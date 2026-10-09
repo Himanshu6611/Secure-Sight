@@ -1,10 +1,24 @@
 {
   "scope": "current Git working tree including untracked source; no history; tests/data/models/private runtime excluded",
   "tool": "security_inventory.py/1.0",
-  "scanned_files": 344,
+  "scanned_files": 350,
   "findings": [],
   "limitations": "Format/literal heuristics miss unsupported tokens and dynamic secrets; inventory is not legal license approval.",
   "installed_packages": [
+    {
+      "name": "altair",
+      "version": "6.3.0",
+      "license_metadata": "Copyright (c) 2015-2025, Vega-Altair Developers\nAll rights reserved.\n\nRedistribution and use in source and binary forms, with or without\nmodification, are permitted provided that the following conditions are met:\n\n* Redistributions of source code must retain the above copyright notice, this\n  list of conditions and the following disclaimer.\n\n* Redistributions in binary form must reproduce the above copyright notice,\n  this list of conditions and the following disclaimer in the documentation\n  and/or other m",
+      "license_classifiers": [
+        "License :: OSI Approved :: BSD License"
+      ]
+    },
+    {
+      "name": "anyio",
+      "version": "4.15.1",
+      "license_metadata": "MIT",
+      "license_classifiers": []
+    },
     {
       "name": "ast_serialize",
       "version": "0.12.1",
@@ -205,6 +219,20 @@
       ]
     },
     {
+      "name": "h11",
+      "version": "0.16.0",
+      "license_metadata": "MIT",
+      "license_classifiers": [
+        "License :: OSI Approved :: MIT License"
+      ]
+    },
+    {
+      "name": "httptools",
+      "version": "0.8.0",
+      "license_metadata": "MIT",
+      "license_classifiers": []
+    },
+    {
       "name": "idna",
       "version": "3.20",
       "license_metadata": "BSD-3-Clause",
@@ -335,6 +363,12 @@
       "license_classifiers": []
     },
     {
+      "name": "narwhals",
+      "version": "2.26.0",
+      "license_metadata": "MIT",
+      "license_classifiers": []
+    },
+    {
       "name": "numpy",
       "version": "1.26.4",
       "license_metadata": "Copyright (c) 2005-2023, NumPy Developers.\nAll rights reserved.\n\nRedistribution and use in source and binary forms, with or without\nmodification, are permitted provided that the following conditions are\nmet:\n\n    * Redistributions of source code must retain the above copyright\n       notice, this list of conditions and the following disclaimer.\n\n    * Redistributions in binary form must reproduce the above\n       copyright notice, this list of conditions and the following\n       disclaimer in the documentat",
@@ -441,6 +475,12 @@
       ]
     },
     {
+      "name": "protobuf",
+      "version": "7.36.2",
+      "license_metadata": "3-Clause BSD License",
+      "license_classifiers": []
+    },
+    {
       "name": "py-serializable",
       "version": "2.1.0",
       "license_metadata": "Apache-2.0",
@@ -466,6 +506,12 @@
       "name": "pycparser",
       "version": "3.1",
       "license_metadata": "BSD-3-Clause",
+      "license_classifiers": []
+    },
+    {
+      "name": "pydeck",
+      "version": "0.9.3",
+      "license_metadata": "Apache License 2.0",
       "license_classifiers": []
     },
     {
@@ -530,6 +576,14 @@
       "version": "1.2.4",
       "license_metadata": "BSD-3-Clause",
       "license_classifiers": []
+    },
+    {
+      "name": "python-multipart",
+      "version": "0.0.32",
+      "license_metadata": "Apache-2.0",
+      "license_classifiers": [
+        "License :: OSI Approved :: Apache Software License"
+      ]
     },
     {
       "name": "python-whois",
@@ -640,8 +694,20 @@
       ]
     },
     {
+      "name": "starlette",
+      "version": "1.7.0",
+      "license_metadata": "BSD-3-Clause",
+      "license_classifiers": []
+    },
+    {
       "name": "stevedore",
       "version": "5.9.1",
+      "license_metadata": "Apache-2.0",
+      "license_classifiers": []
+    },
+    {
+      "name": "streamlit",
+      "version": "1.65.0",
       "license_metadata": "Apache-2.0",
       "license_classifiers": []
     },
@@ -697,6 +763,26 @@
       "name": "urllib3",
       "version": "2.8.0",
       "license_metadata": "MIT",
+      "license_classifiers": []
+    },
+    {
+      "name": "uvicorn",
+      "version": "0.54.0",
+      "license_metadata": "BSD-3-Clause",
+      "license_classifiers": []
+    },
+    {
+      "name": "watchdog",
+      "version": "6.0.0",
+      "license_metadata": "Apache-2.0",
+      "license_classifiers": [
+        "License :: OSI Approved :: Apache Software License"
+      ]
+    },
+    {
+      "name": "websockets",
+      "version": "17.2",
+      "license_metadata": "BSD-3-Clause",
       "license_classifiers": []
     },
     {
