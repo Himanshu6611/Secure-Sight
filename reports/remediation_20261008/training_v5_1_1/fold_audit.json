@@ -1,0 +1,17 @@
+[
+  {
+    "train_rows": 108403,
+    "validation_rows": 57033,
+    "domain_overlap": 0
+  },
+  {
+    "train_rows": 112228,
+    "validation_rows": 53208,
+    "domain_overlap": 0
+  },
+  {
+    "train_rows": 110241,
+    "validation_rows": 55195,
+    "domain_overlap": 0
+  }
+]

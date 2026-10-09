@@ -1,0 +1,20 @@
+[
+  {
+    "description": "Short legitimate HTTPS URL",
+    "features": {
+      "url_len": 25, "dot_cnt": 2, "hyphen_cnt": 0, "special_cnt": 4,
+      "digit_cnt": 0, "token_hits": 0, "domain_len": 6,
+      "subdomain_depth": 1, "has_ip": 0, "https": 1, "entropy": 3.5
+    },
+    "expected_label": 0
+  },
+  {
+    "description": "Common news website URL",
+    "features": {
+      "url_len": 45, "dot_cnt": 2, "hyphen_cnt": 1, "special_cnt": 8,
+      "digit_cnt": 4, "token_hits": 0, "domain_len": 10,
+      "subdomain_depth": 1, "has_ip": 0, "https": 1, "entropy": 4.0
+    },
+    "expected_label": 0
+  }
+]

@@ -1,0 +1,7 @@
+# Performance/accessibility findings
+
+Conditions: localhost Flask debug off, Codex in-app browser, 2026-10-09. Baseline source/social-image audit and real pre-restart homepage observed; after changes the homepage title/H1/links and URL-guide navigation verified in browser. Requested narrow viewport 390x844; DOM reported effective 375px content/client width, no horizontal overflow on URL guide. Keyboard Tab reached Skip to content; Enter focused #content. Browser error log on new guide empty. Mobile/full-page and viewport screenshots retained; viewport override reset. Existing homepage form workflow untouched; no credentials or scans entered.
+
+New guides have one H1, main landmark, breadcrumb/nav labels, visible focus, keyboard skip link, wrapped navigation, system fonts, local 818-byte CSS and no scripts. Social card is actual 1200x630, 28,623 bytes, plain branded wording without invented metrics. Existing homepage keeps Bootstrap/CDN/font dependencies and existing styles; no speculative lazy loading or preload changes.
+
+Lighthouse command NOT RUN (CLI not installed), automated axe/contrast audit NOT RUN, field LCP/INP/CLS UNAVAILABLE. Manual narrow-width/keyboard checks are limited, not WCAG certification or Core Web Vitals PASS. Existing mobile drawer/forms and every breakpoint were not fully audited. No production performance improvement or SEO score claimed. Reproduce browser verification at /guides/url-analysis and inspect local screenshots. Dedicated Lighthouse/field data collection remains P2.

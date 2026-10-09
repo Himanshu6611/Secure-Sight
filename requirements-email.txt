@@ -1,0 +1,3 @@
+-r requirements-media.txt
+dkimpy==1.1.8
+authres==1.2.0

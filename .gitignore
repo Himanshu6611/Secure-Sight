@@ -1,0 +1,63 @@
+# Environment & secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials*.json
+*.log
+pyc_backup/
+dist/
+build/
+dependency-*.json
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environment
+venv/
+.venv/
+
+# Large trained model files
+# ensemble.pkl (~34MB) is included for Render.com deployment
+# email_model.pkl (~298MB) is too large — excluded
+models/email_model.pkl
+models/email_staging/
+data/cleaned.csv
+data/email_features.parquet
+
+# Pytest cache
+.pytest_cache/
+.coverage
+instance/
+app/instance/
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
+htmlcov/
+web/playwright-report/
+web/test-results/
+reports/verification_20261008/audit_dependencies/
+models/legacy_v5_invalid_20261008/
+models/v5_1_staging/
+models/v5_1_1_staging/
+data/v5_1/
+
+# VS Code settings
+.vscode/
+
+# Temp / list files
+file_list.txt
+file_list_utf8.txt
+file_list_webp.txt
+test_output.txt
+
+# Data (raw CSVs can be large — keep processed small ones if needed)
+data/raw/
+
+# Image datasets (~221k files — too big for GitHub, store separately)
+data/Data Set*/

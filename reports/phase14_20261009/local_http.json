@@ -1,0 +1,5 @@
+{
+  "scope": "HTTP reachability only; not browser E2E",
+  "dashboard_status": 200,
+  "home_status": 200
+}

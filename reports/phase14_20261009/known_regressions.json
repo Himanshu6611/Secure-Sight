@@ -1,0 +1,24 @@
+{
+  "cases": [
+    {
+      "id": "paypal_homepage",
+      "expected": "legitimate",
+      "actual": "legitimate",
+      "ml_probability": 0.012494,
+      "pass": true,
+      "owner": "model-maintainer",
+      "issue": "LOCAL-ML-001",
+      "review_by": "2026-11-09",
+      "scope": "Lexical benign-brand regression assumption; no contemporaneous labeled webpage or whitelist"
+    }
+  ],
+  "failures": 0,
+  "training_or_threshold_change": false,
+  "historical_redirect_case": {
+    "status": "UNAVAILABLE",
+    "issue": "LOCAL-ML-001",
+    "owner": "model-maintainer",
+    "review_by": "2026-11-09",
+    "reason": "Phase 9 retained redirected path is redacted; passing the root URL does not resolve the historical full-pipeline false positive"
+  }
+}

@@ -1,0 +1,13 @@
+# Static behavioral evidence
+
+app/behavior/analyzer.py translates gateway and existing Phase 4 outputs into version 8.0.0 evidence. It does not fetch URLs, load models or calculate the final verdict. Structured indicators retain category, reason severity, observation confidence, source, evidence type and scalar observed value. Registered wording lives in config/behavior_reasons.json.
+
+HTTP evidence includes cross-domain changes, loops/repeated targets, excessive chain length, domain transitions, shortener use, scheme/port changes and submitted/final comparison. Unique domains describe the initial-document or successfully followed response domains; no response means zero observed domains. Domain-transition counts describe cross-domain redirect headers, including targets that were not followed. Transition rate and rapid-hopping context use actual relative retrieval timing and do not establish maliciousness.
+
+Static evidence reuses Phase 4's parsed soup to inspect meta-refresh destinations/delays, literal location assignments/replace/assign calls, window-open/target-blank references, challenge-related naming and iframe count. Existing obfuscation/iframe analysis is reused; decodeURIComponent joins its encoding-pattern registry. Obfuscation is contextual, not proof of a redirect. JavaScript patterns can match comments, strings or inactive branches and are marked INFERRED with lower observation confidence. No script or static target is executed/followed. At most 16 static destinations are recorded; reaching the cap marks the result PARTIAL.
+
+Explicit statuses include ANALYZED, PARTIAL, TIMEOUT, SSRF_BLOCKED, REDIRECT_LIMIT, RESOURCE_LIMIT, FETCH_FAILED, DNS_FAILED and REDIRECT_LOOP. Failed observations never become safe values. Dynamic state is NOT_RUN and worker isolation is NOT_IMPLEMENTED. Runtime frame navigation, nested remote iframe depth, actual opened tabs, delayed JavaScript behavior and obfuscated target decoding are unavailable and are not fabricated.
+
+Phase 6 config version 6.1.0 applies only the strongest configured loop/excessive-chain/downgrade/domain-hopping adjustment once, capped at 10 points. Ordinary cross-domain and HTTP-to-HTTPS observations contribute zero. Behavioral evidence does not count as an additional independent malicious source. Reliable final reputation or calibrated model evidence can create an explicitly correlated final-destination reason without inventing a new provider observation. Incomplete redirect analysis or an unexecuted meta/JS target blocks definitive verdicts through the centralized policy.
+
+Phase 7 explanation version 7.1.0 exposes registered behavioral reasons, actual contributions and a redacted chain UI. Metadata/provenance is versioned; model/schema 5.1.1 stays unchanged.

@@ -1,0 +1,11 @@
+{
+  "initial_url": "https://example.com/",
+  "routes": {
+    "https://example.com/": {
+      "status": 302,
+      "location": "http://example.com/"
+    },
+    "http://example.com/": {}
+  },
+  "expected_status": "SUCCESS"
+}

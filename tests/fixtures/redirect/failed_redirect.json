@@ -1,0 +1,9 @@
+{
+  "initial_url": "https://example.com/",
+  "routes": {
+    "https://example.com/": {
+      "status": 302
+    }
+  },
+  "expected_status": "FETCH_FAILED"
+}

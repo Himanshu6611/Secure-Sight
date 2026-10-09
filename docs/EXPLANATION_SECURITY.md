@@ -1,0 +1,11 @@
+# Explanation security and privacy
+
+The deterministic engine executes no supplied URL, page JavaScript or LLM prompt. Page content cannot define registry policy. It reads a fixed trusted JSON path with duplicate-key rejection and a 64 KiB limit; validates complete known mappings, safe template strings and allowed placeholders; and rejects unsupported versions, unsafe markup or format specifiers. No pickle/YAML deserialization or new package is used in this layer.
+
+Untrusted free text is excluded instead of interpolated: titles, detected brand names, destinations, tokens, cookies, private URLs and arbitrary signal reasons do not enter canonical explanations. Safe evidence is limited to known scalar numeric/boolean/status values. ML features are allowlisted; nonfinite values, unknown features, inconsistent impacts and unsupported provenance are omitted. No raw exception message is returned.
+
+Jinja autoescaping remains enabled and no `safe` filter or JavaScript `innerHTML` is used for the new reasons. Registered descriptions are plain text. Tests cover page/brand XSS, JavaScript strings, prompt-injection text, large values, Unicode controls/surrogates, malformed evidence, invalid configuration and HTML escaping at the rendering boundary. Prompt-injection protection follows from having no generative layer and never treating page text as policy.
+
+Default limits: five top reasons, 32 ranked reasons, 400 characters per configured description and 49,152 serialized bytes. Configuration bounds top reasons to 1–7 and total output to 4–64 KiB. Inputs cap signals at 64, conflicts at 16 and local model features at 10. Size enforcement drops optional technical detail before user-facing evidence and preserves warnings. Registry and assessment hashes support deterministic replay.
+
+The output limit applies to the canonical explanation engine output. Existing scan compatibility/intelligence fields are outside this limit and retain their earlier pipeline policies; this change is not a claim of a full historical API privacy audit. No explanation content is added to logs; existing assessment logging preserves only safe fields. Public readiness, production deployment and calibrated verdict accuracy remain separate validation work.

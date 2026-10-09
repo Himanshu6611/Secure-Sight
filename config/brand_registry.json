@@ -1,0 +1,88 @@
+{
+  "version": "9.0.0",
+  "updated_at": "2026-10-08",
+  "scope": "Small curated registry; omitted domains and brands are unknown, not impostors. Review sources before updates.",
+  "brands": [
+    {
+      "id": "paypal",
+      "canonical_name": "PayPal",
+      "aliases": [
+        "paypal"
+      ],
+      "primary_domain": "paypal.com",
+      "official_domains": [
+        "paypal.com",
+        "paypalobjects.com",
+        "paypal.es"
+      ],
+      "sources": [
+        "https://www.paypal.com/us/cshelp/article/paypal-pay-links-and-button-troubleshooting-tips-ts2341",
+        "https://www.paypalobjects.com/webstatic/en_ES/ua/pdf/ints/ua.pdf"
+      ]
+    },
+    {
+      "id": "microsoft",
+      "canonical_name": "Microsoft",
+      "aliases": [
+        "microsoft"
+      ],
+      "primary_domain": "microsoft.com",
+      "official_domains": [
+        "microsoft.com",
+        "microsoftonline.com",
+        "live.com",
+        "cloud.microsoft"
+      ],
+      "sources": [
+        "https://support.microsoft.com/en-us/office/troubleshoot-sign-in-issues-for-support-microsoft-com",
+        "https://learn.microsoft.com/microsoft-365/enterprise/cloud-microsoft-domain"
+      ]
+    },
+    {
+      "id": "google",
+      "canonical_name": "Google",
+      "aliases": [
+        "google",
+        "gmail"
+      ],
+      "primary_domain": "google.com",
+      "official_domains": [
+        "google.com"
+      ],
+      "sources": [
+        "https://support.google.com/mail/answer/8253?hl=en"
+      ]
+    },
+    {
+      "id": "github",
+      "canonical_name": "GitHub",
+      "aliases": [
+        "github"
+      ],
+      "primary_domain": "github.com",
+      "official_domains": [
+        "github.com"
+      ],
+      "sources": [
+        "https://docs.github.com/en/get-started/onboarding/getting-started-with-your-github-account"
+      ]
+    },
+    {
+      "id": "apple",
+      "canonical_name": "Apple",
+      "aliases": [
+        "apple",
+        "icloud"
+      ],
+      "primary_domain": "apple.com",
+      "official_domains": [
+        "apple.com",
+        "icloud.com"
+      ],
+      "sources": [
+        "https://support.apple.com/en-us/111001",
+        "https://support.apple.com/en-euro/guide/icloud/mm281e3e7d/1.0/icloud/1.0"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "logistic_regression": {
+    "best_params": {
+      "classifier__C": 1.0
+    },
+    "cv_auc": 0.992054238184115,
+    "cv_std": 0.000870617409710569,
+    "tuning_rows": 30000,
+    "cv": "StratifiedGroupKFold"
+  },
+  "random_forest": {
+    "best_params": {
+      "classifier__max_depth": 16
+    },
+    "cv_auc": 0.9926640986540791,
+    "cv_std": 0.0005605211225572148,
+    "tuning_rows": 30000,
+    "cv": "StratifiedGroupKFold"
+  },
+  "extra_trees": {
+    "best_params": {
+      "classifier__max_depth": 22
+    },
+    "cv_auc": 0.9929878556607643,
+    "cv_std": 0.0008844488399718226,
+    "tuning_rows": 30000,
+    "cv": "StratifiedGroupKFold"
+  }
+}

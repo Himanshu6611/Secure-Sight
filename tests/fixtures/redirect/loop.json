@@ -1,0 +1,14 @@
+{
+  "initial_url": "https://example.com/",
+  "routes": {
+    "https://example.com/": {
+      "status": 302,
+      "location": "/next"
+    },
+    "https://example.com/next": {
+      "status": 302,
+      "location": "/"
+    }
+  },
+  "expected_status": "REDIRECT_LOOP"
+}

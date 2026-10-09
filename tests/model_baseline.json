@@ -1,0 +1,12 @@
+{
+  "urls": {
+    "https://www.google.com": 0.8689819106978254,
+    "http://example.com": 2.526910364778971e-14,
+    "https://bank-verify.example.com/login?account=123": 2.6496040000166586e-19,
+    "http://8.8.8.8": 0.00200000001107152
+  },
+  "emails": {
+    "Hey, this is a normal email.": 0.54,
+    "URGENT: Please verify your bank account at http://fake-login.com": 0.88
+  }
+}

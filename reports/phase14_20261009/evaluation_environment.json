@@ -1,0 +1,16 @@
+{
+  "python": "3.12.10",
+  "sklearn": "1.5.1",
+  "numpy": "1.26.4",
+  "seed": 20261009,
+  "git_commit": "0ce4acfc5200dd5576b8fa13396e0f06f0c764a6",
+  "working_tree": "dirty; source hashes separately recorded",
+  "dataset_version": "5.1.1",
+  "model_version": "5.1.1",
+  "schema_version": "5.1.1",
+  "dataset_sha256": "a236549cd369cd80bd478ff8e1779cbf44c58d5c3f79f7a51a1adbed7d06d1c6",
+  "split_sha256": "ad354fcd3ec995f63b6c099a73861216c1cc3cb2580f0bc889be1714399bf843",
+  "model_sha256": "d76bea5642acc1de1d5de8841db10fa73a3392c789f5f81b011e03bdba1350c0",
+  "elapsed_seconds": 13.734,
+  "scope": "Historical frozen holdout replay; previously inspected test data, not new model selection or independent prospective validation"
+}

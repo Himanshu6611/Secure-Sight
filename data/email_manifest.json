@@ -1,0 +1,45 @@
+{
+  "dataset_version": "email-v2-grouped",
+  "source_files": {
+    "CEAS_08.csv": "22375e7d5f5a8229dbe987914ee9b3705656c590038662a7df6054629b376074",
+    "Enron.csv": "99933d3233510cf5dc2ee7768ddc609425cb8002bf5d7691d9a7157ffa5fd318",
+    "Ling.csv": "c133792260f18b251e9377b9cb31bef226322af6dc0d79841f61c67489929eca",
+    "Nazario.csv": "b8fbc4158fbdfaff1ed98584c43d72e283c6352d7ade4d457d34c1d79488d184",
+    "Nigerian_Fraud.csv": "f5d6930763cae6feeae6484131c79655a7440abbb97d6f51eab757aea4e6ab4b",
+    "phishing_email.csv": "73a5c5410baf46ed69517fedfd37910f2e93777dc504b73ea483bc16be3a69d1",
+    "SpamAssasin.csv": "3bfe8f8abff89f69a98456be50413c2fcb20a476141116dd84ee1507b980c00e"
+  },
+  "rows": 164971,
+  "groups": 145002,
+  "class_counts": {
+    "0": 79190,
+    "1": 85781
+  },
+  "source_counts": {
+    "CEAS_08.csv": 39154,
+    "Enron.csv": 29767,
+    "Ling.csv": 2859,
+    "Nazario.csv": 1565,
+    "Nigerian_Fraud.csv": 3332,
+    "SpamAssasin.csv": 5809,
+    "phishing_email.csv": 82485
+  },
+  "features": [
+    "length",
+    "word_count",
+    "keyword_hits",
+    "url_count",
+    "exclamation_count",
+    "question_count",
+    "digit_count",
+    "entropy"
+  ],
+  "group_policy": "connected components of exact normalized message fingerprints and normalized sender addresses",
+  "privacy": "Raw messages and sender values are not included in the feature parquet or manifest.",
+  "dropped_missing_feature_rows": 0,
+  "extraction_failures": 0,
+  "label_policy": "Only numeric labels 0 and 1 are accepted; all other labels are excluded.",
+  "license_review_status": "REQUIRED",
+  "label_provenance_review_status": "REQUIRED",
+  "collection_timestamps": "UNAVAILABLE"
+}

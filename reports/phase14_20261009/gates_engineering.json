@@ -1,0 +1,181 @@
+{
+  "profile": "engineering",
+  "pass": true,
+  "gates": [
+    {
+      "name": "lint_0",
+      "status": "PASS",
+      "required": true,
+      "detail": "gate_lint_0.log; 1.891s"
+    },
+    {
+      "name": "lint_1",
+      "status": "PASS",
+      "required": true,
+      "detail": "gate_lint_1.log; 1.000s"
+    },
+    {
+      "name": "type_0",
+      "status": "PASS",
+      "required": true,
+      "detail": "gate_type_0.log; 0.406s"
+    },
+    {
+      "name": "frontend_0",
+      "status": "PASS",
+      "required": true,
+      "detail": "gate_frontend_0.log; 15.890s"
+    },
+    {
+      "name": "frontend_1",
+      "status": "PASS",
+      "required": true,
+      "detail": "gate_frontend_1.log; 5.313s"
+    },
+    {
+      "name": "frontend_2",
+      "status": "PASS",
+      "required": true,
+      "detail": "gate_frontend_2.log; 0.594s"
+    },
+    {
+      "name": "frontend_3",
+      "status": "PASS",
+      "required": true,
+      "detail": "gate_frontend_3.log; 3.281s"
+    },
+    {
+      "name": "frontend_4",
+      "status": "PASS",
+      "required": true,
+      "detail": "gate_frontend_4.log; 142.297s"
+    },
+    {
+      "name": "frontend_5",
+      "status": "PASS",
+      "required": true,
+      "detail": "gate_frontend_5.log; 16.422s"
+    },
+    {
+      "name": "frontend_6",
+      "status": "PASS",
+      "required": true,
+      "detail": "gate_frontend_6.log; 0.062s"
+    },
+    {
+      "name": "model_0",
+      "status": "PASS",
+      "required": true,
+      "detail": "gate_model_0.log; 15.891s"
+    },
+    {
+      "name": "model_1",
+      "status": "PASS",
+      "required": true,
+      "detail": "gate_model_1.log; 2.031s"
+    },
+    {
+      "name": "tests_0",
+      "status": "PASS",
+      "required": true,
+      "detail": "gate_tests_0.log; 75.094s"
+    },
+    {
+      "name": "security_0",
+      "status": "PASS",
+      "required": true,
+      "detail": "gate_security_0.log; 1.515s"
+    },
+    {
+      "name": "security_1",
+      "status": "PASS",
+      "required": true,
+      "detail": "gate_security_1.log; 0.704s"
+    },
+    {
+      "name": "dependencies_0",
+      "status": "PASS",
+      "required": true,
+      "detail": "gate_dependencies_0.log; 0.703s"
+    },
+    {
+      "name": "dependencies_1",
+      "status": "PASS",
+      "required": true,
+      "detail": "gate_dependencies_1.log; 80.406s"
+    },
+    {
+      "name": "performance_0",
+      "status": "PASS",
+      "required": true,
+      "detail": "gate_performance_0.log; 9.609s"
+    },
+    {
+      "name": "critical_statement_coverage",
+      "status": "PASS",
+      "required": true,
+      "detail": "92.2652 >= 80"
+    },
+    {
+      "name": "critical_branch_coverage",
+      "status": "PASS",
+      "required": true,
+      "detail": "84.854 >= 60"
+    },
+    {
+      "name": "test_failures",
+      "status": "PASS",
+      "required": true,
+      "detail": "0 <= 0"
+    },
+    {
+      "name": "unapproved_skips",
+      "status": "PASS",
+      "required": true,
+      "detail": "0 <= 0"
+    },
+    {
+      "name": "historical_fpr",
+      "status": "PASS",
+      "required": true,
+      "detail": "0.004511 <= 0.01"
+    },
+    {
+      "name": "historical_fnr",
+      "status": "PASS",
+      "required": true,
+      "detail": "0.028083 <= 0.1"
+    },
+    {
+      "name": "historical_ece",
+      "status": "PASS",
+      "required": true,
+      "detail": "0.00691292 <= 0.05"
+    },
+    {
+      "name": "leakage_replay",
+      "status": "PASS",
+      "required": true,
+      "detail": "Frozen grouped partition checks and prediction replay"
+    },
+    {
+      "name": "serial_dashboard_p95_ms",
+      "status": "PASS",
+      "required": true,
+      "detail": "8.81291 <= 250"
+    },
+    {
+      "name": "serial_dashboard_failure_rate",
+      "status": "PASS",
+      "required": true,
+      "detail": "0 <= 0"
+    },
+    {
+      "name": "full_ui_accessibility_e2e",
+      "status": "PASS",
+      "required": true,
+      "detail": "7 Playwright tests; 0 failed/flaky, 0 skipped; includes route, scanner, keyboard, contrast and responsive checks"
+    }
+  ],
+  "scope": "Engineering regression and historical benchmark; passing is not public-release certification"
+}

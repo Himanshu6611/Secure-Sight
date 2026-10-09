@@ -1,0 +1,72 @@
+{
+  "status": "PASS",
+  "partitions": {
+    "train": {
+      "rows": 165436,
+      "domains": 137231,
+      "labels": {
+        "0": 94360,
+        "1": 71076
+      },
+      "unique_near_url_keys": 163560
+    },
+    "calibration": {
+      "rows": 16858,
+      "domains": 14703,
+      "labels": {
+        "0": 10128,
+        "1": 6730
+      },
+      "unique_near_url_keys": 16695
+    },
+    "threshold_selection": {
+      "rows": 17037,
+      "domains": 14704,
+      "labels": {
+        "0": 10190,
+        "1": 6847
+      },
+      "unique_near_url_keys": 16824
+    },
+    "test": {
+      "rows": 35554,
+      "domains": 29407,
+      "labels": {
+        "0": 20171,
+        "1": 15383
+      },
+      "unique_near_url_keys": 35070
+    }
+  },
+  "row_overlap": 0,
+  "domain_overlap": 0,
+  "cross_partition_near_url_overlap": 0,
+  "unavailable": [
+    "campaign identities",
+    "capture timestamps/temporal split",
+    "raw page/image clone similarity"
+  ],
+  "prediction_replay": "PASS",
+  "preprocessing_train_medians": "PASS",
+  "grouped_oof": [
+    {
+      "train_rows": 108403,
+      "validation_rows": 57033,
+      "domain_overlap": 0
+    },
+    {
+      "train_rows": 112228,
+      "validation_rows": 53208,
+      "domain_overlap": 0
+    },
+    {
+      "train_rows": 110241,
+      "validation_rows": 55195,
+      "domain_overlap": 0
+    }
+  ],
+  "source_checksum": "UNAVAILABLE",
+  "actual_domain_recomputation": "PASS",
+  "target_derived_features": "Only URL_FEATURE_ORDER; publisher similarity/filename/label features excluded",
+  "dataset_license": "CC BY 4.0 per UCI source; local retrieval timestamp not recorded"
+}

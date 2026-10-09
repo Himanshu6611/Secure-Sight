@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head><title>Hidden Form Test</title></head>
+<body>
+    <div style="display:none">
+        <form action="/login" method="POST">
+            <input type="hidden" name="stealth_token" value="12345">
+            <input type="password" name="pwd" hidden>
+        </form>
+    </div>
+</body>
+</html>

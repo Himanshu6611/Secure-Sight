@@ -1,0 +1,391 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\himan\\AppData\\Local\\Temp\\codex-secure-sight-final\\web\\node_modules\\@playwright\\test\\cli.js",
+      "test"
+    ],
+    "configFile": "C:\\Users\\himan\\AppData\\Local\\Temp\\codex-secure-sight-final\\web\\playwright.config.ts",
+    "rootDir": "C:/Users/himan/AppData/Local/Temp/codex-secure-sight-final/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 7
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/himan/AppData/Local/Temp/codex-secure-sight-final/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 7
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/himan/AppData/Local/Temp/codex-secure-sight-final/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Users\\himan\\AppData\\Local\\Temp\\codex-secure-sight-final\\web\\test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 7
+        },
+        "name": "",
+        "testDir": "C:\\Users\\himan\\AppData\\Local\\Temp\\codex-secure-sight-final\\web\\e2e",
+        "snapshotDir": "C:\\Users\\himan\\AppData\\Local\\Temp\\codex-secure-sight-final\\web\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5101",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "video": "off",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "screen": {
+            "width": 1920,
+            "height": 1080
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "chromium",
+          "launchOptions": {}
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "playwright-report",
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../reports/phase14_20261009/browser_e2e.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 12,
+    "webServer": {
+      "command": "\"D:\\capstone Project\\.venv\\Scripts\\python.exe\" -m flask --app app.app run --host 127.0.0.1 --port 5101",
+      "cwd": "C:\\Users\\himan\\AppData\\Local\\Temp\\codex-secure-sight-final",
+      "url": "http://127.0.0.1:5101/api/v1/health",
+      "reuseExistingServer": true,
+      "timeout": 120000,
+      "stdout": "ignore",
+      "env": {
+        "APP_ENV": "testing",
+        "FLASK_SECRET_KEY": "",
+        "FLASK_SECRET_KEY_FILE": "",
+        "DASHBOARD_ENCRYPTION_KEY": "",
+        "DASHBOARD_ENCRYPTION_KEY_FILE": "",
+        "RATELIMIT_STORAGE_URI": "memory://",
+        "RATELIMIT_STORAGE_URI_FILE": "",
+        "SITE_URL": "http://127.0.0.1:5101",
+        "TRUSTED_HOSTS": "127.0.0.1,localhost",
+        "ALLOWED_ORIGINS": "",
+        "SEO_INDEXING_ENABLED": "false"
+      }
+    }
+  },
+  "suites": [
+    {
+      "title": "public-scanner.spec.ts",
+      "file": "public-scanner.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "public routes render with one primary heading",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8281,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-09T16:47:05.417Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3c6ad8bb99fca11c4d96-73c4a16f4936cc55585d",
+          "file": "public-scanner.spec.ts",
+          "line": 4,
+          "column": 1
+        },
+        {
+          "title": "scanner modes expose labelled controls and keyboard operation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 5540,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-09T16:47:05.418Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3c6ad8bb99fca11c4d96-f3a5e2fafa8ae14e4455",
+          "file": "public-scanner.spec.ts",
+          "line": 24,
+          "column": 1
+        },
+        {
+          "title": "supported email documents and image files can be selected; unsupported files are rejected",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 2,
+                  "status": "passed",
+                  "duration": 5833,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-09T16:47:05.419Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3c6ad8bb99fca11c4d96-ad3cdc59d724c138e5d3",
+          "file": "public-scanner.spec.ts",
+          "line": 43,
+          "column": 1
+        },
+        {
+          "title": "validation and API failures are announced accessibly",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 3,
+                  "status": "passed",
+                  "duration": 5935,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-09T16:47:05.418Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3c6ad8bb99fca11c4d96-e9b0155c76365b1b3a49",
+          "file": "public-scanner.spec.ts",
+          "line": 66,
+          "column": 1
+        },
+        {
+          "title": "scan loading and result states are announced and explain uncertainty",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 4,
+                  "status": "passed",
+                  "duration": 5582,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-09T16:47:05.417Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3c6ad8bb99fca11c4d96-e6a740b81b7fe1464cb0",
+          "file": "public-scanner.spec.ts",
+          "line": 105,
+          "column": 1
+        },
+        {
+          "title": "mobile layout has no horizontal overflow and controls stay visible",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 5,
+                  "status": "passed",
+                  "duration": 4249,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-09T16:47:05.419Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3c6ad8bb99fca11c4d96-9658db8aa48554fd4bbb",
+          "file": "public-scanner.spec.ts",
+          "line": 129,
+          "column": 1
+        },
+        {
+          "title": "main scanner page meets automated WCAG 2.1 A/AA checks",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 6,
+                  "status": "passed",
+                  "duration": 6995,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-09T16:47:05.418Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3c6ad8bb99fca11c4d96-eee1e23701a6c275d22a",
+          "file": "public-scanner.spec.ts",
+          "line": 140,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-09T16:47:01.734Z",
+    "duration": 13068.7,
+    "expected": 7,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

@@ -1,0 +1,167 @@
+{
+  "url": {
+    "status": "REVIEW_REQUIRED",
+    "initial_rows_before_cleaning": 235795,
+    "cleaned_rows": 234885,
+    "rows_removed_during_cleaning": 910,
+    "rows": 234885,
+    "class_counts": {
+      "0": 134849,
+      "1": 100036
+    },
+    "unknown_labels": 0,
+    "malformed_urls": 0,
+    "exact_duplicate_urls": 0,
+    "canonicalized_duplicate_groups": 2654,
+    "conflicting_canonicalized_label_groups": 42,
+    "registrable_domains": 196045,
+    "split_leakage_audit": {
+      "status": "PASS",
+      "partitions": {
+        "train": {
+          "rows": 165436,
+          "domains": 137231,
+          "labels": {
+            "0": 94360,
+            "1": 71076
+          },
+          "unique_near_url_keys": 163560
+        },
+        "calibration": {
+          "rows": 16858,
+          "domains": 14703,
+          "labels": {
+            "0": 10128,
+            "1": 6730
+          },
+          "unique_near_url_keys": 16695
+        },
+        "threshold_selection": {
+          "rows": 17037,
+          "domains": 14704,
+          "labels": {
+            "0": 10190,
+            "1": 6847
+          },
+          "unique_near_url_keys": 16824
+        },
+        "test": {
+          "rows": 35554,
+          "domains": 29407,
+          "labels": {
+            "0": 20171,
+            "1": 15383
+          },
+          "unique_near_url_keys": 35070
+        }
+      },
+      "row_overlap": 0,
+      "domain_overlap": 0,
+      "cross_partition_near_url_overlap": 0,
+      "unavailable": [
+        "campaign identities",
+        "capture timestamps/temporal split",
+        "raw page/image clone similarity"
+      ]
+    },
+    "dataset_version": "5.1.1",
+    "source_license": "CC BY 4.0 per prior source review; confirm the local source copy and attribution before redistribution",
+    "license_review_status": "REVIEW_REQUIRED",
+    "manifest_sha256": "b494e25e3525116b3e1859d11c25e32f88c130a5a89d34dca8ddd6a24774bd06",
+    "publisher_source_sha256": "a236549cd369cd80bd478ff8e1779cbf44c58d5c3f79f7a51a1adbed7d06d1c6",
+    "limitations": [
+      "Collection timestamps and campaign identities are unavailable.",
+      "Canonicalized duplicate groups with conflicting labels require review.",
+      "Source attribution and license compliance require owner confirmation.",
+      "Historical benchmark results do not establish current deployment performance."
+    ]
+  },
+  "email": {
+    "rows": 164971,
+    "features": [
+      "length",
+      "word_count",
+      "keyword_hits",
+      "url_count",
+      "exclamation_count",
+      "question_count",
+      "digit_count",
+      "entropy"
+    ],
+    "class_counts": {
+      "0": 79190,
+      "1": 85781
+    },
+    "invalid_labels": 0,
+    "rows_with_missing_features": 0,
+    "exact_feature_duplicates": 3949,
+    "groups": 145002,
+    "conflicting_group_labels": 7,
+    "sources": {
+      "CEAS_08.csv": {
+        "rows": 39154,
+        "groups": 23719,
+        "class_counts": {
+          "0": 17312,
+          "1": 21842
+        }
+      },
+      "Enron.csv": {
+        "rows": 29767,
+        "groups": 29423,
+        "class_counts": {
+          "0": 15791,
+          "1": 13976
+        }
+      },
+      "Ling.csv": {
+        "rows": 2859,
+        "groups": 2859,
+        "class_counts": {
+          "0": 2401,
+          "1": 458
+        }
+      },
+      "Nazario.csv": {
+        "rows": 1565,
+        "groups": 1367,
+        "class_counts": {
+          "1": 1565
+        }
+      },
+      "Nigerian_Fraud.csv": {
+        "rows": 3332,
+        "groups": 3153,
+        "class_counts": {
+          "1": 3332
+        }
+      },
+      "SpamAssasin.csv": {
+        "rows": 5809,
+        "groups": 2430,
+        "class_counts": {
+          "0": 4091,
+          "1": 1718
+        }
+      },
+      "phishing_email.csv": {
+        "rows": 82485,
+        "groups": 82077,
+        "class_counts": {
+          "0": 39595,
+          "1": 42890
+        }
+      }
+    },
+    "limitations": [
+      "Original collection timestamps/campaign IDs unavailable in the preprocessor inputs",
+      "Email source licensing and label provenance require owner review",
+      "Aggregate handcrafted features do not represent raw text model performance"
+    ],
+    "status": "REVIEW_REQUIRED",
+    "manifest_sha256": "eb650217c33d5ec5217038a45ed2662d0c5576a0d4a80046d7b6ce4d47ed3484",
+    "dataset_sha256": "4b53bad1361007812bdf8f953f637d06a8a86ba2a39bad34cff66f080195bb18",
+    "dataset_version": "email-v2-grouped"
+  },
+  "privacy": "Aggregate counts and hashes only; no URLs, messages, addresses, or samples are written."
+}

@@ -1,0 +1,7 @@
+# Content backlog and review process
+
+P0: operator contact, final domain, release privacy review and retention/backup policy before public exposure. P1: fact-check the new URL/email/media/privacy/security pages against code and deployment; update shared registry and visible content together. No invented reviewer attribution, organization, certification, dates, prices or customer claims. Existing dates are not set to today's date as sitemap lastmod.
+
+P2: deepen one original guide comparing registration age/page history/first-seen with synthetic anonymized examples and caveats; extend email guide with reviewed SPF/DKIM/DMARC alignment examples and trusted-result provenance; explain risk/probability/confidence with actual authorized aggregate evidence, never private exports. Proposed pages remain backlog until substantive reviewed content exists; avoid cannibalizing current guides or adding thin near-duplicates. Add primary citations and genuine reviewer/date only after review actually occurs. Review content on model/schema/privacy changes, not just on an SEO schedule.
+
+P3: research real Search Console queries, landing pages, region/device intent and competition after deployment; prioritize useful answers with evidence and clear limits. No city/modifier doorway pages, scraped competitors, unsupported deepfake tool landing pages or speculative translations. Site remains English only; no hreflang invented.

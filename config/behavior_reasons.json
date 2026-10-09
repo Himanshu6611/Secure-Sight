@@ -1,0 +1,22 @@
+{
+ "version":"8.0.0",
+ "indicators": {
+  "BEHAVIOR_CROSS_DOMAIN":{"category":"REDIRECT","severity":"LOW","title":"Cross-domain redirect observed","description":"An HTTP redirect points to another registrable domain. Cross-domain navigation is common and is not proof of phishing."},
+  "BEHAVIOR_REDIRECT_LOOP":{"category":"REDIRECT","severity":"HIGH","title":"Redirect loop detected","description":"An HTTP redirect points back to a previously visited destination. Following stopped; a loop is not itself proof of phishing."},
+  "BEHAVIOR_DUPLICATE_DESTINATION":{"category":"REDIRECT","severity":"LOW","title":"Repeated redirect destination","description":"A redirect destination repeats an earlier destination. The analyzer stopped rather than following it again."},
+  "BEHAVIOR_EXCESSIVE_REDIRECTS":{"category":"REDIRECT","severity":"MEDIUM","title":"Long redirect chain","description":"Observed redirect headers reached the configured chain-length threshold. Long chains can be legitimate but require context."},
+  "BEHAVIOR_DOMAIN_HOPPING":{"category":"BEHAVIORAL","severity":"MEDIUM","title":"Several domain transitions observed","description":"The chain contains several registrable-domain transitions. The measured timing describes this scan, not evidence of malicious intent."},
+  "BEHAVIOR_SHORTENER":{"category":"REDIRECT","severity":"INFO","title":"Known URL shortener","description":"The submitted hostname appears in the existing shortener registry. Shorteners are not inherently malicious."},
+  "BEHAVIOR_HTTP_TO_HTTPS":{"category":"REDIRECT","severity":"INFO","title":"HTTP to HTTPS redirect","description":"An HTTP redirect points from HTTP to HTTPS. This is common and is not by itself phishing evidence."},
+  "BEHAVIOR_HTTPS_TO_HTTP":{"category":"REDIRECT","severity":"MEDIUM","title":"HTTPS to HTTP redirect","description":"An HTTP redirect points from HTTPS to HTTP, which may reduce transport security. This is not automatically malicious."},
+  "BEHAVIOR_PORT_CHANGE":{"category":"REDIRECT","severity":"LOW","title":"Redirect port change","description":"An HTTP redirect changes the effective destination port. Only ports allowed by the existing outbound policy can be contacted."},
+  "BEHAVIOR_META_REFRESH":{"category":"REDIRECT","severity":"LOW","title":"Meta-refresh target detected","description":"Static HTML contains a meta-refresh destination. It was recorded without following or executing the navigation."},
+  "BEHAVIOR_JAVASCRIPT_REDIRECT":{"category":"BEHAVIORAL","severity":"LOW","title":"JavaScript navigation pattern","description":"An inline script contains a literal location assignment or navigation call. This syntactic pattern may be inactive code; JavaScript was not executed."},
+  "BEHAVIOR_OBFUSCATED_SCRIPT":{"category":"BEHAVIORAL","severity":"LOW","title":"Encoded script context","description":"Existing Phase 4 script analysis detected encoding or obfuscation. No encoded destination was decoded or executed, and the pattern does not prove a redirect."},
+  "BEHAVIOR_FINAL_DOMAIN_CHANGE":{"category":"REDIRECT","severity":"LOW","title":"Final domain differs from submitted domain","description":"The successfully fetched final document has a different registrable domain from the submitted URL. Such transitions can be legitimate."},
+  "BEHAVIOR_SUSPICIOUS_FINAL_DESTINATION":{"category":"BEHAVIORAL","severity":"MEDIUM","title":"Redirect destination has corroborating risk evidence","description":"The observed final destination has an elevated calibrated URL-model estimate or a reliable malicious reputation observation. Phase 6 retains authority over the final verdict."},
+  "BEHAVIOR_CHALLENGE_PATTERN":{"category":"BEHAVIORAL","severity":"INFO","title":"Challenge-related markup","description":"Static markup contains a challenge or CAPTCHA naming pattern. This heuristic was not bypassed and does not establish phishing."},
+  "BEHAVIOR_NEW_WINDOW_PATTERN":{"category":"BEHAVIORAL","severity":"INFO","title":"New-window markup or script pattern","description":"Static analysis found a new-window reference or target-blank link. No new window was opened by the analyzer."},
+  "BEHAVIOR_STATIC_DESTINATION_BLOCKED":{"category":"REDIRECT","severity":"MEDIUM","title":"Restricted static navigation target","description":"A static navigation target violates the existing URL policy. It was not contacted or executed."}
+ }
+}

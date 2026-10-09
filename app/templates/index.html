@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8faf8">
+  <meta name="csrf-token" content="{{ dashboard_csrf() if dashboard_principal and dashboard_csrf is defined else '' }}">
+  {% include "seo_head.html" %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='ui/style.css') }}">
+</head>
+<body>
+  <div id="root"><main class="initial-page"><h1>Check a link, email or image before you trust it.</h1><p>SecureSight reviews available threat evidence and shows where analysis is incomplete.</p><noscript>Enable JavaScript to use the scanner.</noscript></main></div>
+  <script type="module" src="{{ url_for('static', filename='ui/app.js') }}"></script>
+</body>
+</html>

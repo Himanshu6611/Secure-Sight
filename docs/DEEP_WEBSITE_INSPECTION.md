@@ -1,0 +1,11 @@
+# Deep website inspection and controlled crawl
+
+The existing bounded BeautifulSoup parser is reused, with its 1 MiB HTML, 10,000-node, depth-256 and 1,000-resource limits. The Phase 9 inventory adds known brand claims, text/DOM/script hashes, text/heading statistics, bounded descriptive metadata, JSON-LD organization names, declared-domain consistency and legal/contact link counts. Existing form/password/iframe/script/image/link/canonical/favicon/resource observations remain available. Visual logo matching and OCR identity verification are UNAVAILABLE.
+
+Defaults in config/brand_intelligence.json: four attempted pages including reused root, depth one, eight cumulative HTTP requests including root redirects and robots, 2 MiB cumulative response bytes, eight-second fetch/crawl budget including root fetch elapsed time. Each child request uses the existing smaller per-fetch limits and remaining cumulative allowance. The root is not fetched again. Domain/RDAP/model time lies outside this crawl deadline; these are not an eight-second whole-scan SLA.
+
+The crawl stays within the final registrable site and final hostname to respect a single robots policy. Sibling-host links, external links, query/fragment URLs and action/token/download paths are skipped. Priority paths are login/signin/account/verify/security/payment/billing/support/contact/about/privacy/terms, then other observed links. Duplicate normalized destinations are skipped. Redirects cannot leave the registrable-site boundary before contact. robots.txt is consulted: 404/410 permits inspection; unavailable policy stops children; disallow, crawl-delay or request-rate restrictions skip affected children instead of running unrestricted requests.
+
+No forms are submitted. Scripts, images and iframes are never executed/fetched; no cookies/auth/browser state are reused. robots Sitemap hints are not expanded. Budget stops, denied robots, failed pages and parser limits are explicitly PARTIAL. Crawl completeness does not certify the whole website. Child claims inform inspection context and never multiply the root's brand risk.
+
+Tests cover root reuse, priorities, robots, scope-changing/private/metadata/file redirects, duplicate links, cumulative counts/bytes/depth/pages, deadlines, token redaction and API integration.
