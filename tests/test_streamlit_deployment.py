@@ -1,7 +1,23 @@
 """Tests for Streamlit's production configuration and in-process API adapter."""
+import subprocess
+import sys
+from pathlib import Path
+
 from flask import Flask, jsonify, request
 
 from streamlit_app import main as streamlit_main
+
+
+def test_entrypoint_imports_project_packages_when_run_from_subdirectory():
+    entrypoint_dir = Path(streamlit_main.__file__).parent
+    completed = subprocess.run(
+        [sys.executable, "-c", "import runpy; runpy.run_path('main.py'); import app"],
+        cwd=entrypoint_dir,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert completed.returncode == 0, completed.stderr
 
 
 def test_deployment_config_fails_closed_without_public_secrets(monkeypatch):

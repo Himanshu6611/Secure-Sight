@@ -9,10 +9,18 @@ from __future__ import annotations
 import io
 import logging
 import os
+from pathlib import Path
+import sys
 import time
 from typing import Any
 
 import streamlit as st
+
+# Community Cloud runs this file from its subdirectory. Ensure shared project
+# packages (app/, ml/, utils/) are importable from the repository root.
+REPOSITORY_ROOT = str(Path(__file__).resolve().parents[1])
+if REPOSITORY_ROOT not in sys.path:
+    sys.path.insert(0, REPOSITORY_ROOT)
 
 MAX_UPLOAD_BYTES = 6 * 1024 * 1024
 EMAIL_WAIT_SECONDS = 100
@@ -205,9 +213,6 @@ def main() -> None:
                     logging.getLogger(__name__).error(
                         "url_scan_failed error_type=%s", type(exc).__name__
                     )
-                    error_detail = getattr(exc, "name", None)
-                    diagnostic = type(exc).__name__ + (f" ({error_detail})" if error_detail else "")
-                    st.caption(f"Diagnostic class: {diagnostic}")
                     st.error(str(exc) if isinstance(exc, RuntimeError) else "The scan failed safely. Please retry later.")
 
     with email_tab:
