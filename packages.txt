@@ -1,0 +1,4 @@
+# Required by the existing isolated OCR worker for uploaded image/email files.
+tesseract-ocr
+tesseract-ocr-eng
+tesseract-ocr-hin

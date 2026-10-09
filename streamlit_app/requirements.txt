@@ -1,0 +1,4 @@
+# Community Cloud discovers this file beside the app entry point.
+# Reuse the Docker-verified runtime pins, then pin Streamlit explicitly.
+-r ../requirements-runtime.lock
+streamlit==1.65.0

@@ -1,8 +1,8 @@
 [
   {
     "name": "tests_0",
-    "status": "FAIL",
+    "status": "PASS",
     "required": true,
-    "detail": "gate_tests_0.log; 9.453s"
+    "detail": "gate_tests_0.log; 77.172s"
   }
 ]

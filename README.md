@@ -2,6 +2,10 @@
 
 React workbench with a Flask backend for URL phishing analysis, optional email classification and image forensic indicators.
 
+## Streamlit Community Cloud
+
+The repository also includes a Streamlit deployment entry point for the three scanners. Follow the [Community Cloud setup and release limitations](docs/STREAMLIT_COMMUNITY_CLOUD.md); it requires a strong app secret and TLS Redis, and the current release gate remains blocked.
+
 The active URL model is **5.1.1**, trained with corrected PhiUSIIL labels (project target: 0 legitimate, 1 phishing), domain-disjoint splits and fold-local preprocessing. The feature schema contains **97 fields**: 59 URL, 9 domain, 22 HTML and 7 content fields. Only observed URL features are learned; domain/web observations inform a separate evidence policy. Missing observations remain unavailable.
 
 ## Run locally
