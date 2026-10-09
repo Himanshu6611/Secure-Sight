@@ -1,0 +1,11 @@
+{
+  "version": "9.0.0",
+  "max_pages": 8,
+  "max_depth": 2,
+  "max_requests": 16,
+  "max_total_bytes": 4194304,
+  "total_timeout_seconds": 12,
+  "history_max_entries": 512,
+  "history_retention_seconds": 86400,
+  "history_scope": "process_local_observations"
+}

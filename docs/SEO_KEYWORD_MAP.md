@@ -1,0 +1,14 @@
+# Keyword-to-page map
+
+2026-10-09 web research: queries “phishing URL checker”, “SPF DKIM DMARC differences”, “C2PA Content Credentials image authenticity limitations”. Returned evidence included educational comparisons, government email guidance and primary C2PA/Content Authenticity documentation. Search-tool results are not a localized Google SERP/rank measurement; no volume, difficulty, competition score or position data obtained. URL-checker query had no separately usable result attribution in the combined output. All volume/difficulty fields UNKNOWN. Language English; India intended operating context is a hypothesis, not measured target-market evidence.
+
+| Exact candidate query | Intent / fit | Existing page | Evidence and confidence | Next validation / engagement |
+|---|---|---|---|---|
+| SecureSight | Navigational; high product fit | / | Product identity confirmed; no measured demand | Owner Search Console branded queries; analysis interaction |
+| phishing URL checker | Transactional; high relevance, strong competition unknown | / and /guides/url-analysis | Product capability confirmed; no attributed SERP sample, low keyword confidence | Localized SERP/volume review; guide-to-analysis click |
+| SPF DKIM DMARC differences | Informational; medium product fit | /guides/email-analysis | [Australian Cyber Security Centre](https://www.cyber.gov.au/sites/default/files/2023-03/PROTECT%20-%20How%20to%20Combat%20Fake%20Emails%20%28October%202021%29.pdf); comparator guide results. Existing page covers implications, not complete standard reference; medium intent confidence | Validate regional queries; reader reaches analysis and reviews explanation |
+| C2PA Content Credentials image authenticity limitations | Informational; high transparency fit | /guides/media-analysis | [Content Authenticity FAQ](https://opensource.contentauthenticity.org/docs/getting-started/faqs/), [C2PA explainer](https://c2pa.org/specifications/specifications/2.2/explainer/Explainer.html); primary educational results, medium confidence | Validate phrasing/demand; provenance guide reading |
+| domain age vs website age | Informational; high capability fit | /guides/url-analysis | Repository confirms distinction; SERP NOT RUN, demand UNKNOWN | Research independently; avoid competing duplicate guide |
+| SecureSight privacy | Navigational/trust | /privacy | Actual persistence and purge code verified; volume UNKNOWN | Deployment retention/contact review |
+
+No fabricated competitiveness ranking or keyword stuffing. Relevance/product fit supports a provisional backlog, not a numerical opportunity score. Distinct educational pages focus on evidence interpretation rather than copied competitor checker pages. Competitor coverage comparison and achievable competition remain UNKNOWN until owner research. No guarantee of rank, score, growth or timeline.

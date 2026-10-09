@@ -1,0 +1,3 @@
+# Compatibility install entry point. CLIP zero-shot output was removed because
+# it is not an evaluated synthetic/deepfake probability.
+-r requirements-media.txt

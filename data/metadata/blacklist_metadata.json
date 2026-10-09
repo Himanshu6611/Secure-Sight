@@ -1,0 +1,9 @@
+{
+  "source": "Historical corrected benchmark, not a live threat feed",
+  "partition": "train_only",
+  "exact_hosts": true,
+  "mixed_label_hosts_excluded": true,
+  "domains": 3326,
+  "sha256": "977f8ab62dc8ce02a4fefc902cb492b3445a448724a2e90b1ed18a73ce82f049",
+  "source_hash": "a236549cd369cd80bd478ff8e1779cbf44c58d5c3f79f7a51a1adbed7d06d1c6"
+}

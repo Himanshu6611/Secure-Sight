@@ -1,0 +1,17 @@
+{
+  "version": "15.0",
+  "license": "Synthetic local fixture index authored for SecureSight; no captured private content",
+  "network": "FORBIDDEN",
+  "cases": [
+    {"id":"new_startup","type":"benign_context","expected":"Domain age alone cannot establish phishing","source":"tests/test_phase14_quality.py"},
+    {"id":"rebrand","type":"ambiguous_context","expected":"Surface historical brand change with uncertainty, not automatic guilt","source":"tests/historical"},
+    {"id":"third_party_mail","type":"benign_context","expected":"Alignment is separate from sender reputation and content","source":"tests/test_phase11_email.py"},
+    {"id":"qr_destination","type":"malicious_fixture","expected":"Decode locally and revalidate destination; correlate evidence","source":"tests/test_phase10_media.py"},
+    {"id":"absent_c2pa","type":"benign_context","expected":"Absence alone is not manipulation proof","source":"tests/test_phase10_media.py"},
+    {"id":"lookalike","type":"malicious_fixture","expected":"Brand claims need domain/content evidence","source":"tests/brand"},
+    {"id":"nested_mime","type":"malformed_fixture","expected":"413 MIME_RESOURCE_LIMIT before recursive parsing","source":"tests/test_phase15_adversarial.py"},
+    {"id":"mixed_dns","type":"malicious_fixture","expected":"Reject before socket construction","source":"tests/test_phase15_adversarial.py"},
+    {"id":"lexical_variations","type":"ambiguous_context","expected":"Measure instability without asserting current page ground truth","source":"reports/phase15_20261009/ml_robustness.json"},
+    {"id":"genuine_vs_ai_media","type":"unavailable_benchmark","expected":"No supported universal authenticity judgment","source":"docs/ML_ROBUSTNESS_REPORT.md"}
+  ]
+}

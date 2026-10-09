@@ -1,0 +1,334 @@
+{
+  "version": "6.2.1",
+  "assessment_version": "6.2.1",
+  "behavior": {
+    "version": "8.0.0",
+    "maximum_adjustment": 10,
+    "failure_blocks_definitive": true,
+    "indicator_points": {
+      "BEHAVIOR_REDIRECT_LOOP": 8,
+      "BEHAVIOR_EXCESSIVE_REDIRECTS": 6,
+      "BEHAVIOR_HTTPS_TO_HTTP": 10,
+      "BEHAVIOR_DOMAIN_HOPPING": 4
+    }
+  },
+  "policy_status": "PROVISIONAL_NOT_CALIBRATED",
+  "categories": {
+    "url": 0.15,
+    "domain": 0.15,
+    "reputation": 0.2,
+    "html": 0.15,
+    "content": 0.1,
+    "brand": 0.1,
+    "ml": 0.15
+  },
+  "severity": [
+    {
+      "name": "VERY_LOW",
+      "minimum": 0
+    },
+    {
+      "name": "LOW",
+      "minimum": 20
+    },
+    {
+      "name": "MEDIUM",
+      "minimum": 40
+    },
+    {
+      "name": "HIGH",
+      "minimum": 60
+    },
+    {
+      "name": "CRITICAL",
+      "minimum": 80
+    }
+  ],
+  "confidence": {
+    "coverage": 0.55,
+    "quality": 0.2,
+    "agreement": 0.15,
+    "model": 0.1,
+    "contradiction_penalty": 25
+  },
+  "verdict": {
+    "legitimate_max_risk": 39,
+    "suspicious_min_risk": 40,
+    "phishing_min_risk": 80,
+    "minimum_confidence_for_legitimate": 65,
+    "minimum_confidence_for_phishing": 70,
+    "minimum_coverage_for_legitimate": 70,
+    "minimum_coverage_for_phishing": 65,
+    "minimum_phishing_sources": 2,
+    "alert_min_normalized": 0.65,
+    "high_ml_probability": 0.85,
+    "low_ml_probability": 0.15,
+    "minimum_provider_confidence": 0.8
+  },
+  "floors": {
+    "corroborated_credential_harvesting": 60,
+    "confirmed_reputation_and_harvesting": 85,
+    "model_and_corroborated_harvesting": 80
+  },
+  "groups": {
+    "url": {
+      "authority": 0.3,
+      "identity": 0.3,
+      "lure": 0.2,
+      "complexity": 0.2
+    },
+    "domain": {
+      "registration": 0.35,
+      "dns": 0.35,
+      "tls": 0.3
+    },
+    "reputation": {
+      "provider": 1
+    },
+    "html": {
+      "credential_destination": 0.7,
+      "script": 0.15,
+      "embedding": 0.15
+    },
+    "content": {
+      "urgency": 0.4,
+      "credential_language": 0.4,
+      "financial_language": 0.2
+    },
+    "brand": {
+      "identity": 1
+    },
+    "ml": {
+      "model": 1
+    }
+  },
+  "signals": [
+    {
+      "id": "url.ip_host",
+      "category": "url",
+      "group": "authority",
+      "field": "has_ip",
+      "formula": "boolean",
+      "maximum": 0.65,
+      "quality": 0.95,
+      "reason": "An IP literal is used as the hostname; this alone does not establish phishing."
+    },
+    {
+      "id": "url.at_authority",
+      "category": "url",
+      "group": "authority",
+      "field": "authority_obfuscation",
+      "formula": "boolean",
+      "maximum": 0.8,
+      "quality": 0.95,
+      "reason": "The URL contains an authority-obfuscation signal."
+    },
+    {
+      "id": "url.idn",
+      "category": "url",
+      "group": "identity",
+      "field": "punycode_detected",
+      "formula": "boolean",
+      "maximum": 0.2,
+      "quality": 0.95,
+      "reason": "IDN representation is present; many legitimate sites use IDNs."
+    },
+    {
+      "id": "url.typosquatting",
+      "category": "url",
+      "group": "identity",
+      "field": "is_typosquatting",
+      "formula": "boolean",
+      "maximum": 0.65,
+      "quality": 0.65,
+      "reason": "Lexical similarity suggests possible brand impersonation."
+    },
+    {
+      "id": "url.lure_keywords",
+      "category": "url",
+      "group": "lure",
+      "field": "suspicious_keyword_count",
+      "formula": "ramp",
+      "maximum": 0.3,
+      "quality": 0.65,
+      "reason": "URL wording contains configured lure terms; context is needed.",
+      "low": 0,
+      "high": 3
+    },
+    {
+      "id": "url.entropy",
+      "category": "url",
+      "group": "complexity",
+      "field": "url_entropy",
+      "formula": "ramp",
+      "maximum": 0.3,
+      "quality": 0.65,
+      "reason": "Elevated lexical entropy is a weak structural signal.",
+      "low": 4.5,
+      "high": 7
+    },
+    {
+      "id": "url.length",
+      "category": "url",
+      "group": "complexity",
+      "field": "url_len",
+      "formula": "ramp",
+      "maximum": 0.2,
+      "quality": 0.95,
+      "reason": "Unusually long URL; length alone does not establish phishing.",
+      "low": 150,
+      "high": 450
+    },
+    {
+      "id": "domain.young",
+      "category": "domain",
+      "group": "registration",
+      "field": "domain_age_days",
+      "formula": "inverse_ramp",
+      "maximum": 0.6,
+      "quality": 0.75,
+      "reason": "Recent registration is a contextual risk signal, not proof of maliciousness.",
+      "low": 0,
+      "high": 90
+    },
+    {
+      "id": "dns.restricted",
+      "category": "domain",
+      "group": "dns",
+      "field": "is_ssrf_safe",
+      "formula": "inverse_boolean",
+      "maximum": 1,
+      "quality": 1,
+      "reason": "DNS destination violates the outbound address policy."
+    },
+    {
+      "id": "tls.invalid",
+      "category": "domain",
+      "group": "tls",
+      "field": "certificate_valid",
+      "formula": "inverse_boolean",
+      "maximum": 0.35,
+      "quality": 0.95,
+      "reason": "Certificate validation failed; this does not establish phishing intent."
+    },
+    {
+      "id": "reputation.provider",
+      "category": "reputation",
+      "group": "provider",
+      "field": "reputation_status",
+      "formula": "status",
+      "maximum": 1,
+      "quality": 0.9,
+      "reason": "Reputation result describes its provider's observation, not guaranteed safety.",
+      "status_values": {
+        "SAFE": 0,
+        "SUSPICIOUS": 0.6,
+        "MALICIOUS": 1
+      }
+    },
+    {
+      "id": "html.external_credentials",
+      "category": "html",
+      "group": "credential_destination",
+      "field": "external_credentials",
+      "formula": "boolean",
+      "maximum": 0.85,
+      "quality": 0.95,
+      "reason": "A credential form submits across registrable domains; legitimate federation is possible."
+    },
+    {
+      "id": "html.script_obfuscation",
+      "category": "html",
+      "group": "script",
+      "field": "obfuscated_script_count",
+      "formula": "ramp",
+      "maximum": 0.3,
+      "quality": 0.75,
+      "reason": "Static script obfuscation is a weak contextual signal.",
+      "low": 0,
+      "high": 3
+    },
+    {
+      "id": "html.external_iframe",
+      "category": "html",
+      "group": "embedding",
+      "field": "external_iframe_count",
+      "formula": "ramp",
+      "maximum": 0.2,
+      "quality": 0.85,
+      "reason": "External iframe embedding is a weak structural signal.",
+      "low": 0,
+      "high": 3
+    },
+    {
+      "id": "content.urgency",
+      "category": "content",
+      "group": "urgency",
+      "field": "urgency_score",
+      "formula": "probability",
+      "maximum": 0.6,
+      "quality": 0.65,
+      "reason": "Urgency language is present; ordinary notices can also be urgent."
+    },
+    {
+      "id": "content.credentials",
+      "category": "content",
+      "group": "credential_language",
+      "field": "credential_score",
+      "formula": "probability",
+      "maximum": 0.35,
+      "quality": 0.65,
+      "reason": "Credential-related wording is present; ordinary login pages can contain it."
+    },
+    {
+      "id": "content.financial",
+      "category": "content",
+      "group": "financial_language",
+      "field": "financial_language_score",
+      "formula": "probability",
+      "maximum": 0.15,
+      "quality": 0.65,
+      "reason": "Financial wording is a weak contextual signal."
+    },
+    {
+      "id": "brand.mismatch",
+      "category": "brand",
+      "group": "identity",
+      "field": "brand_domain_mismatch",
+      "formula": "boolean",
+      "maximum": 1,
+      "quality": 0.65,
+      "reason": "Corroborated page brand and credential destination differ from known official domains."
+    },
+    {
+      "id": "ml.phishing",
+      "category": "ml",
+      "group": "model",
+      "field": "probability",
+      "formula": "probability",
+      "maximum": 1,
+      "quality": 0.9,
+      "reason": "Calibrated URL classifier probability; domain and webpage evidence are independent inputs."
+    }
+  ],
+  "model_versions": [
+    "5.1.1"
+  ],
+  "feature_schema_versions": [
+    "5.1.1"
+  ],
+  "stages": [
+    "url",
+    "dns",
+    "tls",
+    "registration",
+    "reputation",
+    "html",
+    "content",
+    "ml"
+  ],
+  "evidence": {
+    "minimum_normalized": 0.1,
+    "top_k": 5
+  }
+}

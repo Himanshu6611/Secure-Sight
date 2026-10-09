@@ -1,0 +1,17 @@
+{
+  "dataset_version": "5.1.1",
+  "files": {
+    "data\\v5_1_1\\rows.csv": {
+      "sha256": "7af5f07af1c455bd6fa1731d0467f79bb96b17e025e998e1e844c161ece5f379",
+      "size_bytes": 28696756
+    },
+    "data\\v5_1_1\\features.parquet": {
+      "sha256": "1097d78e7791b5537d36b09301fde429ba78736b789a9fba7d3549a655bdddfb",
+      "size_bytes": 5240977
+    },
+    "data\\v5_1_1\\splits.json": {
+      "sha256": "ad354fcd3ec995f63b6c099a73861216c1cc3cb2580f0bc889be1714399bf843",
+      "size_bytes": 23042804
+    }
+  }
+}

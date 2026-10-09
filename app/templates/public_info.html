@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% include 'seo_head.html' %}
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='public.css') }}">
+</head>
+<body>
+  <a class="skip-link" href="#content">Skip to content</a>
+  <header><nav aria-label="Public navigation"><a class="brand" href="/">SecureSight</a><a href="/#detector">Analyze material</a><a href="/privacy">Privacy</a><a href="/security">Security limits</a></nav></header>
+  <main id="content" tabindex="-1">
+    <nav aria-label="Breadcrumb"><a href="/">Home</a> / <span aria-current="page">{{ page.heading }}</span></nav>
+    <h1>{{ page.heading }}</h1>
+    <p class="intro">{{ page.description }}</p>
+    {% for heading, text in page.sections %}<section><h2>{{ heading }}</h2><p>{{ text }}</p></section>{% endfor %}
+    <aside aria-label="Related reading"><h2>Related reading</h2><ul>{% for path, related in pages.items() if path != request.path and path != '/' %}<li><a href="{{ path }}">{{ related.heading }}</a></li>{% endfor %}</ul></aside>
+    <a class="action" href="/#detector">Inspect authorized material</a>
+  </main>
+  <footer>SecureSight · Academic threat-analysis project · Assessments are not guarantees.</footer>
+</body>
+</html>

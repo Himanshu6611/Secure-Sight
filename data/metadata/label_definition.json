@@ -1,0 +1,8 @@
+{
+  "target_column": "label",
+  "encoding": {
+    "0": "legitimate",
+    "1": "phishing"
+  },
+  "source_conversion": "PhiUSIIL: target=1-source"
+}

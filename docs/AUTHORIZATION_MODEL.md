@@ -1,0 +1,9 @@
+# Authorization model
+
+Reuse Phase 12 identity: scrypt operator-provisioned accounts and active-role lookup on every request. ADMIN/ANALYST/API_CLIENT may write investigations/cases/feedback and export; VIEWER may read tenant records but not write or create saved analyses. ADMIN audit reads remain limited to that admin's tenant. Tenant membership intentionally shares records within a workspace; there is no administrator bypass across tenants.
+
+Flask sessions contain user ID, one-hour expiration and random CSRF; HTTPOnly/SameSite Lax and production Secure cookies. CLI deactivation revokes the next request. Supplied Authorization headers take precedence: invalid bearer credentials cannot silently fall back to a valid cookie session. Bearer input is bounded ASCII; only hashed dedicated API_CLIENT credentials are stored. Email-job bearer tokens are separate short-lived capabilities and do not grant dashboard access. Possessing a job capability grants access to that specific ephemeral result, by design.
+
+All durable investigation/evidence/timeline/graph/comparison/export/case queries include server-derived tenant scope and parameterized SQL. Missing/foreign IDs return identical 404s; search and aggregates cannot disclose other tenants. Case-linked investigations and evidence IDs are checked before transaction commit; revision checks prevent lost updates. Unknown fields cannot set tenant/owner/role/risk/verdict. Notes and unvalidated labels never alter technical snapshots or verified ground truth.
+
+Audit: provisioning/revocation/purge, login/logout/failure, investigation capture/open, case/note/label change and report export produce content-free HMAC-chained events. Request completion adds actor ID/role when authenticated, endpoint, status, latency, request ID and error code. Never log password, token, cookie, username, raw body/OCR, URL query or secret. External audit anchoring and host-level least privilege remain deployment tasks.

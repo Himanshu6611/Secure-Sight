@@ -1,0 +1,9 @@
+# Canonical policy
+
+One configuration source: SITE_URL; production origin is not guessed. SEO_INDEXING_ENABLED defaults false. Explicit opt-in requires public HTTPS, standard port and explicitly trusted canonical host; normalized host uses URL validation/IDNA, default HTTPS port stripped. No external destination comes from request query, forwarded headers or supplied scan data.
+
+Public paths are lowercase and no trailing slash except /. Trusted alternate-origin GET requests and trailing-slash public variants redirect directly with 308 to SITE_URL plus canonical path, without query parameters. Canonical-origin tracking query variants retain the useful page and canonical points to the clean self URL. Distinct guides each canonicalize to themselves. POST/private/unknown paths are not redirected for SEO. Unknown routes/case variants remain real 404; no fake legacy equivalence invented.
+
+Render/Docker actual hostname, apex/www preference and alias DNS remain owner decisions. At deployment configure TLS and trusted proxy scheme forwarding at the edge/Gunicorn; do not trust arbitrary X-Forwarded headers or enable unrestricted ProxyFix. Incorrect scheme forwarding can cause redirect loops: verify behind the actual trusted edge before opt-in. No production reachability, alias DNS, TLS redirect or indexing submission was performed from localhost. Structured data/schema and absolute social URLs derive from the same origin. No lastmod without a real editorial timestamp.
+
+Policy sources reviewed: [Google noindex](https://developers.google.com/search/docs/crawling-indexing/block-indexing), [canonical URL signals](https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls), [sitemap guidance](https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap). Canonical signals and sitemap inclusion do not guarantee Google indexing or rankings.

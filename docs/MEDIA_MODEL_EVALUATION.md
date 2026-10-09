@@ -1,0 +1,11 @@
+# Media model evaluation — research baseline rejected
+
+Four image folder datasets are present under `data/Data Set 1` through `data/Data Set 4`; only Data Sets 1–3 have test splits. The folders contain about 221k JPEGs labelled only `real` or `fake`, with no source, license, generator/identity manifest or duplicate-control report in this workspace. See [the local corpus audit](MEDIA_DATASET_AUDIT.md). These images are not approved for product training or release claims.
+
+A research-only HOG+color-histogram logistic-regression baseline was sampled with a fixed seed (3,000 images per class for training; 750 per class from validation and test). At a 0.5 threshold, validation accuracy was 68.5%, ROC-AUC 0.748 and false-positive rate 30.0%; test accuracy was 73.8%, ROC-AUC 0.845, Brier score 0.182 and false-positive rate 36.8%. The weak and unstable result fails a useful detector quality gate. This classical baseline is not deployed, its probabilities are not calibrated, and its test subset is not a substitute for provenance/identity-disjoint evaluation. A smaller HOG baseline also failed to improve the false-positive rate.
+
+No defensible image/deepfake accuracy claim is currently available. The existing URL model benchmark does not evaluate images. Synthetic fixture tests verify image processing, OCR and QR behavior only—not deepfake accuracy.
+
+Before activating a media adapter, verify dataset provenance and licenses, record model and dataset hashes, training/evaluation versions, class balance, identity/source-disjoint splits and duplicate/perceptual-near-duplicate controls. Evaluate clean/compressed/resized/screenshot/text/QR images and real/manipulated/synthetic images; publish threshold curves and calibration on independent holdouts stratified by resolution, compression and face size. Audit domain shift and multilingual OCR/QR quality independently. Low-quality input must reduce confidence, never create suspicion.
+
+The supplied URL model remains separate and cannot be repurposed for media. No model was automatically downloaded and no media model was promoted. Phase 10's complete definition of done is not satisfied until dataset provenance and a well-generalizing, independently evaluated media model are available.

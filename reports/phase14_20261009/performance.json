@@ -1,0 +1,18 @@
+{
+  "scope": "serial Flask test client, encrypted in-memory SQLite, synthetic 500 records, rate limits explicitly disabled for measurement only",
+  "samples": 200,
+  "status_200": 200,
+  "failure_rate": 0.0,
+  "population_seconds": 6.23499999998603,
+  "p50_ms": 6.118550023529679,
+  "p95_ms": 8.812909963307899,
+  "p99_ms": 10.388160046422852,
+  "throughput_serial_requests_per_second": 129.28248222194642,
+  "python_tracemalloc_peak_bytes": 1158668,
+  "outbound_calls": 0,
+  "queue_delay": null,
+  "provider_unavailable_rate": null,
+  "scan_completion_rate": null,
+  "scan_latency": null,
+  "limits": "No concurrency, HTTP transport, decoder/provider work, production Redis, native/RSS peak or saturation measurement"
+}

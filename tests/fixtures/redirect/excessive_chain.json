@@ -1,0 +1,34 @@
+{
+  "initial_url": "https://example.com/0",
+  "routes": {
+    "https://example.com/0": {
+      "status": 302,
+      "location": "/1"
+    },
+    "https://example.com/1": {
+      "status": 302,
+      "location": "/2"
+    },
+    "https://example.com/2": {
+      "status": 302,
+      "location": "/3"
+    },
+    "https://example.com/3": {
+      "status": 302,
+      "location": "/4"
+    },
+    "https://example.com/4": {
+      "status": 302,
+      "location": "/5"
+    },
+    "https://example.com/5": {
+      "status": 302,
+      "location": "/6"
+    },
+    "https://example.com/6": {
+      "status": 302,
+      "location": "/7"
+    }
+  },
+  "expected_status": "REDIRECT_LIMIT_EXCEEDED"
+}

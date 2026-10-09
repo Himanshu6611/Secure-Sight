@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: securesight
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: singapore
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: FLASK_SECRET_KEY
+        generateValue: true
+      - key: SITE_URL
+        sync: false
+      - key: TRUSTED_HOSTS
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: RATELIMIT_STORAGE_URI
+        sync: false
+      - key: HF_HUB_OFFLINE
+        value: "1"
+      - key: WEB_CONCURRENCY
+        value: "1"
+    healthCheckPath: /api/v1/ready
+    autoDeploy: false

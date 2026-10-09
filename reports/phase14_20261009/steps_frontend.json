@@ -1,0 +1,32 @@
+[
+  {
+    "name": "frontend_0",
+    "status": "PASS",
+    "required": true,
+    "detail": "gate_frontend_0.log; 5.828s"
+  },
+  {
+    "name": "frontend_1",
+    "status": "PASS",
+    "required": true,
+    "detail": "gate_frontend_1.log; 3.531s"
+  },
+  {
+    "name": "frontend_2",
+    "status": "PASS",
+    "required": true,
+    "detail": "gate_frontend_2.log; 0.453s"
+  },
+  {
+    "name": "frontend_3",
+    "status": "PASS",
+    "required": true,
+    "detail": "gate_frontend_3.log; 1.313s"
+  },
+  {
+    "name": "frontend_4",
+    "status": "PASS",
+    "required": true,
+    "detail": "gate_frontend_4.log; 0.047s"
+  }
+]

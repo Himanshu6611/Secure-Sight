@@ -1,0 +1,11 @@
+# Secrets and trusted configuration
+
+Never commit .env, runtime key/SQLite/WAL/credential files or build them into images. `.gitignore` and `.dockerignore` exclude private instances; `.env.example` uses empty secret placeholders. `COPY . .` therefore excludes new local private runtime files. Old images/history require independent review; ignore changes cannot erase earlier leakage.
+
+Production requires an explicit 32+ character session secret, HTTPS SITE_URL, explicit trusted hosts/origins, positive resource/rate settings and checked shared Redis. Generate independent random keys with Python secrets.token_hex(32); length validation is not proof of entropy. Private dashboard remains disabled unless durable DASHBOARD_DB_PATH plus separate 32+ character DASHBOARD_ENCRYPTION_KEY are configured. Use deployment secret injection, private file ownership, secured Redis network/TLS/ACL and encrypted backups; no cloud vault integration was added.
+
+Rotation: session-key change invalidates sessions and existing Redis email-job ciphertext (wait for jobs to expire/drain first). API-client revocation uses dashboard-disable-user then explicitly provisions replacement credentials. Dashboard key rotation requires an offline backed-up decrypt/re-encrypt migration; changing the environment value alone breaks historical decryption and HMAC/search indexes. Such a migration is not implemented. Preserve old key securely until verified migration/backups are handled. Do not print secrets in terminal history/logs or pass them in URLs.
+
+Active models are loaded from trusted operator-owned local bundles only, with hash/schema/version checks before joblib. A writable model plus manifest is not authenticated by checksums; use a read-only trusted artifact deployment and independent trust root/signature when implementing stronger supply-chain guarantees. No runtime download or user-supplied model loader exists.
+
+Phase 13 records a requirements-resolved CycloneDX SBOM, vulnerability audit, installed environment freeze and license metadata inventory. The working-tree format/literal secret scan is intentionally limited; it excludes fixture/data/model/private runtime content and does not inspect Git history. License metadata is not legal approval; unsupported token formats and dynamically assembled secrets can be missed.

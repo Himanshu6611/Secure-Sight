@@ -1,0 +1,21 @@
+{
+  "initial_rows": 235795,
+  "cleaned_rows": 234885,
+  "conflicting_urls": 1,
+  "source": "phiusiil",
+  "label_mapping": {
+    "0": "legitimate",
+    "1": "phishing"
+  },
+  "source_label_mapping": {
+    "0": "phishing",
+    "1": "legitimate"
+  },
+  "label_distribution": {
+    "0": 134849,
+    "1": 100036
+  },
+  "normalization": "IDNA host; default port; full path/query/fragment preserved",
+  "duplicate_policy": "normalized URL majority; tie phishing",
+  "dataset_version": "5.1.1"
+}

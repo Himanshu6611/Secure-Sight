@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SecureSight Investigation v12",
+  "type": "object",
+  "required": [
+    "contract_version",
+    "investigation_id",
+    "entity_type",
+    "summary",
+    "evidence",
+    "explanations",
+    "timeline",
+    "graph",
+    "panels",
+    "analyst_assessment"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "12.0"
+    },
+    "investigation_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{32}$"
+    },
+    "entity_type": {
+      "enum": [
+        "URL",
+        "EMAIL",
+        "MEDIA"
+      ]
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "verdict",
+        "risk_score",
+        "severity",
+        "confidence",
+        "status",
+        "analysis_completeness",
+        "evidence_coverage",
+        "ml_probability"
+      ],
+      "properties": {
+        "risk_score": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "confidence": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "analysis_completeness": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "evidence_coverage": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "ml_probability": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "verdict": {
+          "type": "string"
+        },
+        "severity": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "maxItems": 1024,
+      "items": {
+        "type": "object",
+        "required": [
+          "evidence_id",
+          "evidence_type",
+          "source",
+          "source_version",
+          "timestamp"
+        ],
+        "properties": {
+          "evidence_type": {
+            "enum": [
+              "OBSERVED",
+              "INFERRED",
+              "MODEL_DERIVED",
+              "EXTERNAL",
+              "MISSING",
+              "CONTRADICTORY"
+            ]
+          }
+        }
+      }
+    },
+    "timeline": {
+      "type": "array",
+      "maxItems": 257
+    },
+    "graph": {
+      "type": "object",
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "maxItems": 512
+        },
+        "edges": {
+          "type": "array",
+          "maxItems": 1024
+        }
+      }
+    },
+    "panels": {
+      "type": "object"
+    }
+  }
+}

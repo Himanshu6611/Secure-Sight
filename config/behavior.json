@@ -1,0 +1,14 @@
+{
+  "version": "8.0.0",
+  "max_redirects": 5,
+  "request_timeout_seconds": 4.0,
+  "total_timeout_seconds": 6.0,
+  "max_response_size_bytes": 1048576,
+  "max_total_response_bytes": 1048576,
+  "max_static_destinations": 16,
+  "excessive_redirect_threshold": 4,
+  "domain_hopping_threshold": 3,
+  "rapid_domain_hopping_window_seconds": 3.0,
+  "dynamic_enabled": false,
+  "sensitive_query_keys": ["token", "session", "sid", "auth", "code", "password", "email", "phone", "key", "access_token", "api_key", "secret"]
+}

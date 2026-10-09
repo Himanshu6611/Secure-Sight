@@ -1,0 +1,7 @@
+{
+  "version": "9.0.0",
+  "used_by_serving_model": false,
+  "serving_model_version": "5.1.1",
+  "features": ["corroborated_brand_mismatch", "credential_page", "multi_source_claim", "strong_lookalike", "external_nonofficial_credentials", "known_official_match", "official_auth_destination"],
+  "value_contract": "Observed binary integers; unavailable corroborated_brand_mismatch is null. History stays contextual and unscored. Never append these to the 97-field 5.1.1 model input."
+}

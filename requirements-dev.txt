@@ -1,0 +1,11 @@
+-r requirements-email.txt
+pytest==9.1.1
+pip-audit==2.10.1
+coverage==7.10.6
+pytest-cov==7.0.0
+flake8==7.1.0
+bandit==1.7.10
+fakeredis[lua]==2.39.0
+jsonschema==4.26.0
+mypy==2.4.0
+defusedxml==0.7.1

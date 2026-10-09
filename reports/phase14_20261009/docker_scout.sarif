@@ -1,0 +1,587 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/sarif-2.1/schema/sarif-schema-2.1.0.json",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "fullName": "Docker Scout",
+          "informationUri": "https://docker.com/products/docker-scout",
+          "name": "docker scout",
+          "rules": [
+            {
+              "id": "CVE-2026-107778",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-107778"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-107778?s=debian&n=krb5&ns=debian&t=deb&osn=debian&osv=13&vr=%3E0",
+              "help": {
+                "text": "MIT Kerberos 5 (krb5) through 1.22.2 contains a NULL pointer dereference in make_cred_list() in rd_cred.c that allows authenticated Kerberos clients to crash services by sending mismatched KRB-CRED arrays. Attackers can send forwarded credentials with more tickets than ticket_info entries through gss_accept_sec_context() to crash GSS-API acceptor services, causing denial of service.\n\n---\n- krb5 <unfixed>\nhttps://github.com/krb5/krb5/pull/1511\nFixed by: https://github.com/krb5/krb5/commit/48afa9abb89ab2176bb20624d87d010b9984fc08 (master)\nFixed by: https://github.com/krb5/krb5/commit/62196e2b269159a5465f5b8d0ed7cf6f29c3282a (krb5-1.22 branch)\n",
+                "markdown": "> MIT Kerberos 5 (krb5) through 1.22.2 contains a NULL pointer dereference in make_cred_list() in rd_cred.c that allows authenticated Kerberos clients to crash services by sending mismatched KRB-CRED arrays. Attackers can send forwarded credentials with more tickets than ticket_info entries through gss_accept_sec_context() to crash GSS-API acceptor services, causing denial of service.\n\n---\n- krb5 <unfixed>\nhttps://github.com/krb5/krb5/pull/1511\nFixed by: https://github.com/krb5/krb5/commit/48afa9abb89ab2176bb20624d87d010b9984fc08 (master)\nFixed by: https://github.com/krb5/krb5/commit/62196e2b269159a5465f5b8d0ed7cf6f29c3282a (krb5-1.22 branch)\n\n|                                                                                                      |\n|Package         pkg:deb/debian/krb5@1.21.3-5%2Bdeb13u1?os_distro=trixie&os_name=debian&os_version=13  |\n|Affected range  >0                                                                                    |\n|Fixed version   not fixed                                                                             |\n"
+              },
+              "properties": {
+                "affected_version": ">0",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "not fixed",
+                "purls": [
+                  "pkg:deb/debian/krb5@1.21.3-5%2Bdeb13u1?os_distro=trixie&os_name=debian&os_version=13"
+                ],
+                "security-severity": "7.1",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-107161",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-107161"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-107161?s=debian&n=cyrus-sasl2&ns=debian&t=deb&osn=debian&osv=13&vr=%3E0",
+              "help": {
+                "text": "A heap-based buffer overflow flaw was found in Cyrus SASL. The add_to_challenge() function in the DIGEST-MD5 plugin computes the size of the buffer needed for a challenge/response field before DIGEST-MD5 quoting is applied, but does not recompute that size when quoting (escaping special characters) makes the value longer. The under-sized buffer is then passed to strcat(), causing a heap-based out-of-bounds write whose size depends on attacker-controlled input. A malicious or on-path DIGEST-MD5 (or HTTP Digest) server can trigger this flaw in a connecting client by supplying a crafted challenge field, such as realm or nonce, most likely resulting in a crash of the client application.\n\n---\n- cyrus-sasl2 <unfixed>\nhttps://github.com/cyrusimap/cyrus-sasl/issues/889\nhttps://github.com/cyrusimap/cyrus-sasl/pull/892\nhttps://bugzilla.redhat.com/show_bug.cgi?id=2460420\n",
+                "markdown": "> A heap-based buffer overflow flaw was found in Cyrus SASL. The add_to_challenge() function in the DIGEST-MD5 plugin computes the size of the buffer needed for a challenge/response field before DIGEST-MD5 quoting is applied, but does not recompute that size when quoting (escaping special characters) makes the value longer. The under-sized buffer is then passed to strcat(), causing a heap-based out-of-bounds write whose size depends on attacker-controlled input. A malicious or on-path DIGEST-MD5 (or HTTP Digest) server can trigger this flaw in a connecting client by supplying a crafted challenge field, such as realm or nonce, most likely resulting in a crash of the client application.\n\n---\n- cyrus-sasl2 <unfixed>\nhttps://github.com/cyrusimap/cyrus-sasl/issues/889\nhttps://github.com/cyrusimap/cyrus-sasl/pull/892\nhttps://bugzilla.redhat.com/show_bug.cgi?id=2460420\n\n|                                                                                                           |\n|Package         pkg:deb/debian/cyrus-sasl2@2.1.28%2Bdfsg1-9?os_distro=trixie&os_name=debian&os_version=13  |\n|Affected range  >0                                                                                         |\n|Fixed version   not fixed                                                                                  |\n"
+              },
+              "properties": {
+                "affected_version": ">0",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "not fixed",
+                "purls": [
+                  "pkg:deb/debian/cyrus-sasl2@2.1.28%2Bdfsg1-9?os_distro=trixie&os_name=debian&os_version=13"
+                ],
+                "security-severity": "7.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-67693",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-67693"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-67693?s=debian&n=gnutls28&ns=debian&t=deb&osn=debian&osv=13&vr=%3E0",
+              "help": {
+                "text": "An issue in gnutls v.3.8.13 allows an attacker to obtain sensitive information via failing to reject end-entity X.509 certificates that contain a contradictory combination of Key Usage (KU) and Extended Key Usage (EKU)\n\n---\n- gnutls28 <unfixed>\nTODO: check if https://gist.github.com/lkloliver/6fbfc191bc6163942c8017551ac3f238 reported upstream, valid?\n",
+                "markdown": "> An issue in gnutls v.3.8.13 allows an attacker to obtain sensitive information via failing to reject end-entity X.509 certificates that contain a contradictory combination of Key Usage (KU) and Extended Key Usage (EKU)\n\n---\n- gnutls28 <unfixed>\nTODO: check if https://gist.github.com/lkloliver/6fbfc191bc6163942c8017551ac3f238 reported upstream, valid?\n\n|                                                                                                         |\n|Package         pkg:deb/debian/gnutls28@3.8.9-3%2Bdeb13u4?os_distro=trixie&os_name=debian&os_version=13  |\n|Affected range  >0                                                                                       |\n|Fixed version   not fixed                                                                                |\n"
+              },
+              "properties": {
+                "affected_version": ">0",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "not fixed",
+                "purls": [
+                  "pkg:deb/debian/gnutls28@3.8.9-3%2Bdeb13u4?os_distro=trixie&os_name=debian&os_version=13"
+                ],
+                "security-severity": "7.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-95184",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-95184"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-95184?s=debian&n=gnutls28&ns=debian&t=deb&osn=debian&osv=13&vr=%3E0",
+              "help": {
+                "text": "Improper certificate validation in gnutls v3.8.13 causes the application to reject legitimate certificates for valid users, leading to a Denial of Service (DoS).\n\n---\n- gnutls28 <unfixed>\nTODO: check if https://gist.github.com/lkloliver/0c8b47fa75a0958fa88587665b82ae15 reported upstream, valid?\n",
+                "markdown": "> Improper certificate validation in gnutls v3.8.13 causes the application to reject legitimate certificates for valid users, leading to a Denial of Service (DoS).\n\n---\n- gnutls28 <unfixed>\nTODO: check if https://gist.github.com/lkloliver/0c8b47fa75a0958fa88587665b82ae15 reported upstream, valid?\n\n|                                                                                                         |\n|Package         pkg:deb/debian/gnutls28@3.8.9-3%2Bdeb13u4?os_distro=trixie&os_name=debian&os_version=13  |\n|Affected range  >0                                                                                       |\n|Fixed version   not fixed                                                                                |\n"
+              },
+              "properties": {
+                "affected_version": ">0",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "not fixed",
+                "purls": [
+                  "pkg:deb/debian/gnutls28@3.8.9-3%2Bdeb13u4?os_distro=trixie&os_name=debian&os_version=13"
+                ],
+                "security-severity": "7.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-95209",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-95209"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-95209?s=debian&n=gnutls28&ns=debian&t=deb&osn=debian&osv=13&vr=%3E0",
+              "help": {
+                "text": "An issue in gnutls v3.8.13 causes legitimate CA certificates to be rejected, leading to a Denial of Service (DoS).\n\n---\n- gnutls28 <unfixed>\nTODO: check if https://gist.github.com/lkloliver/8e4498311aff18e2077010e412043e18 reported upstream, valid?\n",
+                "markdown": "> An issue in gnutls v3.8.13 causes legitimate CA certificates to be rejected, leading to a Denial of Service (DoS).\n\n---\n- gnutls28 <unfixed>\nTODO: check if https://gist.github.com/lkloliver/8e4498311aff18e2077010e412043e18 reported upstream, valid?\n\n|                                                                                                         |\n|Package         pkg:deb/debian/gnutls28@3.8.9-3%2Bdeb13u4?os_distro=trixie&os_name=debian&os_version=13  |\n|Affected range  >0                                                                                       |\n|Fixed version   not fixed                                                                                |\n"
+              },
+              "properties": {
+                "affected_version": ">0",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "not fixed",
+                "purls": [
+                  "pkg:deb/debian/gnutls28@3.8.9-3%2Bdeb13u4?os_distro=trixie&os_name=debian&os_version=13"
+                ],
+                "security-severity": "7.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-86140",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-86140"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-86140?s=debian&n=libxml2&ns=debian&t=deb&osn=debian&osv=13&vr=%3E0",
+              "help": {
+                "text": "In libxml2 before 2.15.4, xmlSnprintfElements in valid.c has a strcat stack-based buffer overflow.\n\n---\n- libxml2 2.15.4+dfsg-1 (bug https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1146744)\n[bookworm] - libxml2 <postponed> (Minor issue)\nFixed by: https://gitlab.gnome.org/GNOME/libxml2/-/commit/d1686f91dbda141a752200419d35639fd6b38340 (v2.15.4)\n",
+                "markdown": "> In libxml2 before 2.15.4, xmlSnprintfElements in valid.c has a strcat stack-based buffer overflow.\n\n---\n- libxml2 2.15.4+dfsg-1 (bug https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1146744)\n[bookworm] - libxml2 <postponed> (Minor issue)\nFixed by: https://gitlab.gnome.org/GNOME/libxml2/-/commit/d1686f91dbda141a752200419d35639fd6b38340 (v2.15.4)\n\n|                                                                                                                                 |\n|Package         pkg:deb/debian/libxml2@2.12.7%2Bdfsg%2Breally2.9.14-2.1%2Bdeb13u3?os_distro=trixie&os_name=debian&os_version=13  |\n|Affected range  >0                                                                                                               |\n|Fixed version   not fixed                                                                                                        |\n"
+              },
+              "properties": {
+                "affected_version": ">0",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "not fixed",
+                "purls": [
+                  "pkg:deb/debian/libxml2@2.12.7%2Bdfsg%2Breally2.9.14-2.1%2Bdeb13u3?os_distro=trixie&os_name=debian&os_version=13"
+                ],
+                "security-severity": "8.0",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-77214",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-77214"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-77214?s=debian&n=expat&ns=debian&t=deb&osn=debian&osv=13&vr=%3E0",
+              "help": {
+                "text": "libexpat before commit 13c5f63 contains a heap buffer over-read vulnerability in xmlparse.c. XML_ParseBuffer advances the parse buffer end with parser->m_bufferEnd += len using a caller-supplied length that is not validated against the allocated buffer size, so repeated XML_ParseBuffer calls move m_bufferEnd past the end of the heap allocation and subsequent parsing reads out of bounds. Reaching this path requires a parse buffer to already be present; otherwise XML_ParseBuffer returns XML_ERROR_NO_BUFFER. A buffer is present after a prior call to XML_GetBuffer, either directly (the common case) or indirectly through a prior XML_Parse call that allocates the buffer internally. The over-read discloses adjacent heap memory to the calling application, recovering heap pointers, libc function pointers, and code pointers sufficient to defeat ASLR and build further exploitation primitives.\n\n---\n- expat 2.9.0-1 (bug https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1150320)\nhttps://github.com/libexpat/libexpat/pull/1393\nFixed by: https://github.com/libexpat/libexpat/commit/4d9b1c499ecb66323260a7274edcf86c5eab0517 (R_2_9_0)\n",
+                "markdown": "> libexpat before commit 13c5f63 contains a heap buffer over-read vulnerability in xmlparse.c. XML_ParseBuffer advances the parse buffer end with parser->m_bufferEnd += len using a caller-supplied length that is not validated against the allocated buffer size, so repeated XML_ParseBuffer calls move m_bufferEnd past the end of the heap allocation and subsequent parsing reads out of bounds. Reaching this path requires a parse buffer to already be present; otherwise XML_ParseBuffer returns XML_ERROR_NO_BUFFER. A buffer is present after a prior call to XML_GetBuffer, either directly (the common case) or indirectly through a prior XML_Parse call that allocates the buffer internally. The over-read discloses adjacent heap memory to the calling application, recovering heap pointers, libc function pointers, and code pointers sufficient to defeat ASLR and build further exploitation primitives.\n\n---\n- expat 2.9.0-1 (bug https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1150320)\nhttps://github.com/libexpat/libexpat/pull/1393\nFixed by: https://github.com/libexpat/libexpat/commit/4d9b1c499ecb66323260a7274edcf86c5eab0517 (R_2_9_0)\n\n|                                                                                                    |\n|Package         pkg:deb/debian/expat@2.8.3-1~deb13u1?os_distro=trixie&os_name=debian&os_version=13  |\n|Affected range  >0                                                                                  |\n|Fixed version   not fixed                                                                           |\n"
+              },
+              "properties": {
+                "affected_version": ">0",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "not fixed",
+                "purls": [
+                  "pkg:deb/debian/expat@2.8.3-1~deb13u1?os_distro=trixie&os_name=debian&os_version=13"
+                ],
+                "security-severity": "8.3",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-85091",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-85091"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-85091?s=debian&n=zlib&ns=debian&t=deb&osn=debian&osv=13&vr=%3E0",
+              "help": {
+                "text": "zlib versions 1.3.1.2 through 1.3.2 contain a heap buffer overflow vulnerability in the gz_vacate() function when processing non-blocking gzwrite() operations with stale external buffer pointers. Attackers can trigger the overflow by calling gzprintf() or gzvprintf() after a write stall, causing an unchecked memmove() to write beyond the internal input buffer boundary.\n\n---\n- zlib <unfixed> (bug https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1146895)\nhttps://gist.github.com/thesmartshadow/e0b9481792afb7c31e86fee1ff084490\nhttps://github.com/madler/zlib/issues/1310\nhttps://github.com/madler/zlib/pull/1317\nFixed by: https://github.com/madler/zlib/commit/df84af25dc1942490e1d1c899a07619152a46148\nDiscussion on affected range: https://github.com/madler/zlib/issues/1310#issuecomment-5979623265\nSupport non-blocking devices in the gz* routines introduced with:\nhttps://github.com/madler/zlib/commit/81cc0bebedd935daeb81b0b6e475d8786b51af3d (v1.3.1.2)\n",
+                "markdown": "> zlib versions 1.3.1.2 through 1.3.2 contain a heap buffer overflow vulnerability in the gz_vacate() function when processing non-blocking gzwrite() operations with stale external buffer pointers. Attackers can trigger the overflow by calling gzprintf() or gzvprintf() after a write stall, causing an unchecked memmove() to write beyond the internal input buffer boundary.\n\n---\n- zlib <unfixed> (bug https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1146895)\nhttps://gist.github.com/thesmartshadow/e0b9481792afb7c31e86fee1ff084490\nhttps://github.com/madler/zlib/issues/1310\nhttps://github.com/madler/zlib/pull/1317\nFixed by: https://github.com/madler/zlib/commit/df84af25dc1942490e1d1c899a07619152a46148\nDiscussion on affected range: https://github.com/madler/zlib/issues/1310#issuecomment-5979623265\nSupport non-blocking devices in the gz* routines introduced with:\nhttps://github.com/madler/zlib/commit/81cc0bebedd935daeb81b0b6e475d8786b51af3d (v1.3.1.2)\n\n|                                                                                                                |\n|Package         pkg:deb/debian/zlib@1%3A1.3.dfsg%2Breally1.3.1-1?os_distro=trixie&os_name=debian&os_version=13  |\n|Affected range  >0                                                                                              |\n|Fixed version   not fixed                                                                                       |\n"
+              },
+              "properties": {
+                "affected_version": ">0",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "not fixed",
+                "purls": [
+                  "pkg:deb/debian/zlib@1%3A1.3.dfsg%2Breally1.3.1-1?os_distro=trixie&os_name=debian&os_version=13"
+                ],
+                "security-severity": "8.3",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-74860",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-74860"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-74860?s=debian&n=libxml2&ns=debian&t=deb&osn=debian&osv=13&vr=%3E0",
+              "help": {
+                "text": "A flaw was found in libxml2 with Python bindings enabled. A remote attacker could exploit this vulnerability by providing a specially crafted XML document containing a Document Type Definition (DTD) with enumerated attribute values. This triggers a double-free error in the SAX attributeDecl callback handler, where a string is freed twice. This flaw can lead to a denial of service (DoS) due to a reproducible crash in Python applications using the libxml2 SAX bindings.\n\n---\n- libxml2 2.15.3+dfsg-1\n[bookworm] - libxml2 <postponed> (Minor issue)\nhttps://bugzilla.redhat.com/show_bug.cgi?id=2529697\nhttps://gitlab.gnome.org/GNOME/libxml2/-/work_items/1076\nhttps://gitlab.gnome.org/GNOME/libxml2/-/merge_requests/397\nFixed by: https://gitlab.gnome.org/GNOME/libxml2/-/commit/f41e1865781f74d1cadfe2fbdfeefed946026f12 (v2.15.3)\n",
+                "markdown": "> A flaw was found in libxml2 with Python bindings enabled. A remote attacker could exploit this vulnerability by providing a specially crafted XML document containing a Document Type Definition (DTD) with enumerated attribute values. This triggers a double-free error in the SAX attributeDecl callback handler, where a string is freed twice. This flaw can lead to a denial of service (DoS) due to a reproducible crash in Python applications using the libxml2 SAX bindings.\n\n---\n- libxml2 2.15.3+dfsg-1\n[bookworm] - libxml2 <postponed> (Minor issue)\nhttps://bugzilla.redhat.com/show_bug.cgi?id=2529697\nhttps://gitlab.gnome.org/GNOME/libxml2/-/work_items/1076\nhttps://gitlab.gnome.org/GNOME/libxml2/-/merge_requests/397\nFixed by: https://gitlab.gnome.org/GNOME/libxml2/-/commit/f41e1865781f74d1cadfe2fbdfeefed946026f12 (v2.15.3)\n\n|                                                                                                                                 |\n|Package         pkg:deb/debian/libxml2@2.12.7%2Bdfsg%2Breally2.9.14-2.1%2Bdeb13u3?os_distro=trixie&os_name=debian&os_version=13  |\n|Affected range  >0                                                                                                               |\n|Fixed version   not fixed                                                                                                        |\n"
+              },
+              "properties": {
+                "affected_version": ">0",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "not fixed",
+                "purls": [
+                  "pkg:deb/debian/libxml2@2.12.7%2Bdfsg%2Breally2.9.14-2.1%2Bdeb13u3?os_distro=trixie&os_name=debian&os_version=13"
+                ],
+                "security-severity": "8.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-93990",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-93990"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-93990?s=debian&n=expat&ns=debian&t=deb&osn=debian&osv=13&vr=%3E0",
+              "help": {
+                "text": "Expat before 2.8.5 fails to validate that a high surrogate in UTF-16 input is followed by a low surrogate, allowing malformed UTF-16 sequences to be accepted. Attackers can supply UTF-16 encoded XML containing lone high surrogates that consume the following code unit, causing Expat to pass unpaired surrogates to applications built with XML_UNICODE and to silently replace input characters in other builds.\n\n---\n- expat 2.8.4-2 (bug https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1148665)\nhttps://github.com/libexpat/libexpat/pull/1282\nFixed by: https://github.com/libexpat/libexpat/commit/0cfd15bdf4b2c22d6b0df73610709dfb60921091 (R_2_8_5)\nFixed by: https://github.com/libexpat/libexpat/commit/28fcfba540f6933aa8904a1514c4811713d2ab72 (R_2_8_5)\n",
+                "markdown": "> Expat before 2.8.5 fails to validate that a high surrogate in UTF-16 input is followed by a low surrogate, allowing malformed UTF-16 sequences to be accepted. Attackers can supply UTF-16 encoded XML containing lone high surrogates that consume the following code unit, causing Expat to pass unpaired surrogates to applications built with XML_UNICODE and to silently replace input characters in other builds.\n\n---\n- expat 2.8.4-2 (bug https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1148665)\nhttps://github.com/libexpat/libexpat/pull/1282\nFixed by: https://github.com/libexpat/libexpat/commit/0cfd15bdf4b2c22d6b0df73610709dfb60921091 (R_2_8_5)\nFixed by: https://github.com/libexpat/libexpat/commit/28fcfba540f6933aa8904a1514c4811713d2ab72 (R_2_8_5)\n\n|                                                                                                    |\n|Package         pkg:deb/debian/expat@2.8.3-1~deb13u1?os_distro=trixie&os_name=debian&os_version=13  |\n|Affected range  >0                                                                                  |\n|Fixed version   not fixed                                                                           |\n"
+              },
+              "properties": {
+                "affected_version": ">0",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "not fixed",
+                "purls": [
+                  "pkg:deb/debian/expat@2.8.3-1~deb13u1?os_distro=trixie&os_name=debian&os_version=13"
+                ],
+                "security-severity": "8.7",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-95210",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-95210"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-95210?s=debian&n=gnutls28&ns=debian&t=deb&osn=debian&osv=13&vr=%3E0",
+              "help": {
+                "text": "Improper certificate validation in gnutls v3.8.13 causes the application to accept certificates containing invalid extensions.\n\n---\n- gnutls28 <unfixed>\nTODO: check if https://gist.github.com/lkloliver/4aad23689202720c4068f43b3c6069c7 reported upstream, valid?\n",
+                "markdown": "> Improper certificate validation in gnutls v3.8.13 causes the application to accept certificates containing invalid extensions.\n\n---\n- gnutls28 <unfixed>\nTODO: check if https://gist.github.com/lkloliver/4aad23689202720c4068f43b3c6069c7 reported upstream, valid?\n\n|                                                                                                         |\n|Package         pkg:deb/debian/gnutls28@3.8.9-3%2Bdeb13u4?os_distro=trixie&os_name=debian&os_version=13  |\n|Affected range  >0                                                                                       |\n|Fixed version   not fixed                                                                                |\n"
+              },
+              "properties": {
+                "affected_version": ">0",
+                "cvssV3_severity": "CRITICAL",
+                "fixed_version": "not fixed",
+                "purls": [
+                  "pkg:deb/debian/gnutls28@3.8.9-3%2Bdeb13u4?os_distro=trixie&os_name=debian&os_version=13"
+                ],
+                "security-severity": "9.1",
+                "tags": [
+                  "CRITICAL"
+                ]
+              }
+            }
+          ],
+          "version": "1.24.0"
+        }
+      },
+      "results": [
+        {
+          "ruleId": "CVE-2026-107778",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability   :CVE-2026-107778                                                                       \nSeverity        :HIGH                                                                                  \nPackage         :pkg:deb/debian/krb5@1.21.3-5%2Bdeb13u1?os_distro=trixie&os_name=debian&os_version=13  \nAffected range  :>0                                                                                    \nFixed version   :not fixed                                                                             \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/doc/libgssapi-krb5-2/copyright"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/doc/libk5crypto3/copyright"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/doc/libkrb5-3/copyright"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/doc/libkrb5support0/copyright"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/var/lib/dpkg/status"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-107161",
+          "ruleIndex": 1,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-107161                                                                            \nSeverity         :HIGH                                                                                       \nPackage          :pkg:deb/debian/cyrus-sasl2@2.1.28%2Bdfsg1-9?os_distro=trixie&os_name=debian&os_version=13  \nAffected range   :>0                                                                                         \nFixed version    :not fixed                                                                                  \nEPSS Score       :0.002380                                                                                   \nEPSS Percentile  :0.136000                                                                                   \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/doc/libsasl2-2/copyright"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/doc/libsasl2-modules-db/copyright"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/var/lib/dpkg/status"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-67693",
+          "ruleIndex": 2,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability   :CVE-2026-67693                                                                           \nSeverity        :HIGH                                                                                     \nPackage         :pkg:deb/debian/gnutls28@3.8.9-3%2Bdeb13u4?os_distro=trixie&os_name=debian&os_version=13  \nAffected range  :>0                                                                                       \nFixed version   :not fixed                                                                                \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/doc/libgnutls30t64/copyright"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/var/lib/dpkg/status"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-95184",
+          "ruleIndex": 3,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability   :CVE-2026-95184                                                                           \nSeverity        :HIGH                                                                                     \nPackage         :pkg:deb/debian/gnutls28@3.8.9-3%2Bdeb13u4?os_distro=trixie&os_name=debian&os_version=13  \nAffected range  :>0                                                                                       \nFixed version   :not fixed                                                                                \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/doc/libgnutls30t64/copyright"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/var/lib/dpkg/status"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-95209",
+          "ruleIndex": 4,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability   :CVE-2026-95209                                                                           \nSeverity        :HIGH                                                                                     \nPackage         :pkg:deb/debian/gnutls28@3.8.9-3%2Bdeb13u4?os_distro=trixie&os_name=debian&os_version=13  \nAffected range  :>0                                                                                       \nFixed version   :not fixed                                                                                \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/doc/libgnutls30t64/copyright"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/var/lib/dpkg/status"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-86140",
+          "ruleIndex": 5,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-86140                                                                                                   \nSeverity         :HIGH                                                                                                             \nPackage          :pkg:deb/debian/libxml2@2.12.7%2Bdfsg%2Breally2.9.14-2.1%2Bdeb13u3?os_distro=trixie&os_name=debian&os_version=13  \nAffected range   :>0                                                                                                               \nFixed version    :not fixed                                                                                                        \nEPSS Score       :0.001570                                                                                                         \nEPSS Percentile  :0.042910                                                                                                         \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/doc/libxml2/copyright"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/var/lib/dpkg/status"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-77214",
+          "ruleIndex": 6,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-77214                                                                      \nSeverity         :HIGH                                                                                \nPackage          :pkg:deb/debian/expat@2.8.3-1~deb13u1?os_distro=trixie&os_name=debian&os_version=13  \nAffected range   :>0                                                                                  \nFixed version    :not fixed                                                                           \nEPSS Score       :0.005490                                                                            \nEPSS Percentile  :0.442070                                                                            \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/doc/libexpat1/copyright"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/var/lib/dpkg/status"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-85091",
+          "ruleIndex": 7,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-85091                                                                                  \nSeverity         :HIGH                                                                                            \nPackage          :pkg:deb/debian/zlib@1%3A1.3.dfsg%2Breally1.3.1-1?os_distro=trixie&os_name=debian&os_version=13  \nAffected range   :>0                                                                                              \nFixed version    :not fixed                                                                                       \nEPSS Score       :0.003560                                                                                        \nEPSS Percentile  :0.272250                                                                                        \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/doc/zlib1g/copyright"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/var/lib/dpkg/status"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-74860",
+          "ruleIndex": 8,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-74860                                                                                                   \nSeverity         :HIGH                                                                                                             \nPackage          :pkg:deb/debian/libxml2@2.12.7%2Bdfsg%2Breally2.9.14-2.1%2Bdeb13u3?os_distro=trixie&os_name=debian&os_version=13  \nAffected range   :>0                                                                                                               \nFixed version    :not fixed                                                                                                        \nEPSS Score       :0.004360                                                                                                         \nEPSS Percentile  :0.358410                                                                                                         \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/doc/libxml2/copyright"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/var/lib/dpkg/status"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-93990",
+          "ruleIndex": 9,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-93990                                                                      \nSeverity         :HIGH                                                                                \nPackage          :pkg:deb/debian/expat@2.8.3-1~deb13u1?os_distro=trixie&os_name=debian&os_version=13  \nAffected range   :>0                                                                                  \nFixed version    :not fixed                                                                           \nEPSS Score       :0.004030                                                                            \nEPSS Percentile  :0.324790                                                                            \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/doc/libexpat1/copyright"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/var/lib/dpkg/status"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-95210",
+          "ruleIndex": 10,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability   :CVE-2026-95210                                                                           \nSeverity        :CRITICAL                                                                                 \nPackage         :pkg:deb/debian/gnutls28@3.8.9-3%2Bdeb13u4?os_distro=trixie&os_name=debian&os_version=13  \nAffected range  :>0                                                                                       \nFixed version   :not fixed                                                                                \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/doc/libgnutls30t64/copyright"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/var/lib/dpkg/status"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

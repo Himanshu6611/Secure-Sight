@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-09",
+  "environment": "local Docker Desktop; securesight:az-remediation",
+  "image_digest": "sha256:6841f5e31420f19d72e03bb8987216bfabdb0eb05be50500aee4484e5256b46d",
+  "cpu_limit": 2,
+  "memory_limit": "2g",
+  "concurrency": 10,
+  "requests": 500,
+  "failures": 0,
+  "duration_seconds": 0.54,
+  "throughput_rps": 926.33,
+  "latency_ms": {
+    "p50": 7.51,
+    "p95": 12.12,
+    "p99": 21.82
+  },
+  "tested_path": "/api/v1/ready",
+  "scope": "Local endpoint concurrency smoke only; does not exercise scanning, providers, Redis, queue, production network, or capacity under representative user traffic; does not close production_load gate"
+}

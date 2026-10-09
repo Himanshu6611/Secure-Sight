@@ -1,0 +1,13 @@
+# Redirect security
+
+Every HTTP hop reuses app/security/urls.py and app/security/outbound.py. The policy rejects unsupported schemes, credentials, control/parser ambiguities, nonstandard ports, private/special IPv4/IPv6, metadata destinations, internal suffixes and mixed public/private DNS answers. Validated literal addresses are used by connection pools, preserving hostname/SNI/certificate checks for HTTPS. No environment proxy or second unvalidated hostname resolution is delegated to the HTTP client.
+
+Tests model public-to-private DNS rebinding on a later hop and prove that only a public literal pool was created. Private/metadata/internal/file/javascript redirect targets are rejected without contacting them. These are deterministic transport/security tests, not claims that a public penetration test occurred.
+
+Limits cover followed hops, total/request time, final response body, DOM size/depth/resource count and static destination count. Oversized Content-Length/streaming bodies, compressed responses and non-HTML downloads fail explicitly. Pools/responses close in finally blocks. HTTP headers retain the underlying Python/urllib3 parser limits; the 1 MiB budget refers to the final body, not a claimed pre-allocation cap on all headers. OS/kernel scheduling and native-library behavior remain deployment concerns.
+
+Requests are GET only, with no submitted credentials, forwarded authorization/cookies or persistent session. Redirect response cookies are not reused. Downloads are not written to disk. No CAPTCHA solving or page interaction occurs. Dynamic browser execution cannot be enabled through configuration; attempts fail startup validation.
+
+Public redirect evidence redacts every path/query/fragment value, including unknown parameter names. This is stronger than redacting only configured sensitive names because paths can contain reset/session tokens. Domain/scheme/port and change flags remain available for forensics. Raw routing URLs remain local to the active scan and are removed at the API boundary. The direct web endpoint and scan redact existing URL-bearing form/resource/canonical/favicon fields and omit remote titles after analysis. Existing model inputs remain numeric. Logs retain request correlation, phase, status, timing, counts and error code, not URLs/headers/page text.
+
+No redirect/body cache or scan persistence is added; existing domain-intelligence TTL caching is reused. The configured shared per-worker scan capacity is two. Controlled load tests show excess clients receive 503; there is no browser queue or implied production scalability guarantee. Production Redis/deployment/isolation and representative accuracy validation remain separate gates.

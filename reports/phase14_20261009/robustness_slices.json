@@ -1,0 +1,627 @@
+{
+  "encoded": {
+    "roc_auc": null,
+    "pr_auc": null,
+    "confusion_matrix": {
+      "true_negative": 0,
+      "false_positive": 0,
+      "false_negative": 0,
+      "true_positive": 108
+    },
+    "false_positive_rate": null,
+    "false_negative_rate": 0.0,
+    "samples": 108,
+    "threshold": 0.93,
+    "per_class": {
+      "legitimate": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 0.0
+      },
+      "phishing": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 108.0
+      },
+      "accuracy": 1.0,
+      "macro avg": {
+        "precision": 0.5,
+        "recall": 0.5,
+        "f1-score": 0.5,
+        "support": 108.0
+      },
+      "weighted avg": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 108.0
+      }
+    },
+    "calibration": {
+      "brier_score": 0.0001548461262762532,
+      "ece_10_equal_width": 0.012443691091394316,
+      "reliability_bins": [
+        {
+          "lower": 0.0,
+          "upper": 0.1,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.1,
+          "upper": 0.2,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.2,
+          "upper": 0.3,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.3,
+          "upper": 0.4,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.4,
+          "upper": 0.5,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.5,
+          "upper": 0.6,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.6,
+          "upper": 0.7,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.7,
+          "upper": 0.8,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.8,
+          "upper": 0.9,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.9,
+          "upper": 1.0,
+          "samples": 108,
+          "mean_probability": 0.9875563089086057,
+          "phishing_fraction": 1.0
+        }
+      ],
+      "scope": "historical test replay; not deployment calibration"
+    },
+    "row_wilson_95": {
+      "fpr": null,
+      "fnr": [
+        0.0,
+        0.034347359746557025
+      ]
+    }
+  },
+  "idn": {
+    "roc_auc": null,
+    "pr_auc": null,
+    "confusion_matrix": {
+      "true_negative": 0,
+      "false_positive": 0,
+      "false_negative": 1,
+      "true_positive": 20
+    },
+    "false_positive_rate": null,
+    "false_negative_rate": 0.047619047619047616,
+    "samples": 21,
+    "threshold": 0.93,
+    "per_class": {
+      "legitimate": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 0.0
+      },
+      "phishing": {
+        "precision": 1.0,
+        "recall": 0.9523809523809523,
+        "f1-score": 0.975609756097561,
+        "support": 21.0
+      },
+      "accuracy": 0.9523809523809523,
+      "macro avg": {
+        "precision": 0.5,
+        "recall": 0.47619047619047616,
+        "f1-score": 0.4878048780487805,
+        "support": 21.0
+      },
+      "weighted avg": {
+        "precision": 1.0,
+        "recall": 0.9523809523809523,
+        "f1-score": 0.975609756097561,
+        "support": 21.0
+      }
+    },
+    "calibration": {
+      "brier_score": 0.0009155140218025813,
+      "ece_10_equal_width": 0.01964147470326335,
+      "reliability_bins": [
+        {
+          "lower": 0.0,
+          "upper": 0.1,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.1,
+          "upper": 0.2,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.2,
+          "upper": 0.3,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.3,
+          "upper": 0.4,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.4,
+          "upper": 0.5,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.5,
+          "upper": 0.6,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.6,
+          "upper": 0.7,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.7,
+          "upper": 0.8,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.8,
+          "upper": 0.9,
+          "samples": 1,
+          "mean_probability": 0.8839089336969652,
+          "phishing_fraction": 1.0
+        },
+        {
+          "lower": 0.9,
+          "upper": 1.0,
+          "samples": 20,
+          "mean_probability": 0.9851810048767252,
+          "phishing_fraction": 1.0
+        }
+      ],
+      "scope": "historical test replay; not deployment calibration"
+    },
+    "row_wilson_95": {
+      "fpr": null,
+      "fnr": [
+        0.008455987809826399,
+        0.22669360074122563
+      ]
+    }
+  },
+  "http": {
+    "roc_auc": null,
+    "pr_auc": null,
+    "confusion_matrix": {
+      "true_negative": 0,
+      "false_positive": 0,
+      "false_negative": 0,
+      "true_positive": 8366
+    },
+    "false_positive_rate": null,
+    "false_negative_rate": 0.0,
+    "samples": 8366,
+    "threshold": 0.93,
+    "per_class": {
+      "legitimate": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 0.0
+      },
+      "phishing": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 8366.0
+      },
+      "accuracy": 1.0,
+      "macro avg": {
+        "precision": 0.5,
+        "recall": 0.5,
+        "f1-score": 0.5,
+        "support": 8366.0
+      },
+      "weighted avg": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 8366.0
+      }
+    },
+    "calibration": {
+      "brier_score": 0.00016150973324831656,
+      "ece_10_equal_width": 0.012704451508918524,
+      "reliability_bins": [
+        {
+          "lower": 0.0,
+          "upper": 0.1,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.1,
+          "upper": 0.2,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.2,
+          "upper": 0.3,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.3,
+          "upper": 0.4,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.4,
+          "upper": 0.5,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.5,
+          "upper": 0.6,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.6,
+          "upper": 0.7,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.7,
+          "upper": 0.8,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.8,
+          "upper": 0.9,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.9,
+          "upper": 1.0,
+          "samples": 8366,
+          "mean_probability": 0.9872955484910815,
+          "phishing_fraction": 1.0
+        }
+      ],
+      "scope": "historical test replay; not deployment calibration"
+    },
+    "row_wilson_95": {
+      "fpr": null,
+      "fnr": [
+        0.0,
+        0.00045896434712580387
+      ]
+    }
+  },
+  "has_query": {
+    "roc_auc": null,
+    "pr_auc": null,
+    "confusion_matrix": {
+      "true_negative": 0,
+      "false_positive": 0,
+      "false_negative": 2,
+      "true_positive": 815
+    },
+    "false_positive_rate": null,
+    "false_negative_rate": 0.0024479804161566705,
+    "samples": 817,
+    "threshold": 0.93,
+    "per_class": {
+      "legitimate": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 0.0
+      },
+      "phishing": {
+        "precision": 1.0,
+        "recall": 0.9975520195838433,
+        "f1-score": 0.9987745098039216,
+        "support": 817.0
+      },
+      "accuracy": 0.9975520195838433,
+      "macro avg": {
+        "precision": 0.5,
+        "recall": 0.49877600979192166,
+        "f1-score": 0.4993872549019608,
+        "support": 817.0
+      },
+      "weighted avg": {
+        "precision": 1.0,
+        "recall": 0.9975520195838433,
+        "f1-score": 0.9987745098039217,
+        "support": 817.0
+      }
+    },
+    "calibration": {
+      "brier_score": 0.0006327859860852191,
+      "ece_10_equal_width": 0.013344809722064267,
+      "reliability_bins": [
+        {
+          "lower": 0.0,
+          "upper": 0.1,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.1,
+          "upper": 0.2,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.2,
+          "upper": 0.3,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.3,
+          "upper": 0.4,
+          "samples": 1,
+          "mean_probability": 0.3847437538012319,
+          "phishing_fraction": 1.0
+        },
+        {
+          "lower": 0.4,
+          "upper": 0.5,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.5,
+          "upper": 0.6,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.6,
+          "upper": 0.7,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.7,
+          "upper": 0.8,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.8,
+          "upper": 0.9,
+          "samples": 1,
+          "mean_probability": 0.894631219491024,
+          "phishing_fraction": 1.0
+        },
+        {
+          "lower": 0.9,
+          "upper": 1.0,
+          "samples": 815,
+          "mean_probability": 0.9875066447653758,
+          "phishing_fraction": 1.0
+        }
+      ],
+      "scope": "historical test replay; not deployment calibration"
+    },
+    "row_wilson_95": {
+      "fpr": null,
+      "fnr": [
+        0.0006715814220436406,
+        0.0088813702916283
+      ]
+    }
+  },
+  "long_url_100_plus": {
+    "roc_auc": null,
+    "pr_auc": null,
+    "confusion_matrix": {
+      "true_negative": 0,
+      "false_positive": 0,
+      "false_negative": 0,
+      "true_positive": 469
+    },
+    "false_positive_rate": null,
+    "false_negative_rate": 0.0,
+    "samples": 469,
+    "threshold": 0.93,
+    "per_class": {
+      "legitimate": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 0.0
+      },
+      "phishing": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 469.0
+      },
+      "accuracy": 1.0,
+      "macro avg": {
+        "precision": 0.5,
+        "recall": 0.5,
+        "f1-score": 0.5,
+        "support": 469.0
+      },
+      "weighted avg": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 469.0
+      }
+    },
+    "calibration": {
+      "brier_score": 0.000154766959855262,
+      "ece_10_equal_width": 0.012440529405921996,
+      "reliability_bins": [
+        {
+          "lower": 0.0,
+          "upper": 0.1,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.1,
+          "upper": 0.2,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.2,
+          "upper": 0.3,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.3,
+          "upper": 0.4,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.4,
+          "upper": 0.5,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.5,
+          "upper": 0.6,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.6,
+          "upper": 0.7,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.7,
+          "upper": 0.8,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.8,
+          "upper": 0.9,
+          "samples": 0,
+          "mean_probability": null,
+          "phishing_fraction": null
+        },
+        {
+          "lower": 0.9,
+          "upper": 1.0,
+          "samples": 469,
+          "mean_probability": 0.987559470594078,
+          "phishing_fraction": 1.0
+        }
+      ],
+      "scope": "historical test replay; not deployment calibration"
+    },
+    "row_wilson_95": {
+      "fpr": null,
+      "fnr": [
+        8.673617379884035e-19,
+        0.008124200509564118
+      ]
+    }
+  }
+}

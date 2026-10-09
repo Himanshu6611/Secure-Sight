@@ -1,0 +1,9 @@
+# Phase 16 baseline SEO audit
+
+Audit used source/config inspection, existing tests, Pillow image dimensions and the running local browser before restart. Confirmed Flask/Jinja server rendering, vanilla JS, Bootstrap CDN and external Google Fonts; Docker/Gunicorn, Render blueprint autoDeploy=false. No framework migration. No configured owner-confirmed public domain or analytics tags were found; SITE_URL defaults to localhost and production configuration already validates HTTPS, trusted hosts, secret and Redis.
+
+P0: index.html advertised index/follow and localhost canonical in development; POST scan HTML inherited public metadata. robots advertised a sitemap unconditionally and blocked APIs despite their noindex headers. Sitemap had invented daily frequency and priority. JSON-LD contained an unsupported Organization, free Offer, obsolete model details, version and FAQ claims. Public metadata could differ from actual current model. Private dashboard/API access checks already existed and are preserved.
+
+P1: only the homepage was in the public sitemap; no public privacy/security/educational routes. Existing shared meta system absent. Old social card was actually 1024x1024 despite claiming 1200x630 and contained invented activity/accuracy/system-safe figures. It is no longer referenced by SEO; a plain new branded card is used. Footer had no guides/privacy links. Visible technology/FAQ still described obsolete soft-voting/SMOTE model and enterprise capability.
+
+P2: no JS trackers or conversion instrumentation found. Lighthouse CLI not installed; no field search or Core Web Vitals data. Homepage retains existing third-party styles/fonts; new information pages use 818-byte local CSS, system fonts and no JS. This is a dependency reduction, not measured CWV improvement. No deployed-domain, owner contact or Search Console access supplied. P3: content research and attribution maintenance remain ongoing; no rankings/traffic baseline exists.

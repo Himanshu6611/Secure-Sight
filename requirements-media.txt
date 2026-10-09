@@ -1,0 +1,6 @@
+# Optional media runtime; no model weights or accuracy claims included.
+-r requirements.txt
+opencv-python-headless==4.11.0.86
+pytesseract==0.3.13
+c2pa-python==0.38.0
+# Install trusted Tesseract and language packs separately.

@@ -1,0 +1,14 @@
+{
+  "version": "14.0",
+  "license": "Synthetic .example/.invalid fixtures authored for this project; public-brand identifiers are descriptive observations, not licensed captured pages",
+  "cases": [
+    {"id": "private_metadata", "url": "http://169.254.169.254/", "property": "SSRF_BLOCKED"},
+    {"id": "unicode_normalization", "url": "https://例え.jp/", "property": "DETERMINISTIC_IDNA"},
+    {"id": "encoded_path", "url": "https://example.com/a%20b?q=a%27b", "property": "VALID_PUBLIC_SYNTAX"},
+    {"id": "young_site", "url": "https://example.com/", "property": "AGE_ALONE_NOT_PHISHING"},
+    {"id": "history_repurposing", "url": "https://example.com/", "property": "BRAND_CHANGE_IS_CONTEXT_NOT_PROOF"}
+  ],
+  "known_model_failures": [
+    {"id": "paypal_homepage", "url": "https://www.paypal.com/", "expected_lexical_class": "legitimate", "status": "OPEN", "owner": "model-maintainer", "issue": "LOCAL-ML-001", "review_by": "2026-11-09", "scope": "Lexical benign-brand regression assumption; no contemporaneous labeled webpage or whitelist"}
+  ]
+}

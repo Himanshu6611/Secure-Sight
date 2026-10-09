@@ -1,0 +1,52 @@
+# Keep the build context limited to files explicitly copied by Dockerfile.
+.git
+.github
+.vscode
+.env
+.env.*
+*.env
+*.pem
+*.key
+credentials*.json
+secrets
+venv
+.venv
+__pycache__
+**/__pycache__
+*.py[cod]
+.pytest_cache
+.coverage
+htmlcov
+instance
+app/instance
+**/*.sqlite3
+**/*.sqlite3-wal
+**/*.sqlite3-shm
+**/dashboard.key
+**/dashboard-login.txt
+*.log
+reports
+docs
+*.md
+pyc_backup
+build
+node_modules
+web/node_modules
+web/dist
+tests
+scripts
+
+# Large, raw, derived, and legacy datasets are never image inputs.
+data/raw
+data/Data Set*
+data/v5_1
+data/v5_1_1
+data/cleaned.csv
+data/email_features.parquet
+data/features.parquet
+
+# Only models/v5 is copied; exclude unrelated models and staging bundles.
+models/email_model.pkl
+models/legacy_v5_invalid_20261008
+models/v5_1_staging
+models/v5_1_1_staging

@@ -1,0 +1,227 @@
+{
+  "version": "7.2.0",
+  "limits": {
+    "top_reasons": 5,
+    "max_reasons": 32,
+    "max_description": 400,
+    "max_total_bytes": 49152
+  },
+  "signals": {
+    "url.ip_host": {
+      "category": "URL",
+      "title": "IP address used as hostname",
+      "description": "The URL uses an IP address as its hostname. This can be a contextual risk indicator but does not establish phishing."
+    },
+    "url.at_authority": {
+      "category": "URL",
+      "title": "Obfuscated URL authority",
+      "description": "An at-sign was detected in the URL authority. It can obscure which host the URL actually addresses."
+    },
+    "url.idn": {
+      "category": "URL",
+      "title": "Internationalized hostname encoding",
+      "description": "Punycode encoding was detected. Internationalized domains can be legitimate; visual similarity needs context."
+    },
+    "url.typosquatting": {
+      "category": "URL",
+      "title": "Possible brand-like domain spelling",
+      "description": "The existing URL analysis detected a spelling pattern similar to a known brand. Similarity alone does not prove impersonation."
+    },
+    "url.lure_keywords": {
+      "category": "URL",
+      "title": "Sensitive-action words in URL",
+      "description": "The URL contains words associated with login or account actions. Such words also occur on legitimate sites."
+    },
+    "url.entropy": {
+      "category": "URL",
+      "title": "High URL character variability",
+      "description": "The URL has elevated character variability under the configured rule. Encoded or generated legitimate URLs may share this pattern."
+    },
+    "url.length": {
+      "category": "URL",
+      "title": "Long URL",
+      "description": "URL length exceeded the configured contextual threshold. Length alone does not establish malicious intent."
+    },
+    "domain.young": {
+      "category": "DOMAIN",
+      "title": "Recently registered domain",
+      "description": "Available registration data indicates a recent registration. Domain age alone does not prove phishing.",
+      "negative": {
+        "title": "Longer domain registration history",
+        "description": "Available registration data exceeds the recent-registration risk window. A longer history does not guarantee safety."
+      }
+    },
+    "dns.restricted": {
+      "category": "DNS",
+      "title": "Restricted outbound destination",
+      "description": "DNS analysis marked the destination as unsuitable for public scanning. This is a connection safety restriction, not proof of phishing.",
+      "negative": {
+        "title": "Destination passed public-address checks",
+        "description": "Available DNS analysis passed public-address restrictions. This permits scanning and does not prove site legitimacy."
+      }
+    },
+    "tls.invalid": {
+      "category": "TLS",
+      "title": "TLS certificate not validated",
+      "description": "Available TLS analysis did not validate the certificate. Connection validation failures do not alone establish phishing.",
+      "negative": {
+        "title": "TLS certificate validated",
+        "description": "Available TLS analysis validated the certificate. HTTPS protects the connection but does not prove the site is legitimate."
+      }
+    },
+    "reputation.provider": {
+      "category": "REPUTATION",
+      "title": "Reputation source raised an alert",
+      "description": "Available reputation intelligence reports an alert. Historical or unconfirmed matches can be inaccurate and require review.",
+      "negative": {
+        "title": "Provider reports no reputation alert",
+        "description": "Available provider evidence reports SAFE. This is the provider's observation, not a guarantee of safety or current behavior."
+      }
+    },
+    "html.external_credentials": {
+      "category": "FORM",
+      "title": "Credential form targets another domain",
+      "description": "Static analysis found a password form targeting another registrable domain. Legitimate identity providers can use this pattern; review its context.",
+      "negative": {
+        "title": "No external credential form observed",
+        "description": "No password form targeting another registrable domain was observed in the analyzed static HTML. Dynamic or unobserved content can differ."
+      }
+    },
+    "html.script_obfuscation": {
+      "category": "SCRIPT",
+      "title": "Script encoding or obfuscation pattern",
+      "description": "Static script analysis detected an encoding or obfuscation pattern. Minified or legitimate scripts may also match."
+    },
+    "html.external_iframe": {
+      "category": "DOM",
+      "title": "External iframe reference",
+      "description": "The static page references an iframe on another domain. External frames can be legitimate and were not executed."
+    },
+    "content.urgency": {
+      "category": "CONTENT",
+      "title": "Urgent-action language",
+      "description": "Static content analysis detected urgent-action language. Wording alone does not establish phishing."
+    },
+    "content.credentials": {
+      "category": "NLP",
+      "title": "Credential-related language",
+      "description": "Static content analysis detected credential-related wording. Legitimate login pages also use these words."
+    },
+    "content.financial": {
+      "category": "NLP",
+      "title": "Financial-action language",
+      "description": "Static content analysis detected financial-action wording. This is contextual evidence rather than proof of fraud."
+    },
+    "brand.mismatch": {
+      "category": "BRAND",
+      "title": "Brand and domain mismatch",
+      "description": "Brand claims and domain evidence differ. In Phase 9, this scored signal requires multiple page fields plus corroborating credential evidence; a title alone is insufficient.",
+      "negative": {
+        "title": "No configured brand mismatch observed",
+        "description": "The available static brand signal did not report a mismatch. It does not establish a verified brand identity."
+      }
+    },
+    "ml.phishing": {
+      "category": "ML",
+      "title": "URL model risk estimate",
+      "description": "The URL-only model assigned a nonzero phishing probability. This model estimate is separate from the final assessment and is not proof of malicious behavior."
+    }
+  },
+  "features": {
+    "url_len": "URL length",
+    "hostname_len": "Hostname length",
+    "path_len": "Path length",
+    "query_len": "Query length",
+    "fragment_len": "Fragment length",
+    "colon_count": "Colon count",
+    "character_diversity": "Character diversity",
+    "token_count": "URL token count",
+    "average_token_length": "Average URL token length",
+    "max_token_length": "Longest URL token length",
+    "encoded_ratio": "Encoded-character ratio",
+    "punycode_detected": "Punycode encoding indicator",
+    "unicode_detected": "Unicode character indicator",
+    "dot_count": "Dot count",
+    "hyphen_count": "Hyphen count",
+    "underscore_count": "Underscore count",
+    "slash_count": "Slash count",
+    "question_count": "Question-mark count",
+    "equal_count": "Equals-sign count",
+    "at_count": "At-sign count",
+    "ampersand_count": "Ampersand count",
+    "percent_count": "Percent-sign count",
+    "tilde_count": "Tilde count",
+    "digit_count": "Digit count",
+    "letter_count": "Letter count",
+    "uppercase_count": "Uppercase letter count",
+    "special_char_count": "Special-character count",
+    "digit_ratio": "Digit ratio",
+    "letter_ratio": "Letter ratio",
+    "uppercase_ratio": "Uppercase ratio",
+    "special_ratio": "Special-character ratio",
+    "subdomain_depth": "Subdomain depth",
+    "subdomain_len": "Subdomain length",
+    "path_depth": "Path depth",
+    "query_params_count": "Query parameter count",
+    "has_fragment": "URL fragment indicator",
+    "double_slash_in_path": "Double slash in path",
+    "has_ip": "IP hostname indicator",
+    "tld_len": "Top-level domain length",
+    "is_suspicious_tld": "Configured top-level domain alert",
+    "is_shortener": "URL shortener indicator",
+    "brand_in_subdomain": "Brand reference in subdomain",
+    "brand_in_path": "Brand reference in path",
+    "min_brand_distance": "Closest configured brand spelling distance",
+    "is_typosquatting": "Brand-like spelling indicator",
+    "has_scheme": "URL scheme indicator",
+    "is_https": "HTTPS scheme indicator",
+    "has_port": "Explicit port indicator",
+    "is_non_standard_port": "Nonstandard port indicator",
+    "url_entropy": "URL character entropy",
+    "domain_entropy": "Domain character entropy",
+    "path_entropy": "Path character entropy",
+    "suspicious_keyword_count": "Configured sensitive-action keyword count",
+    "suspicious_kw_domain_count": "Sensitive-action keywords in domain",
+    "suspicious_kw_path_count": "Sensitive-action keywords in path",
+    "hex_encoding_count": "Hexadecimal encoding count",
+    "base64_strings_count": "Base64-like segment count",
+    "has_at_symbol": "At-sign indicator",
+    "consecutive_hyphens": "Consecutive hyphen indicator"
+  },
+  "messages": {
+    "summary": {
+      "PHISHING": "The assessment reports phishing; review the supporting observations and limitations below.",
+      "SUSPICIOUS": "The assessment requires review; the available observations and limitations are listed below.",
+      "LEGITIMATE": "No strong phishing indicators met the current verdict policy. This is not a safety guarantee.",
+      "UNKNOWN": "The available evidence is insufficient for a definitive verdict.",
+      "ANALYSIS_FAILED": "The analysis failed; no safety conclusion is available."
+    },
+    "reason_suffix": " Main observations: {titles}.",
+    "missing_title": "Unavailable observation",
+    "missing_description": "The {name} observation is unavailable or incomplete. No safety conclusion was inferred from its absence.",
+    "not_applicable": "This observation is not applicable to the analyzed context.",
+    "password_title": "Password input observed",
+    "password_description": "Static HTML analysis counted {count} password input field(s). Password fields also occur on legitimate login pages.",
+    "ml_feature_description": "Replacing this URL feature with its observed training median changed the model probability by {impact}. This measures model sensitivity, not causal attribution.",
+    "ml_unavailable": "Local model feature impacts are unavailable; none were inferred or fabricated.",
+    "invalid": "Some explanation inputs were invalid or unsupported and were omitted.",
+    "size_limit": "Additional explanation detail was omitted to respect the configured output limit.",
+    "consistency": "The assessment lacks matching strong explanation evidence; review the original assessment. No reason was invented.",
+    "model_limit": "Feature impacts are training-median perturbation sensitivities, not additive risk-score contributions, SHAP values or causal proof.",
+    "confidence_limit": "Assessment confidence is a provisional evidence-quality index, not a calibrated correctness probability.",
+    "dynamic": "Browser behavior was not executed; this analysis is static only.",
+    "external": "External page resources were not fetched or executed.",
+    "floor": "The configured corroboration rule raised the risk score floor. This adjustment is separate from individual signal contributions.",
+    "behavior_adjustment": "Phase 6 applied the strongest configured redirect-chain adjustment once, with a cap of 10 points. Ordinary cross-domain and HTTP-to-HTTPS transitions do not add points."
+  },
+  "contradictions": {
+    "ML_REPUTATION_CONFLICT": "The URL model indicates elevated risk while a reliable reputation provider reports SAFE. This conflict reduces assessment confidence.",
+    "ML_OBSERVED_EVIDENCE_CONFLICT": "A low URL model estimate conflicts with malicious reputation or corroborated static webpage findings. This conflict reduces assessment confidence.",
+    "REPUTATION_WEB_CONFLICT": "A provider SAFE report conflicts with corroborated static credential-form and brand findings. This conflict reduces assessment confidence."
+  },
+  "floors": [
+    "CORROBORATED_CREDENTIAL_HARVESTING",
+    "MODEL_AND_CORROBORATED_HARVESTING",
+    "CONFIRMED_REPUTATION_AND_HARVESTING"
+  ]
+}

@@ -1,0 +1,159 @@
+{
+  "raw_stack": {
+    "brier_score": 0.013638003195009938,
+    "ece_10_equal_width": 0.004228114389012485,
+    "reliability_bins": [
+      {
+        "lower": 0.0,
+        "upper": 0.1,
+        "samples": 20228,
+        "mean_probability": 0.013777565062579262,
+        "phishing_fraction": 0.017055566541427723
+      },
+      {
+        "lower": 0.1,
+        "upper": 0.2,
+        "samples": 69,
+        "mean_probability": 0.13816511703575557,
+        "phishing_fraction": 0.14492753623188406
+      },
+      {
+        "lower": 0.2,
+        "upper": 0.3,
+        "samples": 51,
+        "mean_probability": 0.2522093067700712,
+        "phishing_fraction": 0.2549019607843137
+      },
+      {
+        "lower": 0.3,
+        "upper": 0.4,
+        "samples": 26,
+        "mean_probability": 0.34772563585228694,
+        "phishing_fraction": 0.4230769230769231
+      },
+      {
+        "lower": 0.4,
+        "upper": 0.5,
+        "samples": 25,
+        "mean_probability": 0.4487818514953223,
+        "phishing_fraction": 0.44
+      },
+      {
+        "lower": 0.5,
+        "upper": 0.6,
+        "samples": 25,
+        "mean_probability": 0.5423342704044037,
+        "phishing_fraction": 0.2
+      },
+      {
+        "lower": 0.6,
+        "upper": 0.7,
+        "samples": 45,
+        "mean_probability": 0.6455570254238604,
+        "phishing_fraction": 0.4
+      },
+      {
+        "lower": 0.7,
+        "upper": 0.8,
+        "samples": 46,
+        "mean_probability": 0.7542897250465564,
+        "phishing_fraction": 0.4782608695652174
+      },
+      {
+        "lower": 0.8,
+        "upper": 0.9,
+        "samples": 68,
+        "mean_probability": 0.8559298107201334,
+        "phishing_fraction": 0.6617647058823529
+      },
+      {
+        "lower": 0.9,
+        "upper": 1.0,
+        "samples": 14971,
+        "mean_probability": 0.9930714464195427,
+        "phishing_fraction": 0.9954578852448066
+      }
+    ],
+    "scope": "historical test replay; not deployment calibration"
+  },
+  "sigmoid_stack": {
+    "brier_score": 0.014269693668898086,
+    "ece_10_equal_width": 0.0069129189835308484,
+    "reliability_bins": [
+      {
+        "lower": 0.0,
+        "upper": 0.1,
+        "samples": 20326,
+        "mean_probability": 0.012571546498662054,
+        "phishing_fraction": 0.0178097018596871
+      },
+      {
+        "lower": 0.1,
+        "upper": 0.2,
+        "samples": 34,
+        "mean_probability": 0.13190138081443992,
+        "phishing_fraction": 0.35294117647058826
+      },
+      {
+        "lower": 0.2,
+        "upper": 0.3,
+        "samples": 16,
+        "mean_probability": 0.2418366500667269,
+        "phishing_fraction": 0.3125
+      },
+      {
+        "lower": 0.3,
+        "upper": 0.4,
+        "samples": 14,
+        "mean_probability": 0.33908576709264976,
+        "phishing_fraction": 0.5
+      },
+      {
+        "lower": 0.4,
+        "upper": 0.5,
+        "samples": 13,
+        "mean_probability": 0.4729719202226198,
+        "phishing_fraction": 0.3076923076923077
+      },
+      {
+        "lower": 0.5,
+        "upper": 0.6,
+        "samples": 10,
+        "mean_probability": 0.5402575827222555,
+        "phishing_fraction": 0.3
+      },
+      {
+        "lower": 0.6,
+        "upper": 0.7,
+        "samples": 11,
+        "mean_probability": 0.6487313872705862,
+        "phishing_fraction": 0.18181818181818182
+      },
+      {
+        "lower": 0.7,
+        "upper": 0.8,
+        "samples": 32,
+        "mean_probability": 0.7578073243055169,
+        "phishing_fraction": 0.40625
+      },
+      {
+        "lower": 0.8,
+        "upper": 0.9,
+        "samples": 35,
+        "mean_probability": 0.855835953472185,
+        "phishing_fraction": 0.42857142857142855
+      },
+      {
+        "lower": 0.9,
+        "upper": 1.0,
+        "samples": 15063,
+        "mean_probability": 0.9870197795285852,
+        "phishing_fraction": 0.9931620527119431
+      }
+    ],
+    "scope": "historical test replay; not deployment calibration"
+  },
+  "fit_partition": "calibration",
+  "evaluation_partition": "frozen_test_replay",
+  "new_calibration_fit": false
+}

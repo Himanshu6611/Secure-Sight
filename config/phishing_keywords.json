@@ -1,0 +1,60 @@
+{
+  "authentication": [
+    "login",
+    "signin",
+    "sign in",
+    "log in",
+    "verify account",
+    "account verification",
+    "authentication",
+    "portal",
+    "password",
+    "username",
+    "credential"
+  ],
+  "urgency": [
+    "immediately",
+    "urgent",
+    "action required",
+    "account suspended",
+    "suspended",
+    "warning",
+    "expires",
+    "within 24 hours",
+    "limited time",
+    "unauthorized access",
+    "security alert"
+  ],
+  "financial": [
+    "payment",
+    "billing",
+    "credit card",
+    "debit card",
+    "bank",
+    "banking",
+    "transaction",
+    "refund",
+    "invoice",
+    "wallet",
+    "crypto"
+  ],
+  "credential": [
+    "enter password",
+    "confirm password",
+    "enter pin",
+    "otp",
+    "one time password",
+    "security code",
+    "social security",
+    "ssn",
+    "verification code"
+  ],
+  "security": [
+    "security update",
+    "identity verification",
+    "confirm identity",
+    "re-activate",
+    "unlock account",
+    "security center"
+  ]
+}

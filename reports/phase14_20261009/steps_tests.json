@@ -1,0 +1,8 @@
+[
+  {
+    "name": "tests_0",
+    "status": "FAIL",
+    "required": true,
+    "detail": "gate_tests_0.log; 9.453s"
+  }
+]

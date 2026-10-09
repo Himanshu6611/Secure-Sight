@@ -1,0 +1,19 @@
+{
+  "feature_schema_version": "8.0.0",
+  "serving_model_schema": "5.1.1",
+  "used_by_serving_model": false,
+  "missing_value": null,
+  "features": {
+    "redirect_count": "Number of observed HTTP redirect headers, including a final header that was not followed",
+    "unique_redirect_domains": "Distinct initial-document or successfully followed response domains; zero when no response or document was observed",
+    "domain_transition_count": "Number of observed redirect headers pointing to a different registrable domain",
+    "cross_domain_redirect_ratio": "Cross-domain redirect headers divided by all observed redirect headers",
+    "redirect_loop_detected": "A header target revisits a normalized destination",
+    "http_to_https": "At least one observed HTTP-to-HTTPS redirect header",
+    "https_to_http": "At least one observed HTTPS-to-HTTP redirect header",
+    "shortener_detected": "Submitted hostname matches the existing Phase 2 shortener registry",
+    "js_redirect_detected": "Static literal JavaScript navigation pattern, not executed navigation",
+    "meta_refresh_detected": "Static meta-refresh destination, not followed navigation",
+    "final_domain_changed": "Successfully retrieved final document differs in registrable domain"
+  }
+}
