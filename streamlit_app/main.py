@@ -205,6 +205,7 @@ def main() -> None:
                     logging.getLogger(__name__).error(
                         "url_scan_failed error_type=%s", type(exc).__name__
                     )
+                    st.caption(f"Diagnostic class: {type(exc).__name__}")
                     st.error(str(exc) if isinstance(exc, RuntimeError) else "The scan failed safely. Please retry later.")
 
     with email_tab:
