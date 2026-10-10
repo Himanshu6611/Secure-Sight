@@ -19,8 +19,11 @@ import streamlit as st
 # Community Cloud runs this file from its subdirectory. Ensure shared project
 # packages (app/, ml/, utils/) are importable from the repository root.
 REPOSITORY_ROOT = str(Path(__file__).resolve().parents[1])
-if REPOSITORY_ROOT not in sys.path:
-    sys.path.insert(0, REPOSITORY_ROOT)
+# Keep project packages ahead of any similarly named packages installed by
+# Community Cloud (notably the project's local ``ml`` package).
+if REPOSITORY_ROOT in sys.path:
+    sys.path.remove(REPOSITORY_ROOT)
+sys.path.insert(0, REPOSITORY_ROOT)
 
 MAX_UPLOAD_BYTES = 6 * 1024 * 1024
 EMAIL_WAIT_SECONDS = 100
@@ -119,12 +122,172 @@ def _verdict(result: dict[str, Any], family: str) -> None:
     left, middle, right = st.columns(3)
     left.metric("Observed risk score", "Unavailable" if risk is None else f"{risk}/100")
     middle.metric("Model estimate", "Unavailable" if probability is None else f"{probability:.1%}")
-    right.metric("Evidence coverage", "Unavailable" if coverage is None else f"{coverage:.0%}")
+    right.metric("Evidence coverage", _coverage_label(coverage))
     st.caption("Risk score and model estimate are different measures. Neither guarantees that content is safe.")
 
 
+def _coverage_label(value: Any) -> str:
+    if not isinstance(value, (int, float)) or not 0 <= value <= 100:
+        return "Unavailable"
+    # The API contract expresses coverage in percentage points (0..100).
+    # Treating values above 1 as fractions caused 65 to render as 6500%.
+    return f"{value:.0f}%"
+
+
+def _domain_age(registration: dict[str, Any]) -> str:
+    days = registration.get("domain_age_days")
+    if isinstance(days, (int, float)) and days >= 0:
+        years = registration.get("domain_age_years")
+        if not isinstance(years, (int, float)):
+            years = days / 365.2425
+        return f"{days:,.0f} days · {years:.1f} years"
+    return "Unavailable from registration data"
+
+
+def _url_verdict_text(verdict: str) -> tuple[str, str]:
+    if verdict == "PHISHING":
+        return "Unsafe — threat indicators found", "error"
+    if verdict == "SUSPICIOUS":
+        return "Suspicious — verify before opening", "warning"
+    if verdict in {"LEGITIMATE", "LOW_RISK"}:
+        return "No strong threat indicators found", "success"
+    return "Needs review — some checks are incomplete", "info"
+
+
+def _show_url_result(result: dict[str, Any]) -> None:
+    verdict = str(result.get("verdict", "UNKNOWN")).upper()
+    label, level = _url_verdict_text(verdict)
+    message = f"**{label}**"
+    if level == "error":
+        st.error(message)
+    elif level == "warning":
+        st.warning(message)
+    elif level == "success":
+        st.success(message)
+    else:
+        st.info(message)
+
+    risk = result.get("risk_score")
+    probability = result.get("ml_probability")
+    coverage = result.get("evidence_coverage")
+    completeness = result.get("analysis_completeness")
+    confidence = result.get("confidence")
+    risk_label = f"{risk:.2f}/100" if isinstance(risk, (int, float)) else "Unavailable"
+    model_label = f"{probability:.1%}" if isinstance(probability, (int, float)) else "Unavailable"
+    first, second, third, fourth = st.columns(4)
+    first.metric("Observed risk score", risk_label)
+    second.metric("ML phishing estimate", model_label)
+    third.metric("Evidence coverage", _coverage_label(coverage))
+    fourth.metric("Analysis completeness", _coverage_label(completeness))
+    st.caption("A score is evidence for review, not a guarantee. A clean result does not prove a site is safe.")
+
+    target = result.get("analysis_target") or result.get("url")
+    if isinstance(target, str):
+        st.markdown("**Analyzed website**")
+        st.code(target, language=None)
+
+    domain = result.get("domain_intelligence") or {}
+    components = domain.get("domain_components") or {}
+    registration = domain.get("registration") or {}
+    tls = domain.get("tls") or {}
+    dns = domain.get("dns") or {}
+    reputation = domain.get("reputation") or {}
+    web = result.get("web_intelligence") or {}
+    features = web.get("combined_web_features") or {}
+    behavior = web.get("behavior_intelligence") or {}
+    dynamic = behavior.get("dynamic_analysis") or {}
+    fetch = web.get("fetch_summary") or {}
+
+    st.subheader("Website and domain details")
+    domain_col, registration_col = st.columns(2)
+    with domain_col:
+        st.markdown("**Domain**")
+        st.write(components.get("registrable_domain") or "Unavailable")
+        st.markdown("**Domain age (WHOIS/RDAP)**")
+        st.write(_domain_age(registration))
+        created = registration.get("creation_date")
+        st.markdown("**Registration date**")
+        st.write(created[:10] if isinstance(created, str) and created else "Unavailable")
+        st.markdown("**Registration data source**")
+        st.write(registration.get("source") or "Unavailable")
+        registrar = registration.get("registrar")
+        st.markdown("**Registrar**")
+        st.write(registrar if isinstance(registrar, str) and not registrar.isdigit() else "Not disclosed by registry")
+        owner_status = str(registration.get("owner_status", "UNKNOWN")).upper()
+        st.markdown("**Registrant details**")
+        st.write("Privacy protected or not provided" if "REDACTED" in owner_status or owner_status == "UNKNOWN" else "Available in registry record")
+    with registration_col:
+        st.markdown("**TLS certificate**")
+        cert_valid = tls.get("certificate_valid")
+        st.write("Valid" if cert_valid is True else "Invalid" if cert_valid is False else "Could not verify")
+        expiry = tls.get("not_after")
+        st.markdown("**Certificate expires**")
+        st.write(expiry if isinstance(expiry, str) else "Unavailable")
+        st.markdown("**DNS**")
+        st.write(f"Resolved · {dns.get('resolved_ip_count', 0)} address(es)" if dns.get("status") == "SUCCESS" else "Could not verify")
+        st.markdown("**Threat reputation**")
+        malicious = reputation.get("malicious_provider_count", 0)
+        provider_count = reputation.get("provider_count", 0)
+        rep_status = str(reputation.get("reputation_status", "UNKNOWN")).upper()
+        if malicious:
+            rep_text = f"Listed by {malicious} of {provider_count} checked source(s)"
+        elif rep_status in {"SAFE", "CLEAN", "NO_MATCH"}:
+            rep_text = f"No match in {provider_count} checked source(s)"
+        else:
+            rep_text = "Unconfirmed — no reliable reputation result"
+        st.write(rep_text)
+
+    st.markdown("**Webpage inspection**")
+    if web.get("status") == "ANALYZED":
+        links = features.get("link_count")
+        forms = features.get("form_count")
+        parts = ["Static page inspection completed"]
+        if isinstance(web.get("title"), str) and web["title"].strip():
+            st.write(f"Page title: {web['title'][:200]}")
+        if isinstance(fetch.get("status_code"), int):
+            parts.append(f"HTTP {fetch['status_code']}")
+        if isinstance(links, int):
+            parts.append(f"{links} links")
+        if isinstance(forms, int):
+            parts.append(f"{forms} forms")
+        if dynamic.get("execution_mode") == "NOT_EXECUTED":
+            parts.append("page scripts were not executed")
+        st.write(" · ".join(parts))
+    else:
+        st.write("Page content could not be fully inspected")
+
+    if probability is None:
+        ml_result = result.get("ml_result") or {}
+        status = str(ml_result.get("status", "MODEL_UNAVAILABLE"))
+        if status == "MODEL_NOT_FOUND":
+            st.warning("The URL model is not available in this deployment. This result uses observable rules only.")
+        else:
+            st.caption("The calibrated URL model did not return an estimate for this scan.")
+    elif isinstance(result.get("model_version"), str):
+        st.caption(f"URL model version: {result['model_version']}. The model evaluates URL patterns; domain and webpage checks are separate evidence.")
+
+    with st.expander("How to read this result"):
+        st.write(f"Evidence quality index: {confidence if isinstance(confidence, (int, float)) else 'Unavailable'} / 100. This is provisional and is not a probability of correctness.")
+        st.write("Evidence coverage counts scorable signals. Analysis completeness reflects applicable checks that returned usable results.")
+        st.write("Domain age and TLS details describe registration and certificate observations. They do not prove that the website is trustworthy.")
+
+    signals = result.get("top_signals") or []
+    if signals:
+        st.markdown("**Why it was flagged**" if verdict in {"PHISHING", "SUSPICIOUS"} else "**Observed indicators**")
+        for signal in signals[:5]:
+            name = signal.get("name", signal.get("signal_id", "Observed signal"))
+            reason = signal.get("reason")
+            st.write(f"• {name}" + (f" — {reason}" if reason else ""))
+
+    if result.get("status") == "PARTIAL":
+        st.caption("Some checks were unavailable or partial. Treat this result as incomplete.")
+
+
 def _show_result(result: dict[str, Any], family: str) -> None:
-    _verdict(result, family)
+    if family == "url":
+        _show_url_result(result)
+    else:
+        _verdict(result, family)
     with st.expander("Evidence and technical details"):
         st.json(result, expanded=False)
 

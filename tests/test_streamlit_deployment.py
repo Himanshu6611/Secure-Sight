@@ -20,6 +20,10 @@ def test_entrypoint_imports_project_packages_when_run_from_subdirectory():
     assert completed.returncode == 0, completed.stderr
 
 
+def test_repository_packages_take_precedence_over_installed_namesakes():
+    assert sys.path[0] == streamlit_main.REPOSITORY_ROOT
+
+
 def test_deployment_config_fails_closed_without_public_secrets(monkeypatch):
     for name in ("FLASK_SECRET_KEY", "RATELIMIT_STORAGE_URI", "SITE_URL"):
         monkeypatch.delenv(name, raising=False)
@@ -61,6 +65,20 @@ def test_deployment_config_builds_production_settings(monkeypatch):
     assert config["SITE_URL"] == "https://securesight.streamlit.app"
     assert config["RATELIMIT_STORAGE_URI"].startswith("rediss://")
     assert config["DASHBOARD_DB_PATH"] == ""
+
+
+def test_coverage_is_rendered_as_percentage_points():
+    assert streamlit_main._coverage_label(65) == "65%"
+    assert streamlit_main._coverage_label(0) == "0%"
+    assert streamlit_main._coverage_label(100) == "100%"
+    assert streamlit_main._coverage_label(None) == "Unavailable"
+    assert streamlit_main._coverage_label(101) == "Unavailable"
+
+
+def test_url_verdict_copy_does_not_claim_unknown_is_safe():
+    assert streamlit_main._url_verdict_text("UNKNOWN")[0].startswith("Needs review")
+    assert streamlit_main._url_verdict_text("PHISHING")[0].startswith("Unsafe")
+    assert streamlit_main._url_verdict_text("SUSPICIOUS")[0].startswith("Suspicious")
 
 
 def test_url_adapter_uses_shared_api(monkeypatch):
