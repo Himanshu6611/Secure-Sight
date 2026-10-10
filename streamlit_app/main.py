@@ -7,6 +7,7 @@ contracts on the existing API paths.
 from __future__ import annotations
 
 import io
+import html
 import logging
 import os
 from pathlib import Path
@@ -209,6 +210,50 @@ def _email_result_summary(result: dict[str, Any]) -> dict[str, Any]:
         level = "error"
         action = "Try the original .eml file or a clearer, unprotected export."
 
+    body = result.get("body_analysis")
+    if not isinstance(body, dict):
+        body = {}
+    snippet = result.get("content_snippet") or body.get("snippet")
+    if not isinstance(snippet, str) or not snippet.strip():
+        snippet = "No readable message preview is available."
+    snippet = " ".join(snippet.split())
+    if len(snippet) > 240:
+        snippet = snippet[:237].rstrip() + "…"
+    body_features = body.get("features")
+    if not isinstance(body_features, dict):
+        body_features = {}
+    context_pattern_count = sum(value is True for value in body_features.values())
+    links = result.get("urls")
+    attachments = result.get("attachments")
+    message = result.get("message")
+    if not isinstance(links, list):
+        links = []
+    if not isinstance(attachments, list):
+        attachments = []
+    if not isinstance(message, dict):
+        message = {}
+
+    verdict_labels = {
+        "PHISHING": "Unsafe",
+        "SUSPICIOUS": "Suspicious",
+        "LEGITIMATE": "No strong warning signs found",
+        "LOW_RISK": "Low risk signals observed",
+        "ANALYSIS_FAILED": "Analysis failed",
+    }
+    verdict_label = verdict_labels.get(verdict, "Needs review")
+    if result.get("analysis_status") == "FAILED":
+        verdict_label = "No result"
+    if verdict == "PHISHING":
+        status_detail = "Phishing indicators found"
+    elif verdict == "SUSPICIOUS":
+        status_detail = "Warning signs found"
+    elif model_active:
+        status_detail = "Experimental model alert" if threshold_crossed else "Model below warning threshold"
+    elif assessment_failed:
+        status_detail = "Analysis could not be completed"
+    else:
+        status_detail = "Some checks may be unavailable"
+
     return {
         "headline": headline,
         "level": level,
@@ -218,6 +263,16 @@ def _email_result_summary(result: dict[str, Any]) -> dict[str, Any]:
         "email_model": "Experimental estimate" if model_active else "Unavailable",
         "email_estimate": estimate,
         "email_model_alert": threshold_crossed,
+        "verdict_label": verdict_label,
+        "status_detail": status_detail,
+        "snippet": snippet,
+        "warning_count": len(findings),
+        "context_pattern_count": context_pattern_count,
+        "link_count": len(links),
+        "attachment_count": len(attachments),
+        "message_bytes": message.get("original_bytes"),
+        "analysis_status": result.get("analysis_status", "Unavailable"),
+        "body_features": body_features,
         "authentication_note": any(
             isinstance(item, dict) and item.get("indicator") == "AUTHENTICATION_UNVERIFIED"
             for item in evidence
@@ -227,23 +282,57 @@ def _email_result_summary(result: dict[str, Any]) -> dict[str, Any]:
 
 def _show_email_result(result: dict[str, Any]) -> None:
     summary = _email_result_summary(result)
-    message = f"**{summary['headline']}**"
-    if summary["level"] == "error":
-        st.error(message)
-    elif summary["level"] == "warning":
-        st.warning(message)
-    else:
-        st.info(message)
-
-    first, second = st.columns(2)
-    first.metric(
-        "Linked-site / email warning score",
-        "Not scored" if summary["risk_score"] is None else f"{summary['risk_score']:.1f}/100",
-    )
     estimate = summary["email_estimate"]
-    second.metric("Experimental email-model estimate", summary["email_model"] if estimate is None else f"{estimate:.1%}")
+    risk_value = "Not scored" if summary["risk_score"] is None else f"{summary['risk_score']:.1f}/100"
+    estimate_value = "Unavailable" if estimate is None else f"{estimate:.1%}"
+    snippet = html.escape(summary["snippet"])
+    level = summary["level"] if summary["level"] in {"error", "warning", "info"} else "info"
+    st.markdown(
+        """
+        <style>
+        .ss-email-verdict { padding: 22px 28px; border-radius: 22px; color: #fff; margin: 8px 0 16px; }
+        .ss-email-verdict.error { background: linear-gradient(110deg,#dc3434,#a91f31); }
+        .ss-email-verdict.warning { background: linear-gradient(110deg,#e5a323,#bf7011); }
+        .ss-email-verdict.info { background: linear-gradient(110deg,#168c98,#076772); }
+        .ss-email-kicker { font-size: 12px; letter-spacing: .11em; font-weight: 750; opacity: .88; text-transform: uppercase; }
+        .ss-email-verdict-line { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+        .ss-email-verdict h2 { color: #fff; font-size: clamp(24px,4vw,34px); line-height:1.15; margin: 5px 0 0; }
+        .ss-email-pill { border:1px solid rgba(255,255,255,.52); background:rgba(255,255,255,.16); border-radius:999px; padding:8px 14px; font-size:14px; font-weight:700; }
+        .ss-email-grid { display:grid; grid-template-columns:1.55fr .8fr .8fr; gap:14px; margin: 0 0 18px; }
+        .ss-email-card { background:#fff; border:1px solid #e0e5ed; border-radius:18px; padding:18px 20px; min-height:132px; box-shadow:0 2px 4px rgba(19,35,55,.08); }
+        .ss-email-label { color:#8792a5; font-size:12px; font-weight:750; letter-spacing:.07em; text-transform:uppercase; }
+        .ss-email-snippet { color:#142033; font-size:16px; line-height:1.5; margin-top:9px; overflow-wrap:anywhere; }
+        .ss-email-value { color:#128a50; font-size:32px; font-weight:800; line-height:1.2; margin-top:9px; }
+        .ss-email-value.neutral { color:#526174; font-size:24px; }
+        .ss-email-detail { color:#8591a3; font-size:13px; line-height:1.4; margin-top:6px; }
+        .ss-email-recommendation { border-left:4px solid #148c98; background:#f1f8f9; border-radius:8px; padding:12px 16px; margin:14px 0; color:#253547; }
+        .ss-email-row { display:flex; justify-content:space-between; gap:18px; padding:12px 15px; background:#fff; border:1px solid #e0e5ed; border-radius:11px; margin:6px 0; }
+        .ss-email-row span:first-child { color:#253547; font-weight:600; }
+        .ss-email-row span:last-child { color:#58677a; text-align:right; overflow-wrap:anywhere; }
+        @media(max-width:760px) { .ss-email-grid { grid-template-columns:1fr; gap:10px; } .ss-email-card { min-height:0; } .ss-email-verdict { padding:18px; } }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        f"""
+        <section class="ss-email-verdict {level}">
+          <div class="ss-email-kicker">Threat verdict</div>
+          <div class="ss-email-verdict-line">
+            <h2>{html.escape(summary['verdict_label'])}</h2>
+            <span class="ss-email-pill">{html.escape(summary['status_detail'])}</span>
+          </div>
+        </section>
+        <section class="ss-email-grid">
+          <div class="ss-email-card"><div class="ss-email-label">Email content preview</div><div class="ss-email-snippet">{snippet}</div></div>
+          <div class="ss-email-card"><div class="ss-email-label">Experimental model estimate</div><div class="ss-email-value {'neutral' if estimate is None else ''}">{html.escape(estimate_value)}</div><div class="ss-email-detail">Not a correctness probability</div></div>
+          <div class="ss-email-card"><div class="ss-email-label">Observed warning signs</div><div class="ss-email-value">{summary['warning_count']}</div><div class="ss-email-detail">From checked message evidence</div></div>
+        </section>
+        """,
+        unsafe_allow_html=True,
+    )
     if estimate is None:
-        st.caption("No email-model estimate was produced for this scan.")
+        st.caption("No experimental email-model estimate was produced for this scan.")
     else:
         st.caption(
             "Experimental estimate learned from historical labeled-email features; it is not a correctness probability. "
@@ -265,7 +354,30 @@ def _show_email_result(result: dict[str, Any]) -> None:
     if summary["authentication_note"]:
         st.caption("Sender authentication could not be independently verified from this uploaded file.")
     st.markdown("**Recommended next step**")
-    st.write(summary["action"])
+    st.info(summary["action"])
+
+    diagnostics = [
+        ("Analysis status", summary["analysis_status"]),
+        ("Linked-site / email warning score", risk_value),
+        ("Experimental email-model estimate", estimate_value),
+        ("Observed warning signs", summary["warning_count"]),
+        ("Context patterns observed", summary["context_pattern_count"]),
+        ("Destination links checked", summary["link_count"]),
+        ("Attachments checked", summary["attachment_count"]),
+        ("Uploaded message size", f"{summary['message_bytes']:,} bytes" if isinstance(summary["message_bytes"], int) else "Unavailable"),
+    ]
+    with st.expander("View technical diagnostic breakdown", expanded=True):
+        for label, value in diagnostics:
+            st.markdown(
+                f'<div class="ss-email-row"><span>{html.escape(str(label))}</span>'
+                f'<span>{html.escape(str(value))}</span></div>',
+                unsafe_allow_html=True,
+            )
+        if summary["body_features"]:
+            observed = [name.replace("_", " ").title() for name, value in summary["body_features"].items() if value is True]
+            st.write("Observed language patterns: " + (", ".join(observed) if observed else "None detected"))
+        st.markdown("**Evidence and technical details**")
+        st.json(result, expanded=False)
 
 
 def _coverage_label(value: Any) -> str:

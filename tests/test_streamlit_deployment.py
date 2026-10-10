@@ -156,6 +156,40 @@ def test_below_threshold_email_model_never_means_legitimate():
     assert result["level"] == "info"
     assert "did not cross" in result["headline"]
     assert "not treat this result as legitimate or safe" in result["action"]
+    assert result["verdict_label"] == "Needs review"
+    assert result["status_detail"] == "Model below warning threshold"
+
+
+def test_email_result_summary_provides_plain_language_card_and_diagnostic_values():
+    result = streamlit_main._email_result_summary({
+        "analysis_status": "PARTIAL",
+        "message": {"original_bytes": 512},
+        "body_analysis": {
+            "snippet": "Please verify your payment today.",
+            "features": {"urgency": True, "credentials": False},
+        },
+        "risk": {"verdict": "UNKNOWN", "risk_score": None},
+        "urls": [{"url": "https://example.invalid"}],
+        "attachments": [{"filename": "notice.pdf"}],
+        "evidence": [{
+            "indicator": "SOCIAL_ENGINEERING_LANGUAGE",
+            "evidence_type": "OBSERVED",
+        }],
+        "email_model": {
+            "status": "EXPERIMENTAL",
+            "estimate": 0.167,
+            "threshold_crossed": False,
+        },
+    })
+
+    assert result["verdict_label"] == "Needs review"
+    assert result["snippet"] == "Please verify your payment today."
+    assert result["email_estimate"] == 0.167
+    assert result["warning_count"] == 1
+    assert result["context_pattern_count"] == 1
+    assert result["link_count"] == 1
+    assert result["attachment_count"] == 1
+    assert result["message_bytes"] == 512
 
 
 def test_email_result_reports_failed_analysis_without_verdict():
