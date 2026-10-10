@@ -131,11 +131,7 @@ def _verdict(result: dict[str, Any], family: str) -> None:
 
 
 def _email_result_summary(result: dict[str, Any]) -> dict[str, Any]:
-    """Translate the email analyzer's observed evidence into plain-language guidance.
-
-    Email classification currently has no deployed, validated email-trained model.
-    Do not invent a probability or present the URL model as an email model.
-    """
+    """Translate observed email evidence and the experimental model into guidance."""
     risk = result.get("risk") if isinstance(result.get("risk"), dict) else {}
     verdict = str(risk.get("verdict", "UNKNOWN")).upper()
     evidence = result.get("evidence")
@@ -158,6 +154,17 @@ def _email_result_summary(result: dict[str, Any]) -> dict[str, Any]:
             findings.append(reason[1])
     findings = list(dict.fromkeys(findings))[:5]
 
+    model = result.get("email_model")
+    if not isinstance(model, dict):
+        model = (result.get("email_analysis") or {}).get("email_model", {})
+    if not isinstance(model, dict):
+        model = {}
+    estimate = model.get("estimate")
+    if not isinstance(estimate, (int, float)) or not 0 <= estimate <= 1:
+        estimate = None
+    model_active = model.get("status") == "EXPERIMENTAL" and estimate is not None
+    threshold_crossed = model.get("threshold_crossed") is True
+
     score = risk.get("risk_score")
     score = score if isinstance(score, (int, float)) and 0 <= score <= 100 else None
     assessment_failed = risk.get("status") == "ERROR" or verdict == "ANALYSIS_FAILED"
@@ -168,7 +175,7 @@ def _email_result_summary(result: dict[str, Any]) -> dict[str, Any]:
             "Do not click links, open attachments, or share passwords or codes. "
             "Verify with the organization through a known contact method."
         )
-    elif verdict == "SUSPICIOUS" or informative:
+    elif verdict == "SUSPICIOUS" or informative or threshold_crossed:
         headline = "Warning signs found — verify before acting"
         level = "warning"
         action = (
@@ -176,18 +183,25 @@ def _email_result_summary(result: dict[str, Any]) -> dict[str, Any]:
             "using a trusted phone number or website."
         )
     elif assessment_failed:
-        headline = "No strong warning found in checked text; link risk could not be assessed"
+        headline = "Email checks were incomplete — review before acting"
         level = "info"
         action = (
             "The message text was inspected, but no linked website produced a risk score. "
             "Do not treat this as a safe verdict; verify unexpected requests independently."
         )
-    else:
-        headline = "No strong phishing signs found in the content checked"
+    elif model_active:
+        headline = "The experimental model did not cross its phishing alert threshold"
         level = "info"
         action = (
-            "This is not proof that the email is safe. Verify unexpected payment, password, "
-            "or account requests through a known contact method."
+            "This model misses some phishing emails. Do not treat this result as legitimate or safe. "
+            "Verify unexpected payment, password, or account requests through a known contact method."
+        )
+    else:
+        headline = "No strong warning found in checked content; model verdict unavailable"
+        level = "info"
+        action = (
+            "The email-trained model did not run, so this is not a model-based verdict. "
+            "Verify unexpected payment, password, or account requests through a known contact method."
         )
 
     if result.get("analysis_status") == "FAILED":
@@ -201,7 +215,9 @@ def _email_result_summary(result: dict[str, Any]) -> dict[str, Any]:
         "action": action,
         "findings": findings,
         "risk_score": score,
-        "email_model": "Not configured",
+        "email_model": "Experimental estimate" if model_active else "Unavailable",
+        "email_estimate": estimate,
+        "email_model_alert": threshold_crossed,
         "authentication_note": any(
             isinstance(item, dict) and item.get("indicator") == "AUTHENTICATION_UNVERIFIED"
             for item in evidence
@@ -224,19 +240,28 @@ def _show_email_result(result: dict[str, Any]) -> None:
         "Linked-site / email warning score",
         "Not scored" if summary["risk_score"] is None else f"{summary['risk_score']:.1f}/100",
     )
-    second.metric("Email-trained model", summary["email_model"])
-    st.caption(
-        "This screening uses observed email and linked-page signals. "
-        "A validated email-trained model is not connected, so no ML probability is shown."
-    )
+    estimate = summary["email_estimate"]
+    second.metric("Experimental email-model estimate", summary["email_model"] if estimate is None else f"{estimate:.1%}")
+    if estimate is None:
+        st.caption("No email-model estimate was produced for this scan.")
+    else:
+        st.caption(
+            "Experimental estimate learned from historical labeled-email features; it is not a correctness probability. "
+            "In its held-out test it detected about half of phishing messages, so a low score cannot rule phishing out."
+        )
 
     if summary["findings"]:
         st.markdown("**Why it was flagged**")
         for finding in summary["findings"]:
             st.write(f"• {finding}")
     else:
-        st.markdown("**What this means**")
-        st.write("No strong phishing indicator was found in the message content that could be checked.")
+        st.markdown("**How to read this result**")
+        if summary["email_estimate"] is None:
+            st.write("The email-trained model did not run, so this scan has no model-based verdict.")
+        elif summary["email_model_alert"]:
+            st.write("The experimental model crossed its phishing warning threshold. This is a warning, not proof.")
+        else:
+            st.write("The experimental model stayed below its warning threshold; it can still miss phishing emails.")
     if summary["authentication_note"]:
         st.caption("Sender authentication could not be independently verified from this uploaded file.")
     st.markdown("**Recommended next step**")

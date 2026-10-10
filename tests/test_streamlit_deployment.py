@@ -114,7 +114,8 @@ def test_email_result_uses_plain_language_evidence_without_fabricating_ml():
     assert result["headline"] == "Warning signs found — verify before acting"
     assert "Displayed link and actual destination" in result["findings"][0]
     assert result["authentication_note"] is True
-    assert result["email_model"] == "Not configured"
+    assert result["email_model"] == "Unavailable"
+    assert result["email_estimate"] is None
     assert result["risk_score"] is None
 
 
@@ -125,9 +126,36 @@ def test_email_result_never_calls_unscored_content_confirmed_safe():
         "risk": {"verdict": "UNKNOWN", "risk_score": None},
         "evidence": [],
     })
-    assert result["headline"] == "No strong phishing signs found in the content checked"
-    assert "not proof" in result["action"]
+    assert "model verdict unavailable" in result["headline"]
+    assert "not a model-based verdict" in result["action"]
     assert "safe" not in result["headline"].casefold()
+
+
+def test_experimental_email_model_alerts_only_at_saved_threshold():
+    result = streamlit_main._email_result_summary({
+        "analysis_status": "PARTIAL",
+        "risk": {"verdict": "UNKNOWN", "risk_score": None},
+        "evidence": [],
+        "email_model": {"status": "EXPERIMENTAL", "estimate": 0.95,
+                        "threshold_crossed": True},
+    })
+    assert result["level"] == "warning"
+    assert "Warning signs" in result["headline"]
+    assert result["email_estimate"] == 0.95
+    assert result["email_model_alert"] is True
+
+
+def test_below_threshold_email_model_never_means_legitimate():
+    result = streamlit_main._email_result_summary({
+        "analysis_status": "ANALYZED",
+        "risk": {"verdict": "UNKNOWN", "risk_score": None},
+        "evidence": [],
+        "email_model": {"status": "EXPERIMENTAL", "estimate": 0.2,
+                        "threshold_crossed": False},
+    })
+    assert result["level"] == "info"
+    assert "did not cross" in result["headline"]
+    assert "not treat this result as legitimate or safe" in result["action"]
 
 
 def test_email_result_reports_failed_analysis_without_verdict():

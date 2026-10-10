@@ -83,9 +83,9 @@ See [media API and architecture](docs/MEDIA_INTELLIGENCE.md), [security limits](
 
 ## Phase 11 email intelligence
 
-Install `requirements-email.txt`. Original EML/raw MIME supports bounded identity/header inspection, actual DKIM/ARC checks, contextual body/BEC indicators, attachment inspection and website/media correlation. Email exports in PDF, DOCX and XML are text-extracted in an isolated worker for body and link analysis; these exports do not preserve trusted delivery headers, so SPF/DKIM/DMARC authentication is unavailable. `POST /api/v1/email/analyze` creates an ephemeral bearer-protected job; production results use encrypted shared Redis. Uploaded authentication claims remain untrusted; actual SPF requires trusted SMTP ingress. No calibrated email model is active.
+Install `requirements-email.txt`. Original EML/raw MIME supports bounded identity/header inspection, actual DKIM/ARC checks, contextual body/BEC indicators, attachment inspection and website/media correlation. Email exports in PDF, DOCX and XML are text-extracted in an isolated worker for body and link analysis; these exports do not preserve trusted delivery headers, so SPF/DKIM/DMARC authentication is unavailable. `POST /api/v1/email/analyze` creates an ephemeral bearer-protected job; production results use encrypted shared Redis. Uploaded authentication claims remain untrusted; actual SPF requires trusted SMTP ingress. The UI may show the checksum-verified `email-research-v1` candidate as an experimental phishing-pattern estimate. It is not a safe/legitimate verdict: held-out recall was about 50%, and source-license, label-provenance, collection-time and campaign review remain open.
 
-See [email architecture](docs/EMAIL_THREAT_INTELLIGENCE.md), [privacy/API](docs/EMAIL_PRIVACY.md) and [Phase 11 report](docs/PHASE_11_REPORT.md). Status remains PARTIAL and public-release accuracy validation is pending.
+See [email architecture](docs/EMAIL_THREAT_INTELLIGENCE.md), [experimental model card](docs/EMAIL_MODEL_RESEARCH.md), [privacy/API](docs/EMAIL_PRIVACY.md) and [Phase 11 report](docs/PHASE_11_REPORT.md). Status remains PARTIAL and public-release accuracy validation is pending.
 
 ## Phase 12 private investigations
 

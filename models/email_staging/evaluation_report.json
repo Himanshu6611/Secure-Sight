@@ -1,0 +1,131 @@
+{
+  "status": "RESEARCH_CANDIDATE_NOT_CONNECTED_TO_SERVING",
+  "model_type": "random_forest_class_weight",
+  "model_version": "email-research-v1",
+  "feature_schema": [
+    "length",
+    "word_count",
+    "keyword_hits",
+    "url_count",
+    "exclamation_count",
+    "question_count",
+    "digit_count",
+    "entropy"
+  ],
+  "label_mapping": {
+    "0": "legitimate",
+    "1": "phishing"
+  },
+  "dataset_sha256": "4b53bad1361007812bdf8f953f637d06a8a86ba2a39bad34cff66f080195bb18",
+  "dataset_manifest_sha256": "eb650217c33d5ec5217038a45ed2662d0c5576a0d4a80046d7b6ce4d47ed3484",
+  "model_sha256": "24a3626899539b819504ca6b144e76cc4f8f7f82b65fe4921819ae805d5a4b02",
+  "split_seed": 20261009,
+  "partitions": {
+    "fit": {
+      "samples": 85019,
+      "groups": 74235,
+      "class_counts": {
+        "0": 40930,
+        "1": 44089
+      }
+    },
+    "calibration": {
+      "samples": 20862,
+      "groups": 18559,
+      "class_counts": {
+        "0": 9866,
+        "1": 10996
+      }
+    },
+    "threshold_selection": {
+      "samples": 26152,
+      "groups": 23200,
+      "class_counts": {
+        "0": 12637,
+        "1": 13515
+      }
+    },
+    "test": {
+      "samples": 32840,
+      "groups": 29001,
+      "class_counts": {
+        "0": 15671,
+        "1": 17169
+      }
+    }
+  },
+  "group_overlap": 0,
+  "quarantined_conflict_rows": 98,
+  "quarantined_conflict_groups": 7,
+  "model_selection": {
+    "logistic_class_weight": {
+      "grouped_cv_auc": 0.711837886046126,
+      "grouped_cv_std": 0.00865020834037692,
+      "best_params": {
+        "classifier__C": 10.0
+      },
+      "cv": "StratifiedGroupKFold(3)"
+    },
+    "logistic_smote": {
+      "grouped_cv_auc": 0.7111326089468215,
+      "grouped_cv_std": 0.01113201738682883,
+      "best_params": {
+        "classifier__C": 10.0
+      },
+      "cv": "StratifiedGroupKFold(3)"
+    },
+    "random_forest_class_weight": {
+      "grouped_cv_auc": 0.9231418325295694,
+      "grouped_cv_std": 0.004603202276144604,
+      "best_params": {
+        "classifier__max_depth": null
+      },
+      "cv": "StratifiedGroupKFold(3)"
+    }
+  },
+  "selected_model": "random_forest_class_weight",
+  "calibration": {
+    "method": "sigmoid",
+    "partition": "calibration"
+  },
+  "threshold": {
+    "threshold": 0.9364209180606788,
+    "recall": 0.503070662227155,
+    "precision": 0.9818050541516246,
+    "fpr": 0.009970720898947535,
+    "selection_partition": "threshold_selection",
+    "objective": "maximum recall subject to validation FPR <= 1%"
+  },
+  "held_out_test": {
+    "samples": 32840,
+    "threshold": 0.9364209180606788,
+    "accuracy": 0.7351096224116931,
+    "precision": 0.9799410698096102,
+    "recall": 0.5036402819034306,
+    "f1": 0.6653329742623014,
+    "roc_auc": 0.9238734807919613,
+    "average_precision": 0.9364009850844439,
+    "brier_score": 0.11168484293946786,
+    "log_loss": 0.35559901783471803,
+    "false_positive_rate": 0.011294748261119265,
+    "false_negative_rate": 0.4963597180965694,
+    "confusion_matrix": {
+      "true_negative": 15494,
+      "false_positive": 177,
+      "false_negative": 8522,
+      "true_positive": 8647
+    }
+  },
+  "environment": {
+    "python": "3.12.10",
+    "scikit_learn": "1.5.1"
+  },
+  "limitations": [
+    "No collection-time split or campaign identities are available.",
+    "Group split uses exact normalized messages and sender identity; unseen-source generalization is not established.",
+    "Inputs are eight engineered aggregate features; this is not a text-language model.",
+    "Source license and original label provenance require independent review.",
+    "Candidate is not loaded by the serving email pipeline and is not an accuracy or release claim."
+  ],
+  "trained_at": "2026-10-09T09:51:35.627488+00:00"
+}

@@ -181,8 +181,13 @@ def scan_email(text):
 
 def format_email_result(analysis):
     risk = analysis["risk"]
+    email_model = analysis.get("email_model") or {"status": "MODEL_NOT_FOUND", "estimate": None}
     labels = {"PHISHING": "Phishing", "SUSPICIOUS": "Suspicious"}
     return {"type": "email", "content_snippet": analysis["body_analysis"]["snippet"],
-            "decision": labels.get(risk["verdict"], "Analysis incomplete"), "ml_probability": None,
-            "model_available": False, "warnings": ["EMAIL_MODEL_UNAVAILABLE"], "email_analysis": analysis}, {
+            "decision": labels.get(risk["verdict"], "Analysis incomplete"),
+            "ml_probability": email_model.get("estimate"),
+            "model_available": email_model.get("status") == "EXPERIMENTAL",
+            "email_model": email_model,
+            "warnings": [] if email_model.get("status") == "EXPERIMENTAL" else ["EMAIL_MODEL_UNAVAILABLE"],
+            "email_analysis": analysis}, {
                 "features": analysis["body_analysis"]["features"], **analysis["explanation"]}

@@ -45,6 +45,8 @@ def analyze(raw, budget_seconds=90, progress=None):
     attachments = parsed.pop("attachments")
     headers = parsed["headers"]
     text = body.pop("_text")
+    from ml.email_inference import predict_email
+    email_model = predict_email(text)
     registry = current_app.extensions["brand_registry"]
     def claims(value):
         value = skeleton(value)
@@ -145,6 +147,7 @@ def analyze(raw, budget_seconds=90, progress=None):
     result = {"email_feature_version": "11.0", "analysis_status": "PARTIAL", "message": parsed,
         "authentication": auth, "sender_intelligence": sender, "body_analysis": body, "urls": urls,
         "attachments": attachments, "media": media, "url_inventory": inventory[:256],
+        "email_model": email_model,
         "brands": {"registry_version": registry["version"], "display_name": display_brands, "body": body_brands,
             "claimed_brand": claimed, "display_name_impersonation": spoofed, "claims_authenticated": False},
         "campaign": {"status": "NOT_APPLICABLE", "scope": "SINGLE_MESSAGE_NO_CROSS_USER_STORE"},
