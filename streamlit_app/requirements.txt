@@ -2,3 +2,6 @@
 # Reuse the Docker-verified runtime pins, then pin Streamlit explicitly.
 -r ../requirements-runtime.lock
 streamlit==1.65.0
+# Streamlit Cloud resolves this app-level manifest from the repository root;
+# keep the model runtime explicit here so it cannot be skipped by nested pins.
+onnxruntime==1.23.2
