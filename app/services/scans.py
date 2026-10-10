@@ -32,7 +32,10 @@ def load_models(app):
     if app.extensions["ml_predictor"] is None:
         app.logger.warning(
             "url_model_unavailable",
-            extra={"model_load_status": app.extensions["models"]["url_load_status"].get("status")},
+            extra={
+                "model_load_status": app.extensions["models"]["url_load_status"].get("status"),
+                "model_failure_reason": app.extensions["models"]["url_load_status"].get("failure_reason"),
+            },
         )
 
 

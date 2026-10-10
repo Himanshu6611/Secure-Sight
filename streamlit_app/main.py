@@ -154,14 +154,24 @@ def _url_verdict_text(verdict: str) -> tuple[str, str]:
     return "Needs review — some checks are incomplete", "info"
 
 
-def _model_status_text(status: str) -> str:
+def _model_status_text(status: str, failure_reason: str | None = None) -> str:
     explanations = {
         "MODEL_NOT_FOUND": "The URL model artifact is missing from this deployment.",
         "MODEL_VERSION_MISMATCH": "The URL model does not match this deployment's supported runtime or schema.",
         "MODEL_LOAD_FAILED": "The URL model failed its integrity or loading checks.",
         "FEATURE_SCHEMA_MISMATCH": "The URL model feature schema is incompatible with this scanner.",
     }
-    return explanations.get(status, "The URL model could not produce an estimate for this scan.")
+    message = explanations.get(status, "The URL model could not produce an estimate for this scan.")
+    if status == "MODEL_LOAD_FAILED" and failure_reason:
+        if failure_reason.startswith("CHECKSUM_MISMATCH:"):
+            message = "The URL model artifact failed its integrity check."
+        elif failure_reason.startswith("CHECKSUM_METADATA_MISSING:"):
+            message = "The URL model is missing required integrity metadata."
+        elif failure_reason.startswith("MODEL_DESERIALIZATION_ERROR:"):
+            message = "The URL model could not be opened by the deployed Python runtime."
+        elif failure_reason == "MODEL_THRESHOLD_INVALID":
+            message = "The URL model's saved decision threshold is invalid."
+    return message
 
 
 def _show_url_result(result: dict[str, Any]) -> None:
@@ -269,7 +279,10 @@ def _show_url_result(result: dict[str, Any]) -> None:
     if probability is None:
         ml_result = result.get("ml_result") or {}
         status = str(ml_result.get("status", "MODEL_UNAVAILABLE"))
-        st.warning(_model_status_text(status) + " This result uses observable rules only.")
+        st.warning(
+            _model_status_text(status, ml_result.get("failure_reason"))
+            + " This result uses observable rules only."
+        )
     elif isinstance(result.get("model_version"), str):
         st.caption(f"URL model version: {result['model_version']}. The model evaluates URL patterns; domain and webpage checks are separate evidence.")
 

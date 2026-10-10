@@ -22,8 +22,8 @@ ERR_PREPROCESSING_FAILED = "PREPROCESSING_FAILED"
 ERR_PREDICTION_FAILED = "PREDICTION_FAILED"
 
 
-def error(status):
-    return dict(status=status, prediction=None, probability=None)
+def error(status, **details):
+    return dict(status=status, prediction=None, probability=None, **details)
 
 
 class SecureSightPredictor:
@@ -41,37 +41,39 @@ class SecureSightPredictor:
         self._loaded = False
         folder = pathlib.Path(self.model_dir)
         if not (folder / "model.pkl").is_file():
-            return error(ERR_MODEL_NOT_FOUND)
+            return error(ERR_MODEL_NOT_FOUND, failure_reason="MODEL_ARTIFACT_MISSING")
         try:
             self.metadata = json.loads((folder / "model_metadata.json").read_text(encoding="utf8"))
             self.feature_schema = json.loads((folder / "feature_schema.json").read_text(encoding="utf8"))
             if self.metadata.get("model_version") != "5.1.1" or self.metadata.get("label_mapping") != {"0":"legitimate", "1":"phishing"}:
-                return error(ERR_MODEL_VERSION_MISMATCH)
+                return error(ERR_MODEL_VERSION_MISMATCH, failure_reason="MODEL_METADATA_VERSION_OR_LABEL_MISMATCH")
             if self.feature_schema.get("feature_order") != FEATURE_ORDER or self.feature_schema.get("feature_schema_version") != FEATURE_SCHEMA_VERSION:
-                return error(ERR_SCHEMA_MISMATCH)
+                return error(ERR_SCHEMA_MISMATCH, failure_reason="FEATURE_SCHEMA_MISMATCH")
             if self.metadata.get("environment", {}).get("scikit_learn_version") != sklearn.__version__:
-                return error(ERR_MODEL_VERSION_MISMATCH)
+                return error(ERR_MODEL_VERSION_MISMATCH, failure_reason="SCIKIT_LEARN_VERSION_MISMATCH")
             for name in ["model.pkl", "preprocessor.pkl", "threshold.json", "feature_schema.json"]:
                 expected = self.metadata.get("artifact_sha256", {}).get(name)
-                if not expected or hashlib.sha256((folder/name).read_bytes()).hexdigest() != expected:
-                    return error(ERR_MODEL_LOAD_FAILED)
+                if not expected:
+                    return error(ERR_MODEL_LOAD_FAILED, failure_reason=f"CHECKSUM_METADATA_MISSING:{name}")
+                if hashlib.sha256((folder/name).read_bytes()).hexdigest() != expected:
+                    return error(ERR_MODEL_LOAD_FAILED, failure_reason=f"CHECKSUM_MISMATCH:{name}")
             self.threshold = float(json.loads((folder/"threshold.json").read_text())["threshold"])
             if not 0 < self.threshold < 1:
-                return error(ERR_MODEL_LOAD_FAILED)
+                return error(ERR_MODEL_LOAD_FAILED, failure_reason="MODEL_THRESHOLD_INVALID")
             start = time.perf_counter()
             with warnings.catch_warnings():
                 warnings.simplefilter("error", InconsistentVersionWarning)
                 self.model = joblib.load(folder/"model.pkl")
                 self.preprocessor = joblib.load(folder/"preprocessor.pkl")
             if list(self.model.classes_) != [0,1] or not self.metadata.get("preprocessing_embedded"):
-                return error(ERR_MODEL_LOAD_FAILED)
+                return error(ERR_MODEL_LOAD_FAILED, failure_reason="MODEL_CLASSES_OR_PREPROCESSING_MISMATCH")
             self._load_time_ms = (time.perf_counter()-start)*1000
             self.calibration_method = self.metadata.get("calibration", {}).get("method")
             self._loaded = True
             return dict(status="OK", **self.describe())
-        except Exception:
+        except Exception as exc:
             self.model = self.preprocessor = None
-            return error(ERR_MODEL_LOAD_FAILED)
+            return error(ERR_MODEL_LOAD_FAILED, failure_reason=f"MODEL_DESERIALIZATION_ERROR:{type(exc).__name__}")
 
     def _expected_features(self):
         return FEATURE_ORDER

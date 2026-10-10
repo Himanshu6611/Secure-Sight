@@ -96,6 +96,9 @@ def test_model_unavailable_reason_is_preserved(monkeypatch):
     finally:
         scans._models.cache_clear()
     assert "runtime or schema" in streamlit_main._model_status_text("MODEL_VERSION_MISMATCH")
+    assert "integrity check" in streamlit_main._model_status_text(
+        "MODEL_LOAD_FAILED", "CHECKSUM_MISMATCH:model.pkl"
+    )
 
 
 def test_url_adapter_uses_shared_api(monkeypatch):
