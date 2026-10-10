@@ -165,9 +165,15 @@ def test_image_summary_keeps_unknown_origin_and_unavailable_model_explicit():
     result = streamlit_main._image_result_summary({
         "analysis_status": "PARTIAL",
         "assessment": {"verdict": "UNKNOWN", "risk_score": None},
-        "artifact": {"format": "PNG"},
+        "artifact": {"format": "PNG", "filename": "sample.png"},
         "metadata": {"status": "ANALYZED", "width": 1254, "height": 1254,
                      "exif_present": False},
+        "forensics": {
+            "status": "ANALYZED",
+            "recompression_mean_absolute_error": 3.1,
+            "high_frequency_energy_fraction": 0.53,
+            "local_texture_variances": [1.2, 2.4],
+        },
         "quality": {"status": "ANALYZED"},
         "synthetic_media": {"analysis_status": "MODEL_UNAVAILABLE",
                             "synthetic_probability": None},
@@ -184,10 +190,13 @@ def test_image_summary_keeps_unknown_origin_and_unavailable_model_explicit():
     assert result["model_available"] is False
     assert result["risk_value"] == "Not scored"
     assert result["dimensions"] == "1,254 × 1,254 px"
+    assert result["image_name"] == "sample.png"
     assert result["provenance"] == "No C2PA provenance found"
     assert result["ocr_word_count"] == 1
     assert result["qr_count"] == 0
     assert result["evidence_count"] == 1
+    assert result["measurement_count"] == 3
+    assert ("High frequency energy fraction", "53.00%") in result["measurements"]
 
 
 def test_image_summary_does_not_claim_valid_signature_is_trusted_without_trust():
@@ -214,7 +223,7 @@ def test_image_result_panel_renders_reference_style_summary_and_evidence(monkeyp
     )
     result = {
         "assessment": {"verdict": "UNKNOWN", "risk_score": None},
-        "artifact": {"format": "PNG"},
+        "artifact": {"format": "PNG", "filename": "mock.png"},
         "metadata": {"status": "ANALYZED", "width": 400, "height": 300,
                      "exif_present": False},
         "quality": {"status": "ANALYZED"},
@@ -229,7 +238,9 @@ def test_image_result_panel_renders_reference_style_summary_and_evidence(monkeyp
 
     output = "\n".join(rendered)
     assert "Image origin could not be confirmed" in output
-    assert "AI / deepfake estimate" in output
+    assert "AI threat score" in output
+    assert "Forensic signals" in output
+    assert "Measured properties · no anomaly verdict" in output
     assert "No C2PA provenance found" in output
     assert "View technical diagnostic breakdown" in output
     assert "validated AI-image/deepfake probability is unavailable" in output
@@ -334,13 +345,15 @@ def test_image_adapter_posts_file_to_shared_api(monkeypatch):
 
     def media():
         upload = request.files["file"]
-        return jsonify(filename=upload.filename, size=len(upload.read()), assessment={"verdict": "UNKNOWN"})
+        return jsonify(filename=upload.filename, size=len(upload.read()),
+                       artifact={"format": "PNG"}, assessment={"verdict": "UNKNOWN"})
 
     app.add_url_rule("/api/v1/media/analyze", view_func=media, methods=["POST"])
     monkeypatch.setattr(streamlit_main, "_flask_app", lambda: app)
     result = streamlit_main._request_image("fixture.png", b"image-bytes")
     assert result["filename"] == "fixture.png"
     assert result["size"] == len(b"image-bytes")
+    assert result["artifact"]["filename"] == "fixture.png"
 
 
 def test_email_adapter_polls_ephemeral_bearer_job(monkeypatch):

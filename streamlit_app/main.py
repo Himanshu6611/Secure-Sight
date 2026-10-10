@@ -400,6 +400,7 @@ def _image_result_summary(result: dict[str, Any]) -> dict[str, Any]:
     artifact = result.get("artifact") if isinstance(result.get("artifact"), dict) else {}
     metadata = result.get("metadata") if isinstance(result.get("metadata"), dict) else {}
     quality = result.get("quality") if isinstance(result.get("quality"), dict) else {}
+    forensics = result.get("forensics") if isinstance(result.get("forensics"), dict) else {}
     provenance = result.get("provenance") if isinstance(result.get("provenance"), dict) else {}
     model = result.get("synthetic_media") if isinstance(result.get("synthetic_media"), dict) else {}
     ocr = result.get("ocr") if isinstance(result.get("ocr"), dict) else {}
@@ -437,6 +438,9 @@ def _image_result_summary(result: dict[str, Any]) -> dict[str, Any]:
     image_format = artifact.get("format") or artifact.get("mime") or "Unavailable"
     if isinstance(image_format, str):
         image_format = image_format.upper().replace("IMAGE/", "")
+    image_name = artifact.get("filename")
+    if not isinstance(image_name, str) or not image_name:
+        image_name = f"{image_format} image"
     ocr_words = ocr.get("words") if isinstance(ocr.get("words"), list) else []
     qr_items = qr.get("items") if isinstance(qr.get("items"), list) else []
     linked = result.get("linked_analysis") if isinstance(result.get("linked_analysis"), list) else []
@@ -444,6 +448,21 @@ def _image_result_summary(result: dict[str, Any]) -> dict[str, Any]:
     risk_value = f"{risk:.1f}/100" if isinstance(risk, (int, float)) and 0 <= risk <= 100 else "Not scored"
 
     evidence_count = len(result.get("evidence", [])) if isinstance(result.get("evidence"), list) else 0
+    measurements = []
+    for key, label, suffix in (
+        ("recompression_mean_absolute_error", "Recompression pixel difference (mean absolute error)", ""),
+        ("median_residual_variance", "Median residual variance", ""),
+        ("jpeg_quantization_tables", "JPEG quantization tables", ""),
+        ("high_frequency_energy_fraction", "High frequency energy fraction", "%"),
+        ("edge_gradient_mean", "Edge gradient mean", ""),
+    ):
+        value = forensics.get(key)
+        if isinstance(value, (int, float)) and 0 <= value < float("inf"):
+            display = f"{value * 100:.2f}%" if suffix == "%" else f"{value:,.4f}" if suffix == "" and key != "jpeg_quantization_tables" else str(value)
+            measurements.append((label, display))
+    textures = forensics.get("local_texture_variances")
+    if isinstance(textures, list):
+        measurements.append(("Texture regions measured", str(len(textures))))
     return {
         "headline": headline,
         "level": level,
@@ -453,6 +472,7 @@ def _image_result_summary(result: dict[str, Any]) -> dict[str, Any]:
         "model_detail": model_detail,
         "model_available": model_is_usable,
         "image_format": image_format,
+        "image_name": image_name,
         "dimensions": dimensions,
         "provenance": provenance_value,
         "provenance_status": c2pa,
@@ -465,6 +485,8 @@ def _image_result_summary(result: dict[str, Any]) -> dict[str, Any]:
         "qr_count": len(qr_items),
         "linked_count": len(linked),
         "evidence_count": evidence_count,
+        "measurements": measurements,
+        "measurement_count": len(measurements),
         "coverage": coverage,
         "analysis_status": result.get("analysis_status", "Unavailable"),
     }
@@ -477,16 +499,19 @@ def _show_image_result(result: dict[str, Any]) -> None:
         """
         <style>
         .ss-image-verdict { padding:22px 28px; border-radius:22px; color:#fff; margin:8px 0 16px; background:linear-gradient(110deg,#168c98,#076772); }
+        .ss-image-verdict.needs-review { background:linear-gradient(110deg,#168c98,#076772); }
         .ss-image-verdict.error { background:linear-gradient(110deg,#dc3434,#a91f31); }
         .ss-image-verdict.warning { background:linear-gradient(110deg,#e5a323,#bf7011); }
         .ss-image-kicker { font-size:12px; letter-spacing:.11em; font-weight:750; opacity:.88; text-transform:uppercase; }
         .ss-image-line { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
         .ss-image-verdict h2 { color:#fff; font-size:clamp(24px,4vw,34px); line-height:1.15; margin:5px 0 0; }
         .ss-image-pill { border:1px solid rgba(255,255,255,.52); background:rgba(255,255,255,.16); border-radius:999px; padding:8px 14px; font-size:14px; font-weight:700; }
-        .ss-image-grid { display:grid; grid-template-columns:1.35fr 1fr 1fr; gap:14px; margin:0 0 16px; }
+        .ss-image-grid { display:grid; grid-template-columns:1.55fr .8fr .8fr; gap:14px; margin:0 0 16px; }
         .ss-image-card { background:#fff; border:1px solid #e0e5ed; border-radius:18px; padding:18px 20px; min-height:122px; box-shadow:0 2px 4px rgba(19,35,55,.08); }
         .ss-image-label { color:#8792a5; font-size:12px; font-weight:750; letter-spacing:.07em; text-transform:uppercase; }
         .ss-image-value { color:#26384a; font-size:25px; font-weight:800; line-height:1.2; margin-top:12px; overflow-wrap:anywhere; }
+        .ss-image-value.neutral { color:#526174; font-size:23px; }
+        .ss-image-file { color:#142033; font-size:16px; line-height:1.45; margin-top:12px; overflow-wrap:anywhere; }
         .ss-image-detail { color:#8591a3; font-size:13px; line-height:1.45; margin-top:7px; }
         .ss-image-note { border-left:4px solid #148c98; background:#f1f8f9; border-radius:8px; padding:12px 16px; margin:14px 0; color:#253547; }
         .ss-image-row { display:flex; justify-content:space-between; gap:18px; padding:12px 15px; background:#fff; border:1px solid #e0e5ed; border-radius:11px; margin:6px 0; }
@@ -499,36 +524,44 @@ def _show_image_result(result: dict[str, Any]) -> None:
     )
     st.markdown(
         f"""
-        <section class="ss-image-verdict {level}">
-          <div class="ss-image-kicker">Image origin result</div>
+        <section class="ss-image-verdict {level} {'needs-review' if summary['headline'] == 'Image origin could not be confirmed' else ''}">
+          <div class="ss-image-kicker">Threat verdict</div>
           <div class="ss-image-line"><h2>{html.escape(summary['headline'])}</h2>
             <span class="ss-image-pill">{html.escape(summary['pill'])}</span></div>
         </section>
         <section class="ss-image-grid">
-          <div class="ss-image-card"><div class="ss-image-label">Image checked</div>
-            <div class="ss-image-value">{html.escape(str(summary['image_format']))}</div>
-            <div class="ss-image-detail">{html.escape(summary['dimensions'])} · Observed risk {html.escape(summary['risk_value'])}</div></div>
-          <div class="ss-image-card"><div class="ss-image-label">AI / deepfake estimate</div>
-            <div class="ss-image-value">{html.escape(summary['model_value'])}</div>
+          <div class="ss-image-card"><div class="ss-image-label">Image media file</div>
+            <div class="ss-image-file">{html.escape(str(summary['image_name']))}</div>
+            <div class="ss-image-detail">{html.escape(str(summary['image_format']))} · {html.escape(summary['dimensions'])}</div></div>
+          <div class="ss-image-card"><div class="ss-image-label">AI threat score</div>
+            <div class="ss-image-value neutral">{html.escape(summary['model_value'])}</div>
             <div class="ss-image-detail">{html.escape(summary['model_detail'])}</div></div>
-          <div class="ss-image-card"><div class="ss-image-label">Origin evidence</div>
-            <div class="ss-image-value">{html.escape(summary['provenance'])}</div>
-            <div class="ss-image-detail">C2PA content credentials · not proof of depicted events</div></div>
+          <div class="ss-image-card"><div class="ss-image-label">Forensic signals</div>
+            <div class="ss-image-value">{summary['measurement_count']}</div>
+            <div class="ss-image-detail">Measured properties · no anomaly verdict</div></div>
         </section>
         """,
         unsafe_allow_html=True,
     )
-    st.info(
-        "An AI/deepfake detector is not configured for this scan. SecureSight cannot tell whether this image was AI-generated or manipulated. "
-        "Missing provenance does not mean an image is fake, and a generated image is not automatically unsafe."
-    )
+    if summary["model_available"]:
+        origin_note = (
+            "The AI score is a model estimate, not proof of image origin. "
+            "Missing provenance does not mean an image is fake."
+        )
+    else:
+        origin_note = (
+            "An AI/deepfake detector is not configured for this scan. SecureSight cannot tell whether this image was AI-generated or manipulated. "
+            "Missing provenance does not mean an image is fake, and a generated image is not automatically unsafe."
+        )
+    st.info(origin_note)
     st.markdown("**What we checked**")
     st.write(
         f"Image details: {summary['image_format']} · {summary['dimensions']}. "
         f"Metadata: {summary['metadata_status']}; EXIF {'found' if summary['metadata_present'] is True else 'not found' if summary['metadata_present'] is False else 'unknown'}. "
         f"Text reading: {summary['ocr_status']} ({summary['ocr_word_count']} words); "
         f"QR check: {summary['qr_status']} ({summary['qr_count']} found); "
-        f"linked destinations analyzed: {summary['linked_count']}."
+        f"linked destinations analyzed: {summary['linked_count']}. "
+        f"Threat screening: {summary['risk_value']}."
     )
     if summary["provenance_status"] == "VALID":
         claims = (result.get("provenance") or {}).get("claims", [])
@@ -542,6 +575,7 @@ def _show_image_result(result: dict[str, Any]) -> None:
     with st.expander("View technical diagnostic breakdown", expanded=True):
         rows = [
             ("Image format", summary["image_format"]),
+            ("Image media file", summary["image_name"]),
             ("Image dimensions", summary["dimensions"]),
             ("AI / deepfake model", summary["model_value"] + " — " + summary["model_detail"]),
             ("C2PA provenance", summary["provenance"]),
@@ -553,6 +587,7 @@ def _show_image_result(result: dict[str, Any]) -> None:
             ("Observable evidence items", summary["evidence_count"]),
             ("Analysis status", summary["analysis_status"]),
         ]
+        rows.extend(summary["measurements"])
         for label, value in rows:
             st.markdown(
                 f'<div class="ss-image-row"><span>{html.escape(str(label))}</span>'
@@ -560,7 +595,7 @@ def _show_image_result(result: dict[str, Any]) -> None:
                 unsafe_allow_html=True,
             )
         st.markdown("**Evidence and limits**")
-        st.caption("A validated AI-image/deepfake probability is unavailable. Measured image properties and missing metadata are clues only; they do not establish image origin or authenticity.")
+        st.caption("Forensic measurements are raw image properties, not anomaly scores. A validated AI-image/deepfake probability is unavailable; measured properties and missing metadata do not establish image origin or authenticity.")
         st.json(result, expanded=False)
 
 
@@ -816,6 +851,10 @@ def _request_image(filename: str, content: bytes) -> dict[str, Any]:
         data = response.get_json(silent=True)
     if response.status_code >= 400 or not isinstance(data, dict):
         raise RuntimeError("The image scan could not be completed. Use a PNG, JPEG or WebP under 6 MB.")
+    artifact = data.get("artifact")
+    if isinstance(artifact, dict):
+        clean_name = filename.replace("\\", "/").rsplit("/", 1)[-1]
+        artifact["filename"] = "".join(char for char in clean_name if char.isprintable())[:160]
     return data
 
 
