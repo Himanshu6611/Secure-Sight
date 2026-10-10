@@ -3,6 +3,7 @@ import hashlib
 import json
 import subprocess
 import sys
+from contextlib import nullcontext
 from pathlib import Path
 
 from flask import Flask, jsonify, request
@@ -158,6 +159,80 @@ def test_below_threshold_email_model_never_means_legitimate():
     assert "not treat this result as legitimate or safe" in result["action"]
     assert result["verdict_label"] == "Needs review"
     assert result["status_detail"] == "Model below warning threshold"
+
+
+def test_image_summary_keeps_unknown_origin_and_unavailable_model_explicit():
+    result = streamlit_main._image_result_summary({
+        "analysis_status": "PARTIAL",
+        "assessment": {"verdict": "UNKNOWN", "risk_score": None},
+        "artifact": {"format": "PNG"},
+        "metadata": {"status": "ANALYZED", "width": 1254, "height": 1254,
+                     "exif_present": False},
+        "quality": {"status": "ANALYZED"},
+        "synthetic_media": {"analysis_status": "MODEL_UNAVAILABLE",
+                            "synthetic_probability": None},
+        "provenance": {"status": "ABSENT"},
+        "ocr": {"status": "ANALYZED", "words": [{"text": "sample"}]},
+        "qr": {"status": "ANALYZED", "items": []},
+        "linked_analysis": [],
+        "evidence": [{"id": "media.provenance_absent"}],
+        "investigation": {"coverage": {"unavailable": ["ai_detector"]}},
+    })
+    assert result["headline"] == "Image origin could not be confirmed"
+    assert result["level"] == "info"
+    assert result["model_value"] == "Unavailable"
+    assert result["model_available"] is False
+    assert result["risk_value"] == "Not scored"
+    assert result["dimensions"] == "1,254 × 1,254 px"
+    assert result["provenance"] == "No C2PA provenance found"
+    assert result["ocr_word_count"] == 1
+    assert result["qr_count"] == 0
+    assert result["evidence_count"] == 1
+
+
+def test_image_summary_does_not_claim_valid_signature_is_trusted_without_trust():
+    result = streamlit_main._image_result_summary({
+        "assessment": {"verdict": "UNKNOWN", "risk_score": None},
+        "provenance": {"status": "VALID", "trusted": False},
+        "synthetic_media": {"analysis_status": "MODEL_UNAVAILABLE"},
+    })
+    assert result["provenance"] == "Signed, but issuer trust is unverified"
+    assert result["headline"] == "Image origin could not be confirmed"
+
+
+def test_image_result_panel_renders_reference_style_summary_and_evidence(monkeypatch):
+    rendered = []
+    monkeypatch.setattr(streamlit_main.st, "markdown", lambda value, **kwargs: rendered.append(str(value)))
+    monkeypatch.setattr(streamlit_main.st, "info", lambda value: rendered.append(str(value)))
+    monkeypatch.setattr(streamlit_main.st, "write", lambda value: rendered.append(str(value)))
+    monkeypatch.setattr(streamlit_main.st, "caption", lambda value: rendered.append(str(value)))
+    monkeypatch.setattr(streamlit_main.st, "json", lambda value, **kwargs: rendered.append("json"))
+    monkeypatch.setattr(
+        streamlit_main.st,
+        "expander",
+        lambda label, **kwargs: (rendered.append(str(label)) or nullcontext()),
+    )
+    result = {
+        "assessment": {"verdict": "UNKNOWN", "risk_score": None},
+        "artifact": {"format": "PNG"},
+        "metadata": {"status": "ANALYZED", "width": 400, "height": 300,
+                     "exif_present": False},
+        "quality": {"status": "ANALYZED"},
+        "synthetic_media": {"analysis_status": "MODEL_UNAVAILABLE"},
+        "provenance": {"status": "ABSENT"},
+        "ocr": {"status": "ANALYZED", "words": []},
+        "qr": {"status": "ANALYZED", "items": []},
+        "linked_analysis": [],
+    }
+
+    streamlit_main._show_result(result, "image")
+
+    output = "\n".join(rendered)
+    assert "Image origin could not be confirmed" in output
+    assert "AI / deepfake estimate" in output
+    assert "No C2PA provenance found" in output
+    assert "View technical diagnostic breakdown" in output
+    assert "validated AI-image/deepfake probability is unavailable" in output
 
 
 def test_email_result_summary_provides_plain_language_card_and_diagnostic_values():

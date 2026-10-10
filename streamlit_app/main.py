@@ -93,6 +93,9 @@ def _verdict(result: dict[str, Any], family: str) -> None:
     if family == "email":
         _show_email_result(result)
         return
+    if family == "image":
+        _show_image_result(result)
+        return
 
     if family == "url":
         verdict = result.get("verdict", "UNKNOWN")
@@ -377,6 +380,187 @@ def _show_email_result(result: dict[str, Any]) -> None:
             observed = [name.replace("_", " ").title() for name, value in summary["body_features"].items() if value is True]
             st.write("Observed language patterns: " + (", ".join(observed) if observed else "None detected"))
         st.markdown("**Evidence and technical details**")
+        st.json(result, expanded=False)
+
+
+def _image_result_summary(result: dict[str, Any]) -> dict[str, Any]:
+    """Present image-origin evidence without turning missing checks into a verdict."""
+    assessment = result.get("assessment") if isinstance(result.get("assessment"), dict) else {}
+    verdict = str(assessment.get("verdict", "UNKNOWN")).upper()
+    labels = {
+        "PHISHING": ("Unsafe indicators found", "error", "Threat indicators found"),
+        "SUSPICIOUS": ("Suspicious image or destination", "warning", "Review before acting"),
+        "LEGITIMATE": ("No strong threat signs found", "info", "Threat screening only"),
+    }
+    headline, level, pill = labels.get(
+        verdict,
+        ("Image origin could not be confirmed", "info", "AI/deepfake detector unavailable"),
+    )
+
+    artifact = result.get("artifact") if isinstance(result.get("artifact"), dict) else {}
+    metadata = result.get("metadata") if isinstance(result.get("metadata"), dict) else {}
+    quality = result.get("quality") if isinstance(result.get("quality"), dict) else {}
+    provenance = result.get("provenance") if isinstance(result.get("provenance"), dict) else {}
+    model = result.get("synthetic_media") if isinstance(result.get("synthetic_media"), dict) else {}
+    ocr = result.get("ocr") if isinstance(result.get("ocr"), dict) else {}
+    qr = result.get("qr") if isinstance(result.get("qr"), dict) else {}
+    investigation = result.get("investigation") if isinstance(result.get("investigation"), dict) else {}
+    coverage = investigation.get("coverage") if isinstance(investigation.get("coverage"), dict) else {}
+
+    probability = model.get("synthetic_probability")
+    if not isinstance(probability, (int, float)) or not 0 <= probability <= 1:
+        probability = None
+    model_status = str(model.get("analysis_status", "MODEL_UNAVAILABLE")).upper()
+    model_is_usable = model_status in {"ANALYZED", "OK", "AVAILABLE"} and probability is not None
+    if not model_is_usable:
+        model_value = "Unavailable"
+        model_detail = "No validated image-origin model ran"
+    else:
+        model_value = f"{probability:.1%}"
+        model_detail = "Experimental estimate" if model.get("calibrated") is not True else "Calibrated estimate"
+
+    c2pa = str(provenance.get("status", "UNAVAILABLE")).upper()
+    provenance_labels = {
+        "VALID": "Signed provenance found",
+        "PRESENT_UNVERIFIED": "Provenance found; trust not verified",
+        "INVALID": "Provenance signature invalid",
+        "ERROR": "Could not inspect provenance",
+        "ABSENT": "No C2PA provenance found",
+        "UNSUPPORTED": "Provenance format unsupported",
+    }
+    provenance_value = provenance_labels.get(c2pa, "Could not check provenance")
+    if c2pa == "VALID" and provenance.get("trusted") is not True:
+        provenance_value = "Signed, but issuer trust is unverified"
+
+    width, height = metadata.get("width"), metadata.get("height")
+    dimensions = f"{width:,} × {height:,} px" if isinstance(width, int) and isinstance(height, int) else "Unavailable"
+    image_format = artifact.get("format") or artifact.get("mime") or "Unavailable"
+    if isinstance(image_format, str):
+        image_format = image_format.upper().replace("IMAGE/", "")
+    ocr_words = ocr.get("words") if isinstance(ocr.get("words"), list) else []
+    qr_items = qr.get("items") if isinstance(qr.get("items"), list) else []
+    linked = result.get("linked_analysis") if isinstance(result.get("linked_analysis"), list) else []
+    risk = assessment.get("risk_score")
+    risk_value = f"{risk:.1f}/100" if isinstance(risk, (int, float)) and 0 <= risk <= 100 else "Not scored"
+
+    evidence_count = len(result.get("evidence", [])) if isinstance(result.get("evidence"), list) else 0
+    return {
+        "headline": headline,
+        "level": level,
+        "pill": pill,
+        "risk_value": risk_value,
+        "model_value": model_value,
+        "model_detail": model_detail,
+        "model_available": model_is_usable,
+        "image_format": image_format,
+        "dimensions": dimensions,
+        "provenance": provenance_value,
+        "provenance_status": c2pa,
+        "metadata_status": metadata.get("status", "Unavailable"),
+        "metadata_present": metadata.get("exif_present"),
+        "quality_status": quality.get("status", "Unavailable"),
+        "ocr_status": ocr.get("status", "Unavailable"),
+        "ocr_word_count": len(ocr_words),
+        "qr_status": qr.get("status", "Unavailable"),
+        "qr_count": len(qr_items),
+        "linked_count": len(linked),
+        "evidence_count": evidence_count,
+        "coverage": coverage,
+        "analysis_status": result.get("analysis_status", "Unavailable"),
+    }
+
+
+def _show_image_result(result: dict[str, Any]) -> None:
+    summary = _image_result_summary(result)
+    level = summary["level"] if summary["level"] in {"error", "warning", "info"} else "info"
+    st.markdown(
+        """
+        <style>
+        .ss-image-verdict { padding:22px 28px; border-radius:22px; color:#fff; margin:8px 0 16px; background:linear-gradient(110deg,#168c98,#076772); }
+        .ss-image-verdict.error { background:linear-gradient(110deg,#dc3434,#a91f31); }
+        .ss-image-verdict.warning { background:linear-gradient(110deg,#e5a323,#bf7011); }
+        .ss-image-kicker { font-size:12px; letter-spacing:.11em; font-weight:750; opacity:.88; text-transform:uppercase; }
+        .ss-image-line { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+        .ss-image-verdict h2 { color:#fff; font-size:clamp(24px,4vw,34px); line-height:1.15; margin:5px 0 0; }
+        .ss-image-pill { border:1px solid rgba(255,255,255,.52); background:rgba(255,255,255,.16); border-radius:999px; padding:8px 14px; font-size:14px; font-weight:700; }
+        .ss-image-grid { display:grid; grid-template-columns:1.35fr 1fr 1fr; gap:14px; margin:0 0 16px; }
+        .ss-image-card { background:#fff; border:1px solid #e0e5ed; border-radius:18px; padding:18px 20px; min-height:122px; box-shadow:0 2px 4px rgba(19,35,55,.08); }
+        .ss-image-label { color:#8792a5; font-size:12px; font-weight:750; letter-spacing:.07em; text-transform:uppercase; }
+        .ss-image-value { color:#26384a; font-size:25px; font-weight:800; line-height:1.2; margin-top:12px; overflow-wrap:anywhere; }
+        .ss-image-detail { color:#8591a3; font-size:13px; line-height:1.45; margin-top:7px; }
+        .ss-image-note { border-left:4px solid #148c98; background:#f1f8f9; border-radius:8px; padding:12px 16px; margin:14px 0; color:#253547; }
+        .ss-image-row { display:flex; justify-content:space-between; gap:18px; padding:12px 15px; background:#fff; border:1px solid #e0e5ed; border-radius:11px; margin:6px 0; }
+        .ss-image-row span:first-child { color:#253547; font-weight:600; }
+        .ss-image-row span:last-child { color:#58677a; text-align:right; overflow-wrap:anywhere; }
+        @media(max-width:760px) { .ss-image-grid { grid-template-columns:1fr; gap:10px; } .ss-image-card { min-height:0; } .ss-image-verdict { padding:18px; } }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        f"""
+        <section class="ss-image-verdict {level}">
+          <div class="ss-image-kicker">Image origin result</div>
+          <div class="ss-image-line"><h2>{html.escape(summary['headline'])}</h2>
+            <span class="ss-image-pill">{html.escape(summary['pill'])}</span></div>
+        </section>
+        <section class="ss-image-grid">
+          <div class="ss-image-card"><div class="ss-image-label">Image checked</div>
+            <div class="ss-image-value">{html.escape(str(summary['image_format']))}</div>
+            <div class="ss-image-detail">{html.escape(summary['dimensions'])} · Observed risk {html.escape(summary['risk_value'])}</div></div>
+          <div class="ss-image-card"><div class="ss-image-label">AI / deepfake estimate</div>
+            <div class="ss-image-value">{html.escape(summary['model_value'])}</div>
+            <div class="ss-image-detail">{html.escape(summary['model_detail'])}</div></div>
+          <div class="ss-image-card"><div class="ss-image-label">Origin evidence</div>
+            <div class="ss-image-value">{html.escape(summary['provenance'])}</div>
+            <div class="ss-image-detail">C2PA content credentials · not proof of depicted events</div></div>
+        </section>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.info(
+        "An AI/deepfake detector is not configured for this scan. SecureSight cannot tell whether this image was AI-generated or manipulated. "
+        "Missing provenance does not mean an image is fake, and a generated image is not automatically unsafe."
+    )
+    st.markdown("**What we checked**")
+    st.write(
+        f"Image details: {summary['image_format']} · {summary['dimensions']}. "
+        f"Metadata: {summary['metadata_status']}; EXIF {'found' if summary['metadata_present'] is True else 'not found' if summary['metadata_present'] is False else 'unknown'}. "
+        f"Text reading: {summary['ocr_status']} ({summary['ocr_word_count']} words); "
+        f"QR check: {summary['qr_status']} ({summary['qr_count']} found); "
+        f"linked destinations analyzed: {summary['linked_count']}."
+    )
+    if summary["provenance_status"] == "VALID":
+        claims = (result.get("provenance") or {}).get("claims", [])
+        if claims:
+            agents = list(dict.fromkeys(
+                claim.get("software_agent") for claim in claims
+                if isinstance(claim, dict) and isinstance(claim.get("software_agent"), str)
+            ))
+            if agents:
+                st.write("Credential claims name the editing or generation tool: " + ", ".join(agents[:3]))
+    with st.expander("View technical diagnostic breakdown", expanded=True):
+        rows = [
+            ("Image format", summary["image_format"]),
+            ("Image dimensions", summary["dimensions"]),
+            ("AI / deepfake model", summary["model_value"] + " — " + summary["model_detail"]),
+            ("C2PA provenance", summary["provenance"]),
+            ("Image metadata", summary["metadata_status"]),
+            ("Image quality", summary["quality_status"]),
+            ("OCR text found", summary["ocr_word_count"]),
+            ("QR codes found", summary["qr_count"]),
+            ("Linked destinations analyzed", summary["linked_count"]),
+            ("Observable evidence items", summary["evidence_count"]),
+            ("Analysis status", summary["analysis_status"]),
+        ]
+        for label, value in rows:
+            st.markdown(
+                f'<div class="ss-image-row"><span>{html.escape(str(label))}</span>'
+                f'<span>{html.escape(str(value))}</span></div>',
+                unsafe_allow_html=True,
+            )
+        st.markdown("**Evidence and limits**")
+        st.caption("A validated AI-image/deepfake probability is unavailable. Measured image properties and missing metadata are clues only; they do not establish image origin or authenticity.")
         st.json(result, expanded=False)
 
 
