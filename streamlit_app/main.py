@@ -445,7 +445,12 @@ def main() -> None:
 
     with email_tab:
         st.write("Accepted formats: EML, PDF, DOCX and XML. Up to 2 MB per file.")
-        email_file = st.file_uploader("Choose an email or email export", type=["eml", "pdf", "docx", "xml"], key="email_file")
+        email_file = st.file_uploader(
+            "Choose an email or email export",
+            type=["eml", "pdf", "docx", "xml"],
+            key="email_file",
+            max_upload_size=2,
+        )
         if st.button("Check email", type="primary", key="check_email"):
             if email_file is None:
                 st.warning("Choose a file first.")
