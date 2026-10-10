@@ -151,7 +151,7 @@ def _url_verdict_text(verdict: str) -> tuple[str, str]:
         return "Suspicious — verify before opening", "warning"
     if verdict in {"LEGITIMATE", "LOW_RISK"}:
         return "No strong threat indicators found", "success"
-    return "Needs review — some checks are incomplete", "info"
+    return "Unable to confirm legitimate or unsafe — checks incomplete", "info"
 
 
 def _model_status_text(status: str, failure_reason: str | None = None) -> str:

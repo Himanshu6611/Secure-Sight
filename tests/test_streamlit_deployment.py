@@ -79,9 +79,12 @@ def test_coverage_is_rendered_as_percentage_points():
 
 
 def test_url_verdict_copy_does_not_claim_unknown_is_safe():
-    assert streamlit_main._url_verdict_text("UNKNOWN")[0].startswith("Needs review")
+    unknown, level = streamlit_main._url_verdict_text("UNKNOWN")
+    assert "confirm legitimate or unsafe" in unknown
+    assert level == "info"
     assert streamlit_main._url_verdict_text("PHISHING")[0].startswith("Unsafe")
     assert streamlit_main._url_verdict_text("SUSPICIOUS")[0].startswith("Suspicious")
+    assert streamlit_main._url_verdict_text("LEGITIMATE")[0].startswith("No strong threat")
 
 
 def test_model_unavailable_reason_is_preserved(monkeypatch):
