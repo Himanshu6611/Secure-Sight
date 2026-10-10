@@ -61,11 +61,51 @@ def test_no_fake_model_or_missing_exif_risk():
     data = image_bytes()
     result = process(data, validate(data, "image/png"))
     assert result["synthetic_media"]["synthetic_probability"] is None
-    assert result["synthetic_media"]["analysis_status"] == "MODEL_UNAVAILABLE"
+    assert result["synthetic_media"]["analysis_status"] == "INSUFFICIENT_QUALITY"
     assert result["quality"]["status"] == "INSUFFICIENT_QUALITY"
     assert result["forensics"]["confidence"] is None
     assert result["metadata"]["exif_present"] is False
     assert result["provenance"]["status"] == "ABSENT"
+
+
+def test_licensed_ai_origin_model_runs_and_returns_an_uncalibrated_estimate():
+    from app.media.models import ExperimentalAIOriginModel
+
+    image = Image.new("RGB", (256, 256), "white")
+    draw = ImageDraw.Draw(image)
+    for y in range(0, 256, 8):
+        draw.line((0, y, 255, y), fill=(y, 255 - y, (y * 3) % 256), width=4)
+    result = ExperimentalAIOriginModel().analyze(image, {"status": "ANALYZED"})
+
+    assert result["analysis_status"] == "EXPERIMENTAL_ESTIMATE"
+    assert 0 <= result["model_score"] <= 1
+    assert result["calibrated"] is False
+    assert result["score_semantics"] == "UNCALIBRATED_MODEL_SCORE"
+    assert result["model_sha256"]
+    assert result["decision_threshold"] > 0
+
+
+def test_media_api_returns_model_estimate_without_turning_it_into_threat_verdict(client):
+    image = Image.new("RGB", (256, 256), "white")
+    draw = ImageDraw.Draw(image)
+    for y in range(0, 256, 8):
+        draw.line((0, y, 255, y), fill=(y, 255 - y, (y * 3) % 256), width=4)
+    output = io.BytesIO()
+    image.save(output, "PNG")
+
+    response = client.post(
+        "/api/v1/media/analyze",
+        data={"file": (io.BytesIO(output.getvalue()), "model-test.png")},
+    )
+    assert response.status_code == 200
+    result = response.get_json()
+    assert result["synthetic_media"]["analysis_status"] == "EXPERIMENTAL_ESTIMATE"
+    assert 0 <= result["synthetic_media"]["model_score"] <= 1
+    assert result["synthetic_media"]["calibrated"] is False
+    assert result["investigation"]["checks"]["ai_image_detector"]["status"] == "inconclusive"
+    assert result["assessment"]["risk_score"] is None
+    assert result["assessment"]["verdict"] == "UNKNOWN"
+    assert all(error["code"] != "MODEL_UNAVAILABLE" for error in result["errors"])
 
 
 def test_real_ocr():
@@ -103,7 +143,7 @@ def test_media_api_worker_and_unknown(client):
     assert result["synthid"]["status"] == "NOT_CHECKED"
     assert result["synthid"]["network_request"] is False
     assert result["investigation"]["status"] == "partial"
-    assert result["investigation"]["checks"]["ai_image_detector"]["status"] == "not_available"
+    assert result["investigation"]["checks"]["ai_image_detector"]["status"] == "inconclusive"
     assert result["investigation"]["checks"]["reverse_image_search"]["network_request"] is False
     assert result["artifact"]["sha256"]
     assert "filename" not in result["artifact"]

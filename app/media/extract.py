@@ -5,7 +5,7 @@ import os
 import re
 import warnings
 from .intake import MediaError, MAX_PIXELS
-from .models import UnavailableMediaModel
+from .models import ExperimentalAIOriginModel
 from .provenance import analyze as provenance
 
 
@@ -126,5 +126,5 @@ def process(data, artifact, language="eng"):
     ocr["credential_terms"] = sorted(set(re.findall(r"\b(?:password|login|verify|credential|otp)\b", ocr["text"], flags=re.I)))
     urls.extend(item["payload"] for item in qr["items"] if item["type"] == "URL")
     return {"artifact": artifact, "metadata": metadata, "quality": quality, "forensics": forensics,
-            "synthetic_media": UnavailableMediaModel().analyze(image, quality), "ocr": ocr, "qr": qr,
+            "synthetic_media": ExperimentalAIOriginModel().analyze(image, quality), "ocr": ocr, "qr": qr,
             "provenance": provenance(data, artifact["mime"]), "_urls": list(dict.fromkeys(urls))[:8]}

@@ -1,7 +1,7 @@
 """Normalize executed media evidence without inventing detector results."""
 import uuid
 
-DEFAULT_CHECKS = ("c2pa", "metadata", "ai_detector", "forensics")
+DEFAULT_CHECKS = ("c2pa", "metadata", "ai_image_detector", "manipulation_forensics")
 
 
 def build(result, reverse_search=False, content_safety=False, requested_checks=None):
@@ -60,9 +60,15 @@ def build(result, reverse_search=False, content_safety=False, requested_checks=N
         },
         "ai_image_detector": {
             "status": "not_available" if model.get("analysis_status") == "MODEL_UNAVAILABLE" else "inconclusive",
-            "model": model.get("model_name"), "score": model.get("synthetic_probability"),
+            "model": model.get("model_name"), "score": model.get("model_score", model.get("synthetic_probability")),
+            "classification": model.get("classification"),
+            "score_semantics": model.get("score_semantics"),
+            "decision_threshold": model.get("decision_threshold"),
+            "test_metrics": model.get("test_metrics"),
             "calibrated": model.get("calibrated", False),
-            "limitations": ["No validated AI-image detector is configured; this result does not determine image origin."],
+            "limitations": ["Experimental AI-generated-image pattern estimate; not a calibrated probability or proof of origin.",
+                "Not evaluated for deepfakes, face swaps, edited real images, or generators outside the training source.",
+                "A low score does not establish that an image is authentic."],
         },
         "manipulation_forensics": {
             "status": "partial" if forensics.get("status") == "ANALYZED" else "not_available",

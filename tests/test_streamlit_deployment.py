@@ -28,6 +28,19 @@ def test_repository_packages_take_precedence_over_installed_namesakes():
     assert sys.path[0] == streamlit_main.REPOSITORY_ROOT
 
 
+def test_community_cloud_lock_installs_checksum_pinned_image_model():
+    root = Path(streamlit_main.REPOSITORY_ROOT)
+    cloud_requirements = (root / "streamlit_app" / "requirements.txt").read_text(encoding="utf-8")
+    runtime_requirements = (root / "requirements-runtime.lock").read_text(encoding="utf-8")
+    model_path = root / "models" / "image_origin" / "image_origin_cnn.onnx"
+    metadata = json.loads((root / "models" / "image_origin" / "evaluation.json").read_text(encoding="utf-8"))
+
+    assert "-r ../requirements-runtime.lock" in cloud_requirements
+    assert "onnxruntime==1.23.2" in runtime_requirements
+    assert model_path.is_file()
+    assert hashlib.sha256(model_path.read_bytes()).hexdigest() == metadata["model_sha256"]
+
+
 def test_deployment_config_fails_closed_without_public_secrets(monkeypatch):
     for name in ("FLASK_SECRET_KEY", "RATELIMIT_STORAGE_URI", "SITE_URL"):
         monkeypatch.delenv(name, raising=False)
@@ -161,7 +174,7 @@ def test_below_threshold_email_model_never_means_legitimate():
     assert result["status_detail"] == "Model below warning threshold"
 
 
-def test_image_summary_keeps_unknown_origin_and_unavailable_model_explicit():
+def test_image_summary_separates_unknown_threat_verdict_from_unavailable_origin_model():
     result = streamlit_main._image_result_summary({
         "analysis_status": "PARTIAL",
         "assessment": {"verdict": "UNKNOWN", "risk_score": None},
@@ -184,9 +197,10 @@ def test_image_summary_keeps_unknown_origin_and_unavailable_model_explicit():
         "evidence": [{"id": "media.provenance_absent"}],
         "investigation": {"coverage": {"unavailable": ["ai_detector"]}},
     })
-    assert result["headline"] == "Image origin could not be confirmed"
+    assert result["headline"] == "Threat screening needs review"
     assert result["level"] == "info"
     assert result["model_value"] == "Unavailable"
+    assert result["model_detail"] == "Experimental AI-pattern estimate unavailable"
     assert result["model_available"] is False
     assert result["risk_value"] == "Not scored"
     assert result["dimensions"] == "1,254 × 1,254 px"
@@ -199,6 +213,37 @@ def test_image_summary_keeps_unknown_origin_and_unavailable_model_explicit():
     assert ("High frequency energy fraction", "53.00%") in result["measurements"]
 
 
+def test_image_summary_shows_experimental_ai_pattern_estimate_without_calling_it_real_or_fake():
+    result = streamlit_main._image_result_summary({
+        "analysis_status": "PARTIAL",
+        "assessment": {"verdict": "UNKNOWN", "risk_score": 18.0},
+        "artifact": {"format": "PNG", "filename": "synthetic.png"},
+        "metadata": {"status": "ANALYZED", "width": 512, "height": 512},
+        "quality": {"status": "ANALYZED"},
+        "synthetic_media": {
+            "analysis_status": "EXPERIMENTAL_ESTIMATE",
+            "model_score": 0.91,
+            "classification": "AI_GENERATED_PATTERN",
+            "decision_threshold": 0.709269,
+            "calibrated": False,
+            "test_metrics": {"balanced_accuracy": 0.875625},
+        },
+        "provenance": {"status": "ABSENT"},
+        "ocr": {"status": "ANALYZED", "words": []},
+        "qr": {"status": "ANALYZED", "items": []},
+        "linked_analysis": [],
+        "evidence": [],
+    })
+    assert result["headline"] == "Threat screening needs review"
+    assert result["pill"] == "AI-origin estimate available"
+    assert result["model_value"] == "91.0%"
+    assert result["model_available"] is True
+    assert result["model_classification"] == "AI_GENERATED_PATTERN"
+    assert result["model_detail"] == "AI-generation pattern flagged · experimental score"
+    assert result["model_threshold"] == 0.709269
+    assert result["risk_value"] == "18.0/100"
+
+
 def test_image_summary_does_not_claim_valid_signature_is_trusted_without_trust():
     result = streamlit_main._image_result_summary({
         "assessment": {"verdict": "UNKNOWN", "risk_score": None},
@@ -206,7 +251,7 @@ def test_image_summary_does_not_claim_valid_signature_is_trusted_without_trust()
         "synthetic_media": {"analysis_status": "MODEL_UNAVAILABLE"},
     })
     assert result["provenance"] == "Signed, but issuer trust is unverified"
-    assert result["headline"] == "Image origin could not be confirmed"
+    assert result["headline"] == "Threat screening needs review"
 
 
 def test_image_result_panel_renders_reference_style_summary_and_evidence(monkeypatch):
@@ -237,13 +282,13 @@ def test_image_result_panel_renders_reference_style_summary_and_evidence(monkeyp
     streamlit_main._show_result(result, "image")
 
     output = "\n".join(rendered)
-    assert "Image origin could not be confirmed" in output
-    assert "AI threat score" in output
+    assert "Threat screening needs review" in output
+    assert "Experimental AI-pattern score" in output
     assert "Forensic signals" in output
     assert "Measured properties · no anomaly verdict" in output
     assert "No C2PA provenance found" in output
     assert "View technical diagnostic breakdown" in output
-    assert "validated AI-image/deepfake probability is unavailable" in output
+    assert "does not detect all deepfakes" in output
 
 
 def test_email_result_summary_provides_plain_language_card_and_diagnostic_values():

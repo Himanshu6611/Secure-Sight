@@ -86,7 +86,19 @@ def _flask_app():
         raise RuntimeError("Secure deployment settings are incomplete")
     from app import create_app
 
-    return create_app(config)
+    app = create_app(config)
+    from app.media.models import _session
+
+    try:
+        _session()
+    except Exception as exc:
+        app.logger.warning(
+            "media_origin_model_startup_check_failed",
+            extra={"phase": "10", "diagnostic_code": type(exc).__name__[:64]},
+        )
+    else:
+        app.logger.info("media_origin_model_startup_check_passed", extra={"phase": "10"})
+    return app
 
 
 def _verdict(result: dict[str, Any], family: str) -> None:
@@ -384,19 +396,9 @@ def _show_email_result(result: dict[str, Any]) -> None:
 
 
 def _image_result_summary(result: dict[str, Any]) -> dict[str, Any]:
-    """Present image-origin evidence without turning missing checks into a verdict."""
+    """Present threat evidence separately from the experimental AI-origin estimate."""
     assessment = result.get("assessment") if isinstance(result.get("assessment"), dict) else {}
     verdict = str(assessment.get("verdict", "UNKNOWN")).upper()
-    labels = {
-        "PHISHING": ("Unsafe indicators found", "error", "Threat indicators found"),
-        "SUSPICIOUS": ("Suspicious image or destination", "warning", "Review before acting"),
-        "LEGITIMATE": ("No strong threat signs found", "info", "Threat screening only"),
-    }
-    headline, level, pill = labels.get(
-        verdict,
-        ("Image origin could not be confirmed", "info", "AI/deepfake detector unavailable"),
-    )
-
     artifact = result.get("artifact") if isinstance(result.get("artifact"), dict) else {}
     metadata = result.get("metadata") if isinstance(result.get("metadata"), dict) else {}
     quality = result.get("quality") if isinstance(result.get("quality"), dict) else {}
@@ -408,17 +410,29 @@ def _image_result_summary(result: dict[str, Any]) -> dict[str, Any]:
     investigation = result.get("investigation") if isinstance(result.get("investigation"), dict) else {}
     coverage = investigation.get("coverage") if isinstance(investigation.get("coverage"), dict) else {}
 
-    probability = model.get("synthetic_probability")
-    if not isinstance(probability, (int, float)) or not 0 <= probability <= 1:
+    probability = model.get("model_score", model.get("synthetic_probability"))
+    if isinstance(probability, bool) or not isinstance(probability, (int, float)) or not 0 <= probability <= 1:
         probability = None
     model_status = str(model.get("analysis_status", "MODEL_UNAVAILABLE")).upper()
-    model_is_usable = model_status in {"ANALYZED", "OK", "AVAILABLE"} and probability is not None
+    model_is_usable = model_status == "EXPERIMENTAL_ESTIMATE" and probability is not None
+    classification = str(model.get("classification", "")).upper()
     if not model_is_usable:
         model_value = "Unavailable"
-        model_detail = "No validated image-origin model ran"
+        model_detail = "Experimental AI-pattern estimate unavailable"
     else:
         model_value = f"{probability:.1%}"
-        model_detail = "Experimental estimate" if model.get("calibrated") is not True else "Calibrated estimate"
+        model_detail = ("AI-generation pattern flagged · experimental score"
+                        if classification == "AI_GENERATED_PATTERN"
+                        else "No AI-generation pattern flagged · experimental score")
+
+    labels = {
+        "PHISHING": ("Unsafe indicators found", "error", "Threat indicators found"),
+        "SUSPICIOUS": ("Suspicious image or destination", "warning", "Review before acting"),
+        "LEGITIMATE": ("No strong threat signs found", "info", "Threat screening only"),
+        "UNKNOWN": ("Threat screening needs review", "info",
+                    "AI-origin estimate available" if model_is_usable else "Threat checks incomplete"),
+    }
+    headline, level, pill = labels.get(verdict, labels["UNKNOWN"])
 
     c2pa = str(provenance.get("status", "UNAVAILABLE")).upper()
     provenance_labels = {
@@ -471,6 +485,9 @@ def _image_result_summary(result: dict[str, Any]) -> dict[str, Any]:
         "model_value": model_value,
         "model_detail": model_detail,
         "model_available": model_is_usable,
+        "model_classification": classification or "Unavailable",
+        "model_threshold": model.get("decision_threshold"),
+        "model_test_metrics": model.get("test_metrics") if isinstance(model.get("test_metrics"), dict) else {},
         "image_format": image_format,
         "image_name": image_name,
         "dimensions": dimensions,
@@ -524,7 +541,7 @@ def _show_image_result(result: dict[str, Any]) -> None:
     )
     st.markdown(
         f"""
-        <section class="ss-image-verdict {level} {'needs-review' if summary['headline'] == 'Image origin could not be confirmed' else ''}">
+        <section class="ss-image-verdict {level} {'needs-review' if summary['headline'] == 'Threat screening needs review' else ''}">
           <div class="ss-image-kicker">Threat verdict</div>
           <div class="ss-image-line"><h2>{html.escape(summary['headline'])}</h2>
             <span class="ss-image-pill">{html.escape(summary['pill'])}</span></div>
@@ -533,7 +550,7 @@ def _show_image_result(result: dict[str, Any]) -> None:
           <div class="ss-image-card"><div class="ss-image-label">Image media file</div>
             <div class="ss-image-file">{html.escape(str(summary['image_name']))}</div>
             <div class="ss-image-detail">{html.escape(str(summary['image_format']))} · {html.escape(summary['dimensions'])}</div></div>
-          <div class="ss-image-card"><div class="ss-image-label">AI threat score</div>
+          <div class="ss-image-card"><div class="ss-image-label">Experimental AI-pattern score</div>
             <div class="ss-image-value neutral">{html.escape(summary['model_value'])}</div>
             <div class="ss-image-detail">{html.escape(summary['model_detail'])}</div></div>
           <div class="ss-image-card"><div class="ss-image-label">Forensic signals</div>
@@ -545,12 +562,13 @@ def _show_image_result(result: dict[str, Any]) -> None:
     )
     if summary["model_available"]:
         origin_note = (
-            "The AI score is a model estimate, not proof of image origin. "
-            "Missing provenance does not mean an image is fake."
+            f"{summary['model_detail']}. This score is not a probability or proof that an image is AI-made. "
+            "The model was evaluated on one licensed image dataset only; it was not evaluated for face deepfakes, "
+            "edits, or every image generator. A result below threshold does not prove camera origin."
         )
     else:
         origin_note = (
-            "An AI/deepfake detector is not configured for this scan. SecureSight cannot tell whether this image was AI-generated or manipulated. "
+            "The experimental AI-image model did not produce an estimate for this scan. SecureSight cannot tell whether this image was AI-generated or manipulated. "
             "Missing provenance does not mean an image is fake, and a generated image is not automatically unsafe."
         )
     st.info(origin_note)
@@ -577,7 +595,9 @@ def _show_image_result(result: dict[str, Any]) -> None:
             ("Image format", summary["image_format"]),
             ("Image media file", summary["image_name"]),
             ("Image dimensions", summary["dimensions"]),
-            ("AI / deepfake model", summary["model_value"] + " — " + summary["model_detail"]),
+            ("Experimental AI-pattern score", summary["model_value"] + " — " + summary["model_detail"]),
+            ("Model classification", summary["model_classification"]),
+            ("Model decision threshold", f"{summary['model_threshold']:.1%}" if isinstance(summary["model_threshold"], (int, float)) else "Unavailable"),
             ("C2PA provenance", summary["provenance"]),
             ("Image metadata", summary["metadata_status"]),
             ("Image quality", summary["quality_status"]),
@@ -595,7 +615,7 @@ def _show_image_result(result: dict[str, Any]) -> None:
                 unsafe_allow_html=True,
             )
         st.markdown("**Evidence and limits**")
-        st.caption("Forensic measurements are raw image properties, not anomaly scores. A validated AI-image/deepfake probability is unavailable; measured properties and missing metadata do not establish image origin or authenticity.")
+        st.caption("Forensic measurements are raw image properties, not anomaly scores. The experimental AI-pattern score is uncalibrated and dataset-limited; it does not detect all deepfakes or prove an image is real. Measured properties and missing metadata do not establish image origin or authenticity.")
         st.json(result, expanded=False)
 
 

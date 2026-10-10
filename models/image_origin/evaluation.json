@@ -1,0 +1,80 @@
+{
+  "validation_split": "pair-grouped validation split from licensed dataset train shard 0",
+  "test_split": "separate pair-grouped holdout; untouched during model fitting and threshold selection",
+  "train_examples": 4795,
+  "validation_examples": 1600,
+  "test_examples": 1600,
+  "pair_groups_disjoint": true,
+  "validation_target_fpr": 0.05,
+  "validation_threshold": 0.7092691932792147,
+  "test_at_selected_threshold": {
+    "accuracy": 0.875625,
+    "balanced_accuracy": 0.875625,
+    "roc_auc": 0.9628125,
+    "false_positive_rate": 0.04125,
+    "false_negative_rate": 0.2075,
+    "confusion_matrix_labels_0_authentic_1_ai": [
+      [
+        767,
+        33
+      ],
+      [
+        166,
+        634
+      ]
+    ]
+  },
+  "test_at_default_0_5": {
+    "accuracy": 0.895625,
+    "balanced_accuracy": 0.895625,
+    "roc_auc": 0.9628125,
+    "false_positive_rate": 0.085,
+    "false_negative_rate": 0.12375,
+    "confusion_matrix_labels_0_authentic_1_ai": [
+      [
+        732,
+        68
+      ],
+      [
+        99,
+        701
+      ]
+    ]
+  },
+  "jpeg_reencoded_test_at_selected_threshold_quality_82": {
+    "accuracy": 0.87,
+    "balanced_accuracy": 0.87,
+    "roc_auc": 0.9618046875,
+    "false_positive_rate": 0.04,
+    "false_negative_rate": 0.22,
+    "confusion_matrix_labels_0_authentic_1_ai": [
+      [
+        768,
+        32
+      ],
+      [
+        176,
+        624
+      ]
+    ]
+  },
+  "score_is_calibrated_probability": false,
+  "limitation": "Single source dataset and one source shard; no independent generator, social-media, deepfake, or real-world test.",
+  "model_sha256": "6669d49056d894c8940d6bb53b0821f5ce6b6ef5664a5817947bb3162a75a648",
+  "decision_threshold": 0.7092691932792147,
+  "dataset": {
+    "name": "AI vs Human Generated Dataset",
+    "source": "Kaggle/alessandrasala79; Hugging Face mirror by Ransaka",
+    "license": "Apache-2.0 (provider-declared)",
+    "license_source": "https://www.innovatiana.com/en/datasets/ai-vs-human-generated-dataset",
+    "upstream": "https://www.kaggle.com/datasets/alessandrasala79/ai-vs-human-generated-dataset",
+    "labels": {
+      "0": "authentic Shutterstock image",
+      "1": "AI-generated counterpart"
+    },
+    "pair_grouping": "adjacent authentic/synthetic equivalents kept in a single split",
+    "used_shard": "train-00000-of-00010.parquet",
+    "source_shard_sha256": "e3c712138963eb76887dd6a05cb57c27e45da2e093e8b49397b9df070c53e4a2"
+  },
+  "architecture": "Compact 5-stage CNN, 96x96 RGB, trained from scratch"
+}

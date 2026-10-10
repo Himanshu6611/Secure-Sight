@@ -25,6 +25,7 @@ class ExplanationEngine:
         """Fixed registered wording for actual unscored media observations."""
         registry = {
             "media.model_unavailable": ("DEEPFAKE", "The trained model is unavailable; synthetic and manipulation probabilities are unknown."),
+            "media.ai_origin_model_observation": ("AI_IMAGE_PATTERN", "An experimental model observed patterns associated with AI-generated images in its training domain; this uncalibrated score does not prove image origin."),
             "media.measured_properties": ("MEDIA_FORENSICS", "Compression and noise measurements are uncalibrated observations, not proof of manipulation."),
             "media.insufficient_quality": ("MEDIA", "Image quality limits analysis; poor quality does not increase phishing risk."),
             "media.qr_observed": ("QR", "A QR payload was decoded. QR presence alone is not malicious."),
