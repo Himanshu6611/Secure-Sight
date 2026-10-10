@@ -89,6 +89,10 @@ def _flask_app():
 
 
 def _verdict(result: dict[str, Any], family: str) -> None:
+    if family == "email":
+        _show_email_result(result)
+        return
+
     if family == "url":
         verdict = result.get("verdict", "UNKNOWN")
         risk = result.get("risk_score")
@@ -124,6 +128,119 @@ def _verdict(result: dict[str, Any], family: str) -> None:
     middle.metric("Model estimate", "Unavailable" if probability is None else f"{probability:.1%}")
     right.metric("Evidence coverage", _coverage_label(coverage))
     st.caption("Risk score and model estimate are different measures. Neither guarantees that content is safe.")
+
+
+def _email_result_summary(result: dict[str, Any]) -> dict[str, Any]:
+    """Translate the email analyzer's observed evidence into plain-language guidance.
+
+    Email classification currently has no deployed, validated email-trained model.
+    Do not invent a probability or present the URL model as an email model.
+    """
+    risk = result.get("risk") if isinstance(result.get("risk"), dict) else {}
+    verdict = str(risk.get("verdict", "UNKNOWN")).upper()
+    evidence = result.get("evidence")
+    if not isinstance(evidence, list):
+        evidence = []
+
+    # Missing authentication is common for uploaded exports and is a limitation,
+    # not itself evidence of phishing. Surface it separately from positive signals.
+    informative = [
+        item for item in evidence
+        if isinstance(item, dict)
+        and item.get("evidence_type") in {"OBSERVED", "INFERRED"}
+        and item.get("indicator") != "AUTHENTICATION_UNVERIFIED"
+    ]
+    from app.email.evidence import REASONS
+    findings = []
+    for item in informative:
+        reason = REASONS.get(item.get("indicator"))
+        if reason:
+            findings.append(reason[1])
+    findings = list(dict.fromkeys(findings))[:5]
+
+    score = risk.get("risk_score")
+    score = score if isinstance(score, (int, float)) and 0 <= score <= 100 else None
+    assessment_failed = risk.get("status") == "ERROR" or verdict == "ANALYSIS_FAILED"
+    if verdict == "PHISHING":
+        headline = "Phishing indicators found — don’t interact"
+        level = "error"
+        action = (
+            "Do not click links, open attachments, or share passwords or codes. "
+            "Verify with the organization through a known contact method."
+        )
+    elif verdict == "SUSPICIOUS" or informative:
+        headline = "Warning signs found — verify before acting"
+        level = "warning"
+        action = (
+            "Avoid links and attachments until you verify the sender independently "
+            "using a trusted phone number or website."
+        )
+    elif assessment_failed:
+        headline = "No strong warning found in checked text; link risk could not be assessed"
+        level = "info"
+        action = (
+            "The message text was inspected, but no linked website produced a risk score. "
+            "Do not treat this as a safe verdict; verify unexpected requests independently."
+        )
+    else:
+        headline = "No strong phishing signs found in the content checked"
+        level = "info"
+        action = (
+            "This is not proof that the email is safe. Verify unexpected payment, password, "
+            "or account requests through a known contact method."
+        )
+
+    if result.get("analysis_status") == "FAILED":
+        headline = "Email analysis failed — no result was produced"
+        level = "error"
+        action = "Try the original .eml file or a clearer, unprotected export."
+
+    return {
+        "headline": headline,
+        "level": level,
+        "action": action,
+        "findings": findings,
+        "risk_score": score,
+        "email_model": "Not configured",
+        "authentication_note": any(
+            isinstance(item, dict) and item.get("indicator") == "AUTHENTICATION_UNVERIFIED"
+            for item in evidence
+        ),
+    }
+
+
+def _show_email_result(result: dict[str, Any]) -> None:
+    summary = _email_result_summary(result)
+    message = f"**{summary['headline']}**"
+    if summary["level"] == "error":
+        st.error(message)
+    elif summary["level"] == "warning":
+        st.warning(message)
+    else:
+        st.info(message)
+
+    first, second = st.columns(2)
+    first.metric(
+        "Linked-site / email warning score",
+        "Not scored" if summary["risk_score"] is None else f"{summary['risk_score']:.1f}/100",
+    )
+    second.metric("Email-trained model", summary["email_model"])
+    st.caption(
+        "This screening uses observed email and linked-page signals. "
+        "A validated email-trained model is not connected, so no ML probability is shown."
+    )
+
+    if summary["findings"]:
+        st.markdown("**Why it was flagged**")
+        for finding in summary["findings"]:
+            st.write(f"• {finding}")
+    else:
+        st.markdown("**What this means**")
+        st.write("No strong phishing indicator was found in the message content that could be checked.")
+    if summary["authentication_note"]:
+        st.caption("Sender authentication could not be independently verified from this uploaded file.")
+    st.markdown("**Recommended next step**")
+    st.write(summary["action"])
 
 
 def _coverage_label(value: Any) -> str:

@@ -101,6 +101,45 @@ def test_url_verdict_copy_does_not_claim_unknown_is_safe():
     assert streamlit_main._url_verdict_text("LEGITIMATE")[0].startswith("No strong threat")
 
 
+def test_email_result_uses_plain_language_evidence_without_fabricating_ml():
+    result = streamlit_main._email_result_summary({
+        "analysis_status": "PARTIAL",
+        "body_analysis": {"snippet": "redacted"},
+        "risk": {"verdict": "UNKNOWN", "risk_score": None},
+        "evidence": [
+            {"indicator": "AUTHENTICATION_UNVERIFIED", "evidence_type": "MISSING"},
+            {"indicator": "HTML_LINK_DOMAIN_MISMATCH", "evidence_type": "OBSERVED"},
+        ],
+    })
+    assert result["headline"] == "Warning signs found — verify before acting"
+    assert "Displayed link and actual destination" in result["findings"][0]
+    assert result["authentication_note"] is True
+    assert result["email_model"] == "Not configured"
+    assert result["risk_score"] is None
+
+
+def test_email_result_never_calls_unscored_content_confirmed_safe():
+    result = streamlit_main._email_result_summary({
+        "analysis_status": "PARTIAL",
+        "body_analysis": {"snippet": "redacted"},
+        "risk": {"verdict": "UNKNOWN", "risk_score": None},
+        "evidence": [],
+    })
+    assert result["headline"] == "No strong phishing signs found in the content checked"
+    assert "not proof" in result["action"]
+    assert "safe" not in result["headline"].casefold()
+
+
+def test_email_result_reports_failed_analysis_without_verdict():
+    result = streamlit_main._email_result_summary({
+        "analysis_status": "FAILED",
+        "risk": {"verdict": "UNKNOWN", "risk_score": None},
+        "evidence": [],
+    })
+    assert result["headline"] == "Email analysis failed — no result was produced"
+    assert result["level"] == "error"
+
+
 def test_model_unavailable_reason_is_preserved(monkeypatch):
     class FailedPredictor:
         _loaded = False
