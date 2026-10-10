@@ -17,16 +17,23 @@ from app.brand.analyzer import analyze_brand, validate_email_context
 @lru_cache(maxsize=1)
 def _models():
     predictor = SecureSightPredictor()
-    predictor.load()
+    url_status = predictor.load()
     # Legacy email pickle has no approved Phase 11 evaluation/provenance.
-    return {"url": predictor if predictor._loaded else None, "email": None}
+    return {
+        "url": predictor if predictor._loaded else None,
+        "url_load_status": url_status,
+        "email": None,
+    }
 
 
 def load_models(app):
     app.extensions["models"] = dict(_models())
     app.extensions["ml_predictor"] = app.extensions["models"]["url"]
     if app.extensions["ml_predictor"] is None:
-        app.logger.warning("url_model_unavailable")
+        app.logger.warning(
+            "url_model_unavailable",
+            extra={"model_load_status": app.extensions["models"]["url_load_status"].get("status")},
+        )
 
 
 def scan_url(value, email_context=None):
@@ -80,7 +87,11 @@ def scan_url(value, email_context=None):
     predictor = current_app.extensions.get("ml_predictor")
     if current_app.extensions["models"]["url"] is None:
         predictor = None
-    prediction = predictor.predict(vector) if predictor is not None else dict(status="MODEL_NOT_FOUND",probability=None,prediction=None)
+    load_status = current_app.extensions["models"].get("url_load_status", {})
+    unavailable_status = load_status.get("status", "MODEL_NOT_FOUND")
+    prediction = predictor.predict(vector) if predictor is not None else dict(
+        status=unavailable_status, probability=None, prediction=None
+    )
     probability = prediction.get("probability")
     if prediction["status"] != "OK":
         warnings_list.append(prediction["status"])

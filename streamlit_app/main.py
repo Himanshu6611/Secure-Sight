@@ -154,6 +154,16 @@ def _url_verdict_text(verdict: str) -> tuple[str, str]:
     return "Needs review — some checks are incomplete", "info"
 
 
+def _model_status_text(status: str) -> str:
+    explanations = {
+        "MODEL_NOT_FOUND": "The URL model artifact is missing from this deployment.",
+        "MODEL_VERSION_MISMATCH": "The URL model does not match this deployment's supported runtime or schema.",
+        "MODEL_LOAD_FAILED": "The URL model failed its integrity or loading checks.",
+        "FEATURE_SCHEMA_MISMATCH": "The URL model feature schema is incompatible with this scanner.",
+    }
+    return explanations.get(status, "The URL model could not produce an estimate for this scan.")
+
+
 def _show_url_result(result: dict[str, Any]) -> None:
     verdict = str(result.get("verdict", "UNKNOWN")).upper()
     label, level = _url_verdict_text(verdict)
@@ -259,10 +269,7 @@ def _show_url_result(result: dict[str, Any]) -> None:
     if probability is None:
         ml_result = result.get("ml_result") or {}
         status = str(ml_result.get("status", "MODEL_UNAVAILABLE"))
-        if status == "MODEL_NOT_FOUND":
-            st.warning("The URL model is not available in this deployment. This result uses observable rules only.")
-        else:
-            st.caption("The calibrated URL model did not return an estimate for this scan.")
+        st.warning(_model_status_text(status) + " This result uses observable rules only.")
     elif isinstance(result.get("model_version"), str):
         st.caption(f"URL model version: {result['model_version']}. The model evaluates URL patterns; domain and webpage checks are separate evidence.")
 

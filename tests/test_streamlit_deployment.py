@@ -6,6 +6,7 @@ from pathlib import Path
 from flask import Flask, jsonify, request
 
 from streamlit_app import main as streamlit_main
+from app.services import scans
 
 
 def test_entrypoint_imports_project_packages_when_run_from_subdirectory():
@@ -79,6 +80,22 @@ def test_url_verdict_copy_does_not_claim_unknown_is_safe():
     assert streamlit_main._url_verdict_text("UNKNOWN")[0].startswith("Needs review")
     assert streamlit_main._url_verdict_text("PHISHING")[0].startswith("Unsafe")
     assert streamlit_main._url_verdict_text("SUSPICIOUS")[0].startswith("Suspicious")
+
+
+def test_model_unavailable_reason_is_preserved(monkeypatch):
+    class FailedPredictor:
+        _loaded = False
+
+        def load(self):
+            return {"status": "MODEL_VERSION_MISMATCH"}
+
+    scans._models.cache_clear()
+    monkeypatch.setattr(scans, "SecureSightPredictor", FailedPredictor)
+    try:
+        assert scans._models()["url_load_status"]["status"] == "MODEL_VERSION_MISMATCH"
+    finally:
+        scans._models.cache_clear()
+    assert "runtime or schema" in streamlit_main._model_status_text("MODEL_VERSION_MISMATCH")
 
 
 def test_url_adapter_uses_shared_api(monkeypatch):
