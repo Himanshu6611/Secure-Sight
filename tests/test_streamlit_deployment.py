@@ -270,3 +270,52 @@ def test_email_adapter_reports_document_extraction_failure(monkeypatch):
         assert "after PDF OCR" in str(exc)
     else:
         raise AssertionError("Expected a readable-text explanation for scanned PDF")
+
+
+def test_email_adapter_retries_one_transient_capacity_rejection(monkeypatch):
+    app = Flask(__name__)
+    submissions = {"count": 0}
+
+    def submit():
+        submissions["count"] += 1
+        if submissions["count"] == 1:
+            response = jsonify(error={"code": "PROVIDER_UNAVAILABLE"})
+            response.status_code = 503
+            response.headers["Retry-After"] = "1"
+            return response
+        return jsonify(job_id="b" * 32, token="temporary-token", poll_url="/api/v1/email/jobs/" + "b" * 32), 202
+
+    def poll(job_id):
+        return jsonify(state="PARTIAL", result={"risk": {"verdict": "UNKNOWN"}})
+
+    app.add_url_rule("/api/v1/email/analyze", view_func=submit, methods=["POST"])
+    app.add_url_rule("/api/v1/email/jobs/<job_id>", view_func=poll, methods=["GET"])
+    monkeypatch.setattr(streamlit_main, "_flask_app", lambda: app)
+    monkeypatch.setattr(streamlit_main.time, "sleep", lambda _: None)
+
+    result = streamlit_main._request_email("fixture.eml", b"Subject: test\n\nhello")
+
+    assert submissions["count"] == 2
+    assert result == {"risk": {"verdict": "UNKNOWN"}}
+
+
+def test_email_adapter_explains_persistent_capacity_rejection(monkeypatch):
+    app = Flask(__name__)
+
+    def submit():
+        response = jsonify(error={"code": "PROVIDER_UNAVAILABLE"})
+        response.status_code = 503
+        response.headers["Retry-After"] = "1"
+        return response
+
+    app.add_url_rule("/api/v1/email/analyze", view_func=submit, methods=["POST"])
+    monkeypatch.setattr(streamlit_main, "_flask_app", lambda: app)
+    monkeypatch.setattr(streamlit_main.time, "sleep", lambda _: None)
+
+    try:
+        streamlit_main._request_email("fixture.eml", b"Subject: test\n\nhello")
+    except RuntimeError as exc:
+        assert "scanner is busy" in str(exc).lower()
+        assert "was not queued" in str(exc).lower()
+    else:
+        raise AssertionError("Expected a clear message for a busy scanner")

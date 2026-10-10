@@ -526,16 +526,48 @@ def _request_image(filename: str, content: bytes) -> dict[str, Any]:
 def _request_email(filename: str, content: bytes) -> dict[str, Any]:
     app = _flask_app()
     with app.test_client() as client:
-        response = client.post(
-            "/api/v1/email/analyze",
-            data={"file": (io.BytesIO(content), filename)},
-            content_type="multipart/form-data",
-        )
+        response = None
+        # A saturated scan semaphore returns a definite 503 before the email
+        # endpoint accepts or queues the upload. Wait briefly and retry once so
+        # a transient burst does not become a confusing submission failure.
+        for attempt in range(2):
+            response = client.post(
+                "/api/v1/email/analyze",
+                data={"file": (io.BytesIO(content), filename)},
+                content_type="multipart/form-data",
+            )
+            if response.status_code != 503 or attempt == 1:
+                break
+            retry_after = response.headers.get("Retry-After", "1")
+            try:
+                delay = min(5, max(1, int(retry_after)))
+            except (TypeError, ValueError):
+                delay = 1
+            time.sleep(delay)
         job = response.get_json(silent=True)
         if response.status_code != 202 or not isinstance(job, dict):
             error = job.get("error", {}) if isinstance(job, dict) else {}
             code = error.get("code") if isinstance(error, dict) else None
             messages = {
+                "PROVIDER_UNAVAILABLE": (
+                    "The scanner is busy right now. Your email was not queued; "
+                    "please wait a few seconds and try again."
+                ),
+                "RATE_LIMITED": (
+                    "Too many scans were submitted recently. Please wait before trying again."
+                ),
+                "EMAIL_QUEUE_FULL": (
+                    "The email analysis queue is full. Your email was not queued; "
+                    "please try again shortly."
+                ),
+                "EMAIL_JOB_STORE_UNAVAILABLE": (
+                    "The protected email job store is temporarily unavailable. "
+                    "Your email was not queued; please try later."
+                ),
+                "EMAIL_WORKER_UNAVAILABLE": (
+                    "The email analysis worker could not start. Your email was not queued; "
+                    "please try again shortly."
+                ),
                 "DOCUMENT_TEXT_UNAVAILABLE": (
                     "No readable text was found in this file, even after PDF OCR. "
                     "The PDF may be blank, damaged or too low quality to read."
