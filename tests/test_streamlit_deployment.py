@@ -1,4 +1,6 @@
 """Tests for Streamlit's production configuration and in-process API adapter."""
+import hashlib
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -113,6 +115,18 @@ def test_scan_result_preserves_safe_model_failure_reason():
         "prediction": None,
         "failure_reason": "CHECKSUM_MISMATCH:model.pkl",
     }
+
+
+def test_model_json_artifact_hashes_are_portable_across_line_endings():
+    artifact_dir = Path(streamlit_main.REPOSITORY_ROOT) / "models" / "v5"
+    metadata = json.loads(
+        (artifact_dir / "model_metadata.json").read_text(encoding="utf-8")
+    )
+    for name, expected in metadata["artifact_sha256"].items():
+        artifact = (artifact_dir / name).read_bytes()
+        if name.endswith(".json"):
+            assert b"\r\n" not in artifact, f"{name} must stay LF-stable"
+        assert hashlib.sha256(artifact).hexdigest() == expected
 
 
 def test_url_adapter_uses_shared_api(monkeypatch):

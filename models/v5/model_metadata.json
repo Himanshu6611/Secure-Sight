@@ -158,7 +158,7 @@
   "artifact_sha256": {
     "model.pkl": "d76bea5642acc1de1d5de8841db10fa73a3392c789f5f81b011e03bdba1350c0",
     "preprocessor.pkl": "4ead6216fcb2b128b59c1c7aac19ec6ebf1fffcb65be7c3b8e34f992c081f4af",
-    "threshold.json": "1ebabe68219e7fa10087eb38418835f54d2b686e408f2fe8bc945dc1611f2487",
-    "feature_schema.json": "5565fb58ec739bf452371407ea0e08c7c5ebbf3f980d6c95bf95db21528ead86"
+    "threshold.json": "f3625b8d992f33e35e840ba3ff2c6994173aa8d8afacebc82c46cc148b64670f",
+    "feature_schema.json": "2ad06d87e5971fd9152d5e73646b516fd28d5531cddaa1f4d05a66518925f57b"
   }
 }
