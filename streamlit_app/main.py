@@ -395,9 +395,12 @@ def _request_email(filename: str, content: bytes) -> dict[str, Any]:
             code = error.get("code") if isinstance(error, dict) else None
             messages = {
                 "DOCUMENT_TEXT_UNAVAILABLE": (
-                    "No readable text was found in this file. It may be a scanned PDF; "
-                    "image-only PDFs are not supported for email analysis yet."
+                    "No readable text was found in this file, even after PDF OCR. "
+                    "The PDF may be blank, damaged or too low quality to read."
                 ),
+                "DOCUMENT_OCR_UNAVAILABLE": "Scanned PDF reading is temporarily unavailable. Please try again later or upload the original .eml message.",
+                "DOCUMENT_OCR_TIMEOUT": "The scanned PDF took too long to read. Try a smaller or clearer PDF.",
+                "DOCUMENT_OCR_FAILED": "The scanned PDF could not be read. Try a clearer scan or upload the original .eml message.",
                 "DOCUMENT_PARSE_FAILED": "This document could not be read. Try exporting it again or upload the original .eml message.",
                 "ENCRYPTED_DOCUMENT_UNSUPPORTED": "This document is password-protected. Remove the password before analyzing it.",
                 "DOCUMENT_RESOURCE_LIMIT": "This document exceeds the analysis limits (maximum 20 PDF pages and bounded text size).",

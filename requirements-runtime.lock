@@ -33,6 +33,7 @@ pandas==2.2.2
 pillow==12.3.0
 pyarrow==25.0.1
 pypdf==6.20.0
+pypdfium2==5.14.0
 pycparser==3.1
 pytesseract==0.3.13
 python-dateutil==2.9.0.post0

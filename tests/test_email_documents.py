@@ -37,6 +37,52 @@ def test_pdf_extraction_is_bounded_and_requires_pdf_signature(monkeypatch):
         extract(b"not a pdf", "pdf")
 
 
+def test_pdf_uses_ocr_only_for_pages_without_embedded_text(monkeypatch):
+    class Page:
+        def extract_text(self):
+            return ""
+
+    class Reader:
+        is_encrypted = False
+        pages = [Page()]
+
+    calls = []
+
+    class Document:
+        def close(self):
+            pass
+
+    document = Document()
+    monkeypatch.setattr("app.email.documents.PdfReader", lambda *_args, **_kwargs: Reader())
+    monkeypatch.setattr("app.email.documents._open_pdf_for_ocr", lambda raw: document)
+    monkeypatch.setattr("app.email.documents._ocr_pdf_page", lambda pdf, page: calls.append((pdf, page)) or "Visit https://example.test")
+    assert extract(b"%PDF-1.7\n", "pdf") == "Visit https://example.test"
+    assert calls == [(document, 0)]
+
+
+def test_scanned_pdf_is_ocrd_in_isolated_worker():
+    import shutil
+    from pathlib import Path
+
+    if not Path(r"C:\Program Files\Tesseract-OCR\tesseract.exe").is_file() and not shutil.which("tesseract"):
+        pytest.skip("Tesseract is not installed in this test environment")
+    fixture = Path(__file__).parent / "fixtures" / "scanned-email.pdf"
+    text = extract(fixture.read_bytes(), "pdf")
+    assert "example.test" in text.lower()
+
+
+def test_scanned_pdf_ocr_works_through_isolated_worker():
+    import shutil
+    from pathlib import Path
+    from app.media.worker import run
+
+    if not Path(r"C:\Program Files\Tesseract-OCR\tesseract.exe").is_file() and not shutil.which("tesseract"):
+        pytest.skip("Tesseract is not installed in this test environment")
+    fixture = Path(__file__).parent / "fixtures" / "scanned-email.pdf"
+    result = run(fixture.read_bytes(), {"mime": "--email-document"}, "pdf", wall_seconds=20)
+    assert "example.test" in result["text"].lower()
+
+
 def test_document_extraction_runs_in_isolated_worker():
     from app.media.worker import run
 

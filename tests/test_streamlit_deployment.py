@@ -200,6 +200,6 @@ def test_email_adapter_reports_document_extraction_failure(monkeypatch):
         streamlit_main._request_email("fixture.pdf", b"%PDF-fixture")
     except RuntimeError as exc:
         assert "No readable text" in str(exc)
-        assert "scanned PDF" in str(exc)
+        assert "after PDF OCR" in str(exc)
     else:
         raise AssertionError("Expected a readable-text explanation for scanned PDF")

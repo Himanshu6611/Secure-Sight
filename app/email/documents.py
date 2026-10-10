@@ -1,5 +1,6 @@
 """Extract bounded, passive text from common email-export documents."""
 import io
+import os
 import zipfile
 from defusedxml import ElementTree
 from pypdf import PdfReader
@@ -7,6 +8,63 @@ from .parser import EmailError, MAX_EMAIL_BYTES
 
 MAX_EXTRACTED_TEXT = 64 * 1024
 MAX_DOCX_EXPANDED = 12 * 1024 * 1024
+PDF_OCR_MAX_DIMENSION = 2000
+PDF_OCR_TIMEOUT_SECONDS = 2.0
+
+
+def _open_pdf_for_ocr(raw):
+    try:
+        import pypdfium2 as pdfium
+        return pdfium.PdfDocument(raw)
+    except ImportError:
+        raise EmailError("DOCUMENT_OCR_UNAVAILABLE", 503) from None
+    except Exception:
+        raise EmailError("DOCUMENT_OCR_FAILED", 422) from None
+
+
+def _ocr_pdf_page(document, page_number):
+    """OCR one textless PDF page in the already isolated document worker."""
+    try:
+        import pytesseract
+        from PIL import Image
+    except ImportError:
+        raise EmailError("DOCUMENT_OCR_UNAVAILABLE", 503) from None
+
+    page = bitmap = image = None
+    try:
+        page = document[page_number]
+        width, height = page.get_size()
+        if not width or not height or width > 200_000 or height > 200_000:
+            raise EmailError("DOCUMENT_RESOURCE_LIMIT", 413)
+        scale = min(1.5, PDF_OCR_MAX_DIMENSION / max(width, height))
+        bitmap = page.render(scale=scale, rotation=0)
+        image = bitmap.to_pil().convert("L")
+        if image.width * image.height > PDF_OCR_MAX_DIMENSION ** 2:
+            raise EmailError("DOCUMENT_RESOURCE_LIMIT", 413)
+        command = os.environ.get("TESSERACT_CMD") or r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+        if os.path.isfile(command):
+            pytesseract.pytesseract.tesseract_cmd = command
+        try:
+            return pytesseract.image_to_string(
+                image, lang="eng+hin", config="--psm 6", timeout=PDF_OCR_TIMEOUT_SECONDS
+            )
+        except RuntimeError as exc:
+            if "timeout" in str(exc).lower():
+                raise EmailError("DOCUMENT_OCR_TIMEOUT", 422) from None
+            raise EmailError("DOCUMENT_OCR_FAILED", 422) from None
+        except Exception:
+            raise EmailError("DOCUMENT_OCR_FAILED", 422) from None
+    except EmailError:
+        raise
+    except Exception:
+        raise EmailError("DOCUMENT_OCR_FAILED", 422) from None
+    finally:
+        if image is not None:
+            image.close()
+        if bitmap is not None:
+            bitmap.close()
+        if page is not None:
+            page.close()
 
 
 def _pdf(raw):
@@ -20,12 +78,21 @@ def _pdf(raw):
             raise EmailError("DOCUMENT_RESOURCE_LIMIT", 413)
         parts = []
         size = 0
-        for page in reader.pages:
-            text = page.extract_text() or ""
-            size += len(text)
-            if size > MAX_EXTRACTED_TEXT:
-                raise EmailError("DOCUMENT_RESOURCE_LIMIT", 413)
-            parts.append(text)
+        ocr_document = None
+        try:
+            for page_number, page in enumerate(reader.pages):
+                text = page.extract_text() or ""
+                if not text.strip():
+                    if ocr_document is None:
+                        ocr_document = _open_pdf_for_ocr(raw)
+                    text = _ocr_pdf_page(ocr_document, page_number)
+                size += len(text)
+                if size > MAX_EXTRACTED_TEXT:
+                    raise EmailError("DOCUMENT_RESOURCE_LIMIT", 413)
+                parts.append(text)
+        finally:
+            if ocr_document is not None:
+                ocr_document.close()
         return "\n".join(parts)
     except EmailError:
         raise

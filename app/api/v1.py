@@ -27,7 +27,7 @@ def email_analyze_endpoint():
                 from email.message import EmailMessage
                 try:
                     extracted = run(raw, {"mime": "--email-document"}, suffix,
-                                    wall_seconds=8, output_limit=512 * 1024)
+                                    wall_seconds=20, output_limit=512 * 1024)
                 except MediaError as exc:
                     raise EmailError(exc.code, exc.status) from None
                 message = EmailMessage()
