@@ -1,80 +1,250 @@
 {
-  "validation_split": "pair-grouped validation split from licensed dataset train shard 0",
-  "test_split": "separate pair-grouped holdout; untouched during model fitting and threshold selection",
-  "train_examples": 4795,
-  "validation_examples": 1600,
-  "test_examples": 1600,
-  "pair_groups_disjoint": true,
-  "validation_target_fpr": 0.05,
-  "validation_threshold": 0.7092691932792147,
-  "test_at_selected_threshold": {
-    "accuracy": 0.875625,
-    "balanced_accuracy": 0.875625,
-    "roc_auc": 0.9628125,
-    "false_positive_rate": 0.04125,
-    "false_negative_rate": 0.2075,
-    "confusion_matrix_labels_0_authentic_1_ai": [
-      [
-        767,
-        33
-      ],
-      [
-        166,
-        634
-      ]
-    ]
-  },
-  "test_at_default_0_5": {
-    "accuracy": 0.895625,
-    "balanced_accuracy": 0.895625,
-    "roc_auc": 0.9628125,
-    "false_positive_rate": 0.085,
-    "false_negative_rate": 0.12375,
-    "confusion_matrix_labels_0_authentic_1_ai": [
-      [
-        732,
-        68
-      ],
-      [
-        99,
-        701
-      ]
-    ]
-  },
-  "jpeg_reencoded_test_at_selected_threshold_quality_82": {
-    "accuracy": 0.87,
-    "balanced_accuracy": 0.87,
-    "roc_auc": 0.9618046875,
-    "false_positive_rate": 0.04,
-    "false_negative_rate": 0.22,
-    "confusion_matrix_labels_0_authentic_1_ai": [
-      [
-        768,
-        32
-      ],
-      [
-        176,
-        624
-      ]
-    ]
-  },
-  "score_is_calibrated_probability": false,
-  "limitation": "Single source dataset and one source shard; no independent generator, social-media, deepfake, or real-world test.",
-  "model_sha256": "6669d49056d894c8940d6bb53b0821f5ce6b6ef5664a5817947bb3162a75a648",
-  "decision_threshold": 0.7092691932792147,
   "dataset": {
     "name": "AI vs Human Generated Dataset",
-    "source": "Kaggle/alessandrasala79; Hugging Face mirror by Ransaka",
-    "license": "Apache-2.0 (provider-declared)",
+    "source": "Kaggle/alessandrasala79; mirror by Ransaka on Hugging Face",
+    "license": "Apache-2.0 as declared by the dataset provider; verify source terms before commercial use",
     "license_source": "https://www.innovatiana.com/en/datasets/ai-vs-human-generated-dataset",
-    "upstream": "https://www.kaggle.com/datasets/alessandrasala79/ai-vs-human-generated-dataset",
+    "upstream": "https://huggingface.co/datasets/Ransaka/ai-vs-human-generated-dataset",
     "labels": {
       "0": "authentic Shutterstock image",
       "1": "AI-generated counterpart"
     },
-    "pair_grouping": "adjacent authentic/synthetic equivalents kept in a single split",
-    "used_shard": "train-00000-of-00010.parquet",
-    "source_shard_sha256": "e3c712138963eb76887dd6a05cb57c27e45da2e093e8b49397b9df070c53e4a2"
+    "pairing_check": "Adjacent rows have opposite labels; pair groups never cross fit/validation/test splits",
+    "train_files": [
+      {
+        "name": "train-00000-of-00010.parquet",
+        "bytes": 465990145,
+        "sha256": "e3c712138963eb76887dd6a05cb57c27e45da2e093e8b49397b9df070c53e4a2"
+      },
+      {
+        "name": "train-00001-of-00010.parquet",
+        "bytes": 459033298,
+        "sha256": "6373c3e9a7798f58adba82536a8a2379f0e0c2ab4bcd1978b87c4a33fd98dfda"
+      },
+      {
+        "name": "train-00002-of-00010.parquet",
+        "bytes": 460312574,
+        "sha256": "a6c1ef4e79a725470b77151bb2ee9325e52089ddc32adcde7f6775693509f02e"
+      },
+      {
+        "name": "train-00003-of-00010.parquet",
+        "bytes": 463204939,
+        "sha256": "8f99fb14804848bb03530d8f3b4d7913e355be3910624d313b709b8ce8809190"
+      },
+      {
+        "name": "train-00004-of-00010.parquet",
+        "bytes": 459534360,
+        "sha256": "0f604b57cc32035aca3509b0305b1fbc73ffd8f24ccf520dda1312a3cbc9dfc1"
+      },
+      {
+        "name": "train-00005-of-00010.parquet",
+        "bytes": 463682003,
+        "sha256": "c95bb30e198c764d7195ebd4b770571fa17ed4c35756e9220093ddc177525ce5"
+      },
+      {
+        "name": "train-00006-of-00010.parquet",
+        "bytes": 457714146,
+        "sha256": "abec6b89943a29b1c9387695a24944096f013c5b31f72e6242b6be6cca83e959"
+      },
+      {
+        "name": "train-00007-of-00010.parquet",
+        "bytes": 460557375,
+        "sha256": "0813b02188a7bbde23f334d0fb6d9a1ed4701b23ff38145e82b1f388548d152f"
+      },
+      {
+        "name": "train-00008-of-00010.parquet",
+        "bytes": 460930524,
+        "sha256": "44eb6e56dd9fdd433b578b8e1a97c289f4aca7ab16b02f06ff2aa2bb1db986c8"
+      },
+      {
+        "name": "train-00009-of-00010.parquet",
+        "bytes": 464330962,
+        "sha256": "ce4f31e2afafa3ee548cdd4e693ae21257fa2a6ef20d64bc054542efb07032c1"
+      }
+    ],
+    "labeled_train_file_count": 10
   },
-  "architecture": "Compact 5-stage CNN, 96x96 RGB, trained from scratch"
+  "architecture": "Compact 5-stage CNN, 96x96 RGB, trained from scratch",
+  "training_split": "70% of labeled source train rows; pair-grouped validation/test splits; best validation loss checkpoint",
+  "test_split": "Pair-grouped 15% holdout from the labeled source training split; the mirror's separate test split is unlabeled",
+  "train_examples": 55962,
+  "validation_examples": 11994,
+  "test_examples": 11994,
+  "download_coverage": {
+    "labeled_train": {
+      "downloaded_shards": 10,
+      "expected_shards": 10,
+      "complete": true
+    }
+  },
+  "pair_groups_disjoint": true,
+  "validation_target_fpr": 0.05,
+  "validation_threshold": 0.6579098105430603,
+  "test_at_selected_threshold": {
+    "accuracy": 0.9439719859929965,
+    "balanced_accuracy": 0.9439719859929965,
+    "roc_auc": 0.9869666643671454,
+    "precision_ai": 0.9505838551362329,
+    "recall_ai": 0.936634984158746,
+    "false_positive_rate": 0.04869101217275304,
+    "false_negative_rate": 0.06336501584125397,
+    "confusion_matrix_labels_0_authentic_1_ai": [
+      [
+        5705,
+        292
+      ],
+      [
+        380,
+        5617
+      ]
+    ]
+  },
+  "test_at_default_0_5": {
+    "accuracy": 0.942804735701184,
+    "balanced_accuracy": 0.942804735701184,
+    "roc_auc": 0.9869666643671454,
+    "precision_ai": 0.928375544442652,
+    "recall_ai": 0.9596464899116225,
+    "false_positive_rate": 0.07403701850925462,
+    "false_negative_rate": 0.04035351008837752,
+    "confusion_matrix_labels_0_authentic_1_ai": [
+      [
+        5553,
+        444
+      ],
+      [
+        242,
+        5755
+      ]
+    ]
+  },
+  "jpeg_reencoded_test_at_selected_threshold_quality_82": {
+    "accuracy": 0.9322994830748708,
+    "balanced_accuracy": 0.9322994830748708,
+    "roc_auc": 0.985180545361336,
+    "precision_ai": 0.967032967032967,
+    "recall_ai": 0.895114223778556,
+    "false_positive_rate": 0.030515257628814407,
+    "false_negative_rate": 0.10488577622144406,
+    "confusion_matrix_labels_0_authentic_1_ai": [
+      [
+        5814,
+        183
+      ],
+      [
+        629,
+        5368
+      ]
+    ]
+  },
+  "balanced_accuracy_95pct_pair_bootstrap_ci": [
+    0.9398011580109596,
+    0.947807252407074
+  ],
+  "jpeg_balanced_accuracy_95pct_pair_bootstrap_ci": [
+    0.9277138710021973,
+    0.9368851184844971
+  ],
+  "existing_model_on_same_pair_grouped_holdout": {
+    "model_sha256": "6669d49056d894c8940d6bb53b0821f5ce6b6ef5664a5817947bb3162a75a648",
+    "threshold": 0.7092691932792147,
+    "test_at_existing_threshold": {
+      "accuracy": 0.8781890945472737,
+      "balanced_accuracy": 0.8781890945472737,
+      "roc_auc": 0.9582173667012485,
+      "precision_ai": 0.9461054287962234,
+      "recall_ai": 0.8020677005169251,
+      "false_positive_rate": 0.04568951142237786,
+      "false_negative_rate": 0.19793229948307486,
+      "confusion_matrix_labels_0_authentic_1_ai": [
+        [
+          5723,
+          274
+        ],
+        [
+          1187,
+          4810
+        ]
+      ]
+    },
+    "test_at_0_5": {
+      "accuracy": 0.8956978489244622,
+      "balanced_accuracy": 0.8956978489244622,
+      "roc_auc": 0.9582173667012485,
+      "precision_ai": 0.912839248434238,
+      "recall_ai": 0.8749374687343672,
+      "false_positive_rate": 0.08354177088544272,
+      "false_negative_rate": 0.12506253126563283,
+      "confusion_matrix_labels_0_authentic_1_ai": [
+        [
+          5496,
+          501
+        ],
+        [
+          750,
+          5247
+        ]
+      ]
+    },
+    "jpeg_test_at_existing_threshold_quality_82": {
+      "accuracy": 0.8338335834583959,
+      "balanced_accuracy": 0.8338335834583959,
+      "roc_auc": 0.9525014577768568,
+      "precision_ai": 0.9577046181984453,
+      "recall_ai": 0.6985159246289812,
+      "false_positive_rate": 0.030848757712189426,
+      "false_negative_rate": 0.30148407537101884,
+      "confusion_matrix_labels_0_authentic_1_ai": [
+        [
+          5812,
+          185
+        ],
+        [
+          1808,
+          4189
+        ]
+      ]
+    },
+    "balanced_accuracy_95pct_pair_bootstrap_ci": [
+      0.8726842418313027,
+      0.8836084604263306
+    ]
+  },
+  "training_history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.3359291548899242,
+      "validation_loss": 0.31414603085276926
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.28696510105473655,
+      "validation_loss": 0.3136061763668314
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.237410544191088,
+      "validation_loss": 0.20428854163656843
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.205513111105987,
+      "validation_loss": 0.15329359562948663
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.19056058875577792,
+      "validation_loss": 0.16621053999567287
+    }
+  ],
+  "onnx_max_abs_logit_delta_vs_pytorch_128_test_images": 6.67572021484375e-06,
+  "score_is_calibrated_probability": false,
+  "limitations": [
+    "The score is not a calibrated probability or proof of image origin.",
+    "The source dataset covers paired Shutterstock photos and AI counterparts, not face swaps or deepfakes.",
+    "The mirror's separate test split is unlabeled; this held-out test shares the labeled training source family.",
+    "Independent current-generator and social-media validation is still required."
+  ],
+  "model_sha256": "a1341ca40d2d0f1fb640d6e6a42a5e7689d4517c950cea2d5732689bf37050dd",
+  "decision_threshold": 0.6579098105430603
 }

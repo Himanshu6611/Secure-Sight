@@ -1,0 +1,5 @@
+# Local-only training dependencies; these are not installed in the web app.
+-r requirements.txt
+torch==2.9.1
+onnx==1.17.0
+huggingface_hub==0.35.3

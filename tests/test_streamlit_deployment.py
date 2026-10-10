@@ -3,6 +3,7 @@ import hashlib
 import json
 import subprocess
 import sys
+import pytest
 from contextlib import nullcontext
 from pathlib import Path
 
@@ -197,7 +198,7 @@ def test_image_summary_separates_unknown_threat_verdict_from_unavailable_origin_
         "evidence": [{"id": "media.provenance_absent"}],
         "investigation": {"coverage": {"unavailable": ["ai_detector"]}},
     })
-    assert result["headline"] == "Threat screening needs review"
+    assert result["headline"] == "Image origin could not be determined"
     assert result["level"] == "info"
     assert result["model_value"] == "Unavailable"
     assert result["model_detail"] == "Experimental AI-pattern estimate unavailable"
@@ -234,8 +235,8 @@ def test_image_summary_shows_experimental_ai_pattern_estimate_without_calling_it
         "linked_analysis": [],
         "evidence": [],
     })
-    assert result["headline"] == "Threat screening needs review"
-    assert result["pill"] == "AI-origin estimate available"
+    assert result["headline"] == "Likely AI-generated"
+    assert result["pill"] == "AI pattern detected"
     assert result["model_value"] == "91.0%"
     assert result["model_available"] is True
     assert result["model_classification"] == "AI_GENERATED_PATTERN"
@@ -251,7 +252,7 @@ def test_image_summary_does_not_claim_valid_signature_is_trusted_without_trust()
         "synthetic_media": {"analysis_status": "MODEL_UNAVAILABLE"},
     })
     assert result["provenance"] == "Signed, but issuer trust is unverified"
-    assert result["headline"] == "Threat screening needs review"
+    assert result["headline"] == "Image origin could not be determined"
 
 
 def test_image_result_panel_renders_reference_style_summary_and_evidence(monkeypatch):
@@ -282,13 +283,47 @@ def test_image_result_panel_renders_reference_style_summary_and_evidence(monkeyp
     streamlit_main._show_result(result, "image")
 
     output = "\n".join(rendered)
-    assert "Threat screening needs review" in output
+    assert "Image origin could not be determined" in output
+    assert "Threat screening needs review" not in output
     assert "Experimental AI-pattern score" in output
     assert "Forensic signals" in output
     assert "Measured properties · no anomaly verdict" in output
     assert "No C2PA provenance found" in output
     assert "View technical diagnostic breakdown" in output
     assert "does not detect all deepfakes" in output
+
+
+@pytest.mark.parametrize("score,classification,headline", [
+    (0.91, "AI_GENERATED_PATTERN", "Likely AI-generated"),
+    (0.05, "NOT_FLAGGED_AS_AI", "No AI-generation pattern detected"),
+    (float("nan"), "AI_GENERATED_PATTERN", "Image origin could not be determined"),
+    (True, "AI_GENERATED_PATTERN", "Image origin could not be determined"),
+    (0.91, "UNKNOWN", "Image origin could not be determined"),
+])
+def test_image_origin_banner_uses_valid_model_result_even_when_threat_checks_are_partial(score, classification, headline):
+    summary = streamlit_main._image_result_summary({
+        "analysis_status": "PARTIAL",
+        "assessment": {"verdict": "UNKNOWN"},
+        "synthetic_media": {"analysis_status": "EXPERIMENTAL_ESTIMATE",
+                            "model_score": score, "classification": classification},
+    })
+    assert summary["headline"] == headline
+    assert "Legitimate" not in summary["headline"]
+    assert summary["threat_headline"] == "Threat checks incomplete"
+
+
+def test_image_model_does_not_hide_detected_threats(monkeypatch):
+    warnings = []
+    for method in ("markdown", "info", "write", "caption", "json"):
+        monkeypatch.setattr(streamlit_main.st, method, lambda *args, **kwargs: None)
+    monkeypatch.setattr(streamlit_main.st, "error", warnings.append)
+    monkeypatch.setattr(streamlit_main.st, "expander", lambda *args, **kwargs: nullcontext())
+    streamlit_main._show_image_result({
+        "assessment": {"verdict": "MALICIOUS"},
+        "synthetic_media": {"analysis_status": "EXPERIMENTAL_ESTIMATE",
+                            "model_score": 0.05, "classification": "NOT_FLAGGED_AS_AI"},
+    })
+    assert warnings == ["Unsafe indicators found"]
 
 
 def test_email_result_summary_provides_plain_language_card_and_diagnostic_values():

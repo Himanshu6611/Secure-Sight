@@ -1,11 +1,42 @@
-# Experimental AI-generated-image pattern model
+# SecureSight experimental AI-image-pattern model
 
-This small CPU inference model is trained from scratch on the **AI vs Human Generated Dataset**. The provider describes 85,500 images, authentic Shutterstock photographs paired with AI-generated equivalents, and an Apache 2.0 commercial-use license. Dataset attribution and terms: [Innovatiana dataset page](https://www.innovatiana.com/en/datasets/ai-vs-human-generated-dataset). Upstream archive: [Kaggle dataset](https://www.kaggle.com/datasets/alessandrasala79/ai-vs-human-generated-dataset). The local training run used only the recorded shard and never includes source images in this repository.
+This is a compact CNN trained from scratch and run locally with ONNX Runtime;
+image inference sends no image to a third-party API. It estimates whether a
+96×96 image resembles the AI-generated class in the training source. It does
+not prove an image is real or fake, identify its generator, detect face swaps,
+or establish that a person or scene is authentic. The sigmoid score is
+uncalibrated and must not be described as a correctness probability.
 
-## Scope and result
+## Data and evaluation
 
-The model estimates whether a 96×96 image has patterns resembling the dataset's AI-generated class. It is **not** a deepfake, face-swap, image-editing, ownership, identity, or truth detector. Its sigmoid output is an uncalibrated model score, not a probability that the image is AI-made. A score below the decision threshold means only that the model did not flag the pattern.
+Training used all 79,950 labeled rows from the AI vs Human Generated Dataset:
+authentic Shutterstock images and AI-generated counterparts. The provider
+declares Apache 2.0 terms; the Hugging Face mirror itself has no license field,
+so review upstream terms and preserve attribution before commercial use. The
+mirror's separate 5,540-row test split returned label `-1`, so it was not used
+for accuracy claims.
 
-The split kept adjacent equivalent real/AI examples together. Training used 4,795 images, threshold selection used a separate 1,600-image validation set, and the final 1,600-image test set was not used for fitting or threshold selection. On that one-dataset, one-shard test set, the validation-selected 0.7093 threshold produced 87.6% balanced accuracy, 4.1% false positives, and 20.8% false negatives. Re-encoding test images as JPEG quality 82 yielded 87.0% balanced accuracy, 4.0% false positives, and 22.0% false negatives. At threshold 0.5, test balanced accuracy was 89.6%, false positives 8.5%, and false negatives 12.4%.
+The labeled training rows were divided by adjacent counterpart pair into
+55,962 fit examples, 11,994 validation examples, and 11,994 held-out test
+examples. No pair crossed a split. The validation split selected threshold
+`0.6579` to target a false-positive rate no higher than 5%.
 
-These are internal dataset results, not independent real-world validation. No results are available for current generators outside this dataset, social-media transformations, screenshots, edited real images, or face deepfakes. Do not present the model's result as a definitive “real” or “fake” verdict. The app labels it an experimental AI-pattern estimate and keeps its general image-authenticity/threat verdict separate.
+On that held-out split, the new model achieved 94.4% balanced accuracy, 4.9%
+false positives, and 6.3% false negatives (95% pair-bootstrap interval for
+balanced accuracy: 94.0–94.8%). The prior model scored 87.8% balanced accuracy,
+4.6% false positives, and 19.8% false negatives on the same images. After
+JPEG quality-82 recompression, the new model scored 93.2% balanced accuracy,
+3.1% false positives, and 10.5% false negatives; the prior model scored 83.4%,
+3.1%, and 30.1%, respectively. PyTorch-to-ONNX maximum logit difference on
+128 held-out images was `0.0000067`.
+
+These results measure a pair-grouped holdout from the same labeled dataset
+family, not independent current generators, social-media reposts, screenshots,
+edited photos, or deepfakes. Independent external validation is still needed.
+The application therefore presents an experimental AI-pattern estimate, not
+a definitive `Real` / `Fake` or safe / unsafe verdict.
+
+Dataset and declared terms: [provider page](https://www.innovatiana.com/en/datasets/ai-vs-human-generated-dataset). The mirror's row counts and files are at [Hugging Face](https://huggingface.co/datasets/Ransaka/ai-vs-human-generated-dataset).
+
+See [local retraining instructions](../../docs/MEDIA_MODEL_TRAINING.md) for the
+training command, split checks, model comparison, and ONNX parity test.

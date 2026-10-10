@@ -414,8 +414,9 @@ def _image_result_summary(result: dict[str, Any]) -> dict[str, Any]:
     if isinstance(probability, bool) or not isinstance(probability, (int, float)) or not 0 <= probability <= 1:
         probability = None
     model_status = str(model.get("analysis_status", "MODEL_UNAVAILABLE")).upper()
-    model_is_usable = model_status == "EXPERIMENTAL_ESTIMATE" and probability is not None
     classification = str(model.get("classification", "")).upper()
+    model_is_usable = (model_status == "EXPERIMENTAL_ESTIMATE" and probability is not None
+                       and classification in {"AI_GENERATED_PATTERN", "NOT_FLAGGED_AS_AI"})
     if not model_is_usable:
         model_value = "Unavailable"
         model_detail = "Experimental AI-pattern estimate unavailable"
@@ -429,10 +430,16 @@ def _image_result_summary(result: dict[str, Any]) -> dict[str, Any]:
         "PHISHING": ("Unsafe indicators found", "error", "Threat indicators found"),
         "SUSPICIOUS": ("Suspicious image or destination", "warning", "Review before acting"),
         "LEGITIMATE": ("No strong threat signs found", "info", "Threat screening only"),
-        "UNKNOWN": ("Threat screening needs review", "info",
-                    "AI-origin estimate available" if model_is_usable else "Threat checks incomplete"),
+        "MALICIOUS": ("Unsafe indicators found", "error", "Threat indicators found"),
+        "UNKNOWN": ("Threat checks incomplete", "info", "Threat checks incomplete"),
     }
-    headline, level, pill = labels.get(verdict, labels["UNKNOWN"])
+    threat_headline, threat_level, _ = labels.get(verdict, labels["UNKNOWN"])
+    if not model_is_usable:
+        headline, level, pill = "Image origin could not be determined", "info", "Model result unavailable"
+    elif classification == "AI_GENERATED_PATTERN":
+        headline, level, pill = "Likely AI-generated", "info", "AI pattern detected"
+    else:
+        headline, level, pill = "No AI-generation pattern detected", "info", "Camera origin not verified"
 
     c2pa = str(provenance.get("status", "UNAVAILABLE")).upper()
     provenance_labels = {
@@ -481,12 +488,15 @@ def _image_result_summary(result: dict[str, Any]) -> dict[str, Any]:
         "headline": headline,
         "level": level,
         "pill": pill,
+        "threat_headline": threat_headline,
+        "threat_level": threat_level,
         "risk_value": risk_value,
         "model_value": model_value,
         "model_detail": model_detail,
         "model_available": model_is_usable,
         "model_classification": classification or "Unavailable",
         "model_threshold": model.get("decision_threshold"),
+        "model_sha256": model.get("model_sha256") or "Unavailable",
         "model_test_metrics": model.get("test_metrics") if isinstance(model.get("test_metrics"), dict) else {},
         "image_format": image_format,
         "image_name": image_name,
@@ -516,7 +526,6 @@ def _show_image_result(result: dict[str, Any]) -> None:
         """
         <style>
         .ss-image-verdict { padding:22px 28px; border-radius:22px; color:#fff; margin:8px 0 16px; background:linear-gradient(110deg,#168c98,#076772); }
-        .ss-image-verdict.needs-review { background:linear-gradient(110deg,#168c98,#076772); }
         .ss-image-verdict.error { background:linear-gradient(110deg,#dc3434,#a91f31); }
         .ss-image-verdict.warning { background:linear-gradient(110deg,#e5a323,#bf7011); }
         .ss-image-kicker { font-size:12px; letter-spacing:.11em; font-weight:750; opacity:.88; text-transform:uppercase; }
@@ -541,8 +550,8 @@ def _show_image_result(result: dict[str, Any]) -> None:
     )
     st.markdown(
         f"""
-        <section class="ss-image-verdict {level} {'needs-review' if summary['headline'] == 'Threat screening needs review' else ''}">
-          <div class="ss-image-kicker">Threat verdict</div>
+        <section class="ss-image-verdict {level}">
+          <div class="ss-image-kicker">Image origin · model assessment</div>
           <div class="ss-image-line"><h2>{html.escape(summary['headline'])}</h2>
             <span class="ss-image-pill">{html.escape(summary['pill'])}</span></div>
         </section>
@@ -560,6 +569,8 @@ def _show_image_result(result: dict[str, Any]) -> None:
         """,
         unsafe_allow_html=True,
     )
+    if summary["threat_level"] in {"error", "warning"}:
+        getattr(st, summary["threat_level"])(summary["threat_headline"])
     if summary["model_available"]:
         origin_note = (
             f"{summary['model_detail']}. This score is not a probability or proof that an image is AI-made. "
@@ -597,6 +608,7 @@ def _show_image_result(result: dict[str, Any]) -> None:
             ("Image dimensions", summary["dimensions"]),
             ("Experimental AI-pattern score", summary["model_value"] + " — " + summary["model_detail"]),
             ("Model classification", summary["model_classification"]),
+            ("Model artifact SHA-256", summary["model_sha256"]),
             ("Model decision threshold", f"{summary['model_threshold']:.1%}" if isinstance(summary["model_threshold"], (int, float)) else "Unavailable"),
             ("C2PA provenance", summary["provenance"]),
             ("Image metadata", summary["metadata_status"]),
@@ -1025,7 +1037,6 @@ def main() -> None:
                     with st.spinner("Inspecting image metadata, provenance, text and available indicators…"):
                         result = _request_image(image_file.name, image_file.getvalue())
                     _show_result(result, "image")
-                    st.caption("AI-image/deepfake origin cannot be reliably confirmed without a validated detector or trusted provenance signal.")
                 except Exception as exc:
                     st.error(str(exc) if isinstance(exc, RuntimeError) else "Image analysis failed safely. Please retry later.")
 
