@@ -101,6 +101,20 @@ def test_model_unavailable_reason_is_preserved(monkeypatch):
     )
 
 
+def test_scan_result_preserves_safe_model_failure_reason():
+    status = {
+        "status": "MODEL_LOAD_FAILED",
+        "failure_reason": "CHECKSUM_MISMATCH:model.pkl",
+    }
+    prediction = scans._unavailable_prediction(status)
+    assert prediction == {
+        "status": "MODEL_LOAD_FAILED",
+        "probability": None,
+        "prediction": None,
+        "failure_reason": "CHECKSUM_MISMATCH:model.pkl",
+    }
+
+
 def test_url_adapter_uses_shared_api(monkeypatch):
     app = Flask(__name__)
     app.add_url_rule("/api/v1/scan", view_func=lambda: jsonify(verdict="UNKNOWN"), methods=["POST"])

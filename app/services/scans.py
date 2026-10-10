@@ -39,6 +39,18 @@ def load_models(app):
         )
 
 
+def _unavailable_prediction(load_status):
+    """Expose the model loader's safe diagnostic in scan results."""
+    result = {
+        "status": load_status.get("status", "MODEL_NOT_FOUND"),
+        "probability": None,
+        "prediction": None,
+    }
+    if load_status.get("failure_reason"):
+        result["failure_reason"] = load_status["failure_reason"]
+    return result
+
+
 def scan_url(value, email_context=None):
     start = time.perf_counter()
     url = validate_url(value, current_app.config["MAX_URL_LENGTH"])
@@ -92,9 +104,7 @@ def scan_url(value, email_context=None):
         predictor = None
     load_status = current_app.extensions["models"].get("url_load_status", {})
     unavailable_status = load_status.get("status", "MODEL_NOT_FOUND")
-    prediction = predictor.predict(vector) if predictor is not None else dict(
-        status=unavailable_status, probability=None, prediction=None
-    )
+    prediction = predictor.predict(vector) if predictor is not None else _unavailable_prediction(load_status)
     probability = prediction.get("probability")
     if prediction["status"] != "OK":
         warnings_list.append(prediction["status"])
