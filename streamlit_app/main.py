@@ -391,7 +391,23 @@ def _request_email(filename: str, content: bytes) -> dict[str, Any]:
         )
         job = response.get_json(silent=True)
         if response.status_code != 202 or not isinstance(job, dict):
-            raise RuntimeError("The email could not be queued. Check the file type and size, then retry.")
+            error = job.get("error", {}) if isinstance(job, dict) else {}
+            code = error.get("code") if isinstance(error, dict) else None
+            messages = {
+                "DOCUMENT_TEXT_UNAVAILABLE": (
+                    "No readable text was found in this file. It may be a scanned PDF; "
+                    "image-only PDFs are not supported for email analysis yet."
+                ),
+                "DOCUMENT_PARSE_FAILED": "This document could not be read. Try exporting it again or upload the original .eml message.",
+                "ENCRYPTED_DOCUMENT_UNSUPPORTED": "This document is password-protected. Remove the password before analyzing it.",
+                "DOCUMENT_RESOURCE_LIMIT": "This document exceeds the analysis limits (maximum 20 PDF pages and bounded text size).",
+                "EMAIL_RESOURCE_LIMIT": "The email file is empty or exceeds the 2 MB analysis limit.",
+                "UNSUPPORTED_EMAIL_FORMAT": "Choose an .eml, .pdf, .docx or .xml file.",
+                "DOCUMENT_TYPE_MISMATCH": "The file contents do not match its extension. Choose a valid .eml, .pdf, .docx or .xml file.",
+                "INVALID_EMAIL": "The uploaded file is not a valid email or supported email document.",
+            }
+            message = messages.get(code, "The email could not be submitted for analysis. Please retry later.")
+            raise RuntimeError(message)
         deadline = time.monotonic() + EMAIL_WAIT_SECONDS
         while time.monotonic() < deadline:
             poll = client.get(

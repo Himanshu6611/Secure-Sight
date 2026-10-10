@@ -185,3 +185,21 @@ def test_email_adapter_polls_ephemeral_bearer_job(monkeypatch):
     assert streamlit_main._request_email("fixture.eml", b"From: a@example.com\n\nhello") == {
         "risk": {"verdict": "UNKNOWN"}
     }
+
+
+def test_email_adapter_reports_document_extraction_failure(monkeypatch):
+    app = Flask(__name__)
+
+    def reject_scanned_pdf():
+        assert request.files["file"].filename == "fixture.pdf"
+        return jsonify(analysis_status="FAILED", error={"code": "DOCUMENT_TEXT_UNAVAILABLE"}), 422
+
+    app.add_url_rule("/api/v1/email/analyze", view_func=reject_scanned_pdf, methods=["POST"])
+    monkeypatch.setattr(streamlit_main, "_flask_app", lambda: app)
+    try:
+        streamlit_main._request_email("fixture.pdf", b"%PDF-fixture")
+    except RuntimeError as exc:
+        assert "No readable text" in str(exc)
+        assert "scanned PDF" in str(exc)
+    else:
+        raise AssertionError("Expected a readable-text explanation for scanned PDF")
