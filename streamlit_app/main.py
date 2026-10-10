@@ -144,14 +144,33 @@ def _domain_age(registration: dict[str, Any]) -> str:
     return "Unavailable from registration data"
 
 
-def _url_verdict_text(verdict: str) -> tuple[str, str]:
+def _url_verdict_text(
+    verdict: str,
+    *,
+    risk_score: Any = None,
+    ml_probability: Any = None,
+    model_available: bool = False,
+    webpage_analyzed: bool = False,
+) -> tuple[str, str]:
     if verdict == "PHISHING":
         return "Unsafe — threat indicators found", "error"
     if verdict == "SUSPICIOUS":
         return "Suspicious — verify before opening", "warning"
     if verdict in {"LEGITIMATE", "LOW_RISK"}:
         return "No strong threat indicators found", "success"
-    return "Unable to confirm legitimate or unsafe — checks incomplete", "info"
+    # Summarize low-risk evidence in plain language while keeping UNKNOWN as
+    # the actual verdict whenever supporting intelligence is incomplete.
+    if (
+        verdict == "UNKNOWN"
+        and model_available
+        and webpage_analyzed
+        and isinstance(risk_score, (int, float))
+        and 0 <= risk_score < 40
+        and isinstance(ml_probability, (int, float))
+        and 0 <= ml_probability < 0.15
+    ):
+        return "Low risk — no clear threat found", "info"
+    return "We could not finish enough checks to decide", "info"
 
 
 def _model_status_text(status: str, failure_reason: str | None = None) -> str:
@@ -176,7 +195,15 @@ def _model_status_text(status: str, failure_reason: str | None = None) -> str:
 
 def _show_url_result(result: dict[str, Any]) -> None:
     verdict = str(result.get("verdict", "UNKNOWN")).upper()
-    label, level = _url_verdict_text(verdict)
+    risk = result.get("risk_score")
+    probability = result.get("ml_probability")
+    web = result.get("web_intelligence") or {}
+    model_available = result.get("model_available") is True and (result.get("ml_result") or {}).get("status") == "OK"
+    webpage_analyzed = web.get("status") == "ANALYZED"
+    label, level = _url_verdict_text(
+        verdict, risk_score=risk, ml_probability=probability,
+        model_available=model_available, webpage_analyzed=webpage_analyzed,
+    )
     message = f"**{label}**"
     if level == "error":
         st.error(message)
@@ -187,8 +214,6 @@ def _show_url_result(result: dict[str, Any]) -> None:
     else:
         st.info(message)
 
-    risk = result.get("risk_score")
-    probability = result.get("ml_probability")
     coverage = result.get("evidence_coverage")
     completeness = result.get("analysis_completeness")
     confidence = result.get("confidence")
@@ -200,6 +225,27 @@ def _show_url_result(result: dict[str, Any]) -> None:
     third.metric("Evidence coverage", _coverage_label(coverage))
     fourth.metric("Analysis completeness", _coverage_label(completeness))
     st.caption("A score is evidence for review, not a guarantee. A clean result does not prove a site is safe.")
+    if verdict == "UNKNOWN" and label.startswith("Low risk"):
+        details = []
+        if isinstance(probability, (int, float)):
+            details.append(f"The trained URL model estimates {probability:.1%} phishing risk.")
+        if webpage_analyzed:
+            features = web.get("combined_web_features") or {}
+            links = features.get("link_count")
+            forms = features.get("form_count")
+            page_checks = []
+            if isinstance(links, int):
+                page_checks.append(f"{links} links found")
+            if isinstance(forms, int):
+                page_checks.append(f"{forms} forms found")
+            if page_checks:
+                details.append("Static webpage inspection: " + ", ".join(page_checks) + ".")
+        details.append(
+            "Some reputation, history, or crawl checks may be unavailable; this is low risk, not a confirmed safe verdict."
+        )
+        st.info(" ".join(details))
+    elif verdict == "UNKNOWN":
+        st.info("One or more important checks did not return enough evidence for a reliable decision.")
 
     target = result.get("analysis_target") or result.get("url")
     if isinstance(target, str):
@@ -212,7 +258,6 @@ def _show_url_result(result: dict[str, Any]) -> None:
     tls = domain.get("tls") or {}
     dns = domain.get("dns") or {}
     reputation = domain.get("reputation") or {}
-    web = result.get("web_intelligence") or {}
     features = web.get("combined_web_features") or {}
     behavior = web.get("behavior_intelligence") or {}
     dynamic = behavior.get("dynamic_analysis") or {}
@@ -299,7 +344,7 @@ def _show_url_result(result: dict[str, Any]) -> None:
             reason = signal.get("reason")
             st.write(f"• {name}" + (f" — {reason}" if reason else ""))
 
-    if result.get("status") == "PARTIAL":
+    if result.get("status") == "PARTIAL" and verdict != "UNKNOWN":
         st.caption("Some checks were unavailable or partial. Treat this result as incomplete.")
 
 

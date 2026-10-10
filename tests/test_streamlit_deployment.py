@@ -80,8 +80,22 @@ def test_coverage_is_rendered_as_percentage_points():
 
 def test_url_verdict_copy_does_not_claim_unknown_is_safe():
     unknown, level = streamlit_main._url_verdict_text("UNKNOWN")
-    assert "confirm legitimate or unsafe" in unknown
+    assert "finish enough checks" in unknown
     assert level == "info"
+    low_risk, level = streamlit_main._url_verdict_text(
+        "UNKNOWN", risk_score=1.23, ml_probability=0.012,
+        model_available=True, webpage_analyzed=True,
+    )
+    assert low_risk == "Low risk — no clear threat found"
+    assert level == "info"
+    assert streamlit_main._url_verdict_text(
+        "UNKNOWN", risk_score=1.23, ml_probability=0.012,
+        model_available=False, webpage_analyzed=True,
+    )[0] != low_risk
+    assert streamlit_main._url_verdict_text(
+        "UNKNOWN", risk_score=1.23, ml_probability=0.012,
+        model_available=True, webpage_analyzed=False,
+    )[0] != low_risk
     assert streamlit_main._url_verdict_text("PHISHING")[0].startswith("Unsafe")
     assert streamlit_main._url_verdict_text("SUSPICIOUS")[0].startswith("Suspicious")
     assert streamlit_main._url_verdict_text("LEGITIMATE")[0].startswith("No strong threat")
